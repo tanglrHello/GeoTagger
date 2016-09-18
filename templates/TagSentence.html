@@ -1,0 +1,722 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <title>单句分析-GeoTagger-njunlp</title>
+  <link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" /> 
+</head>
+<body>
+  <script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+  <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+  
+  <nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+      <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+          <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+        <li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+        <li><a href="SearchText.html">搜索试题</a></li>
+        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+  
+  <div> &nbsp;</div>
+  <div class="page-header">
+      <h1>单句标注-{{papername}}</h1>
+  </div>
+
+  
+
+  <form method="POST" onsubmit="return submitCheckFunc();">
+  <div class="container">
+      <font size="4"><a href="./TagEachField.html?papername={{papername}}&papertype={{papertype}}">回到本试卷单项标注导航页</a></font><br />
+      <font size="4"><a href="./TestpaperInfo.html?papername={{papername}}&papertype={{papertype}}">回到本试卷详情页面</a></font><br /><br>
+      <div class="input-group">
+        {% if papertype == "choice"%}
+        <span class="input-group-addon" id="sizing-addon1">组合选项序号：</span>
+        <input id="number" type="text" class="form-control" value="{{textInfo.combinedChoiceIndex}}">
+        {%else%}
+        <span class="input-group-addon" id="sizing-addon1">小题序号：</span>
+        <input id="number" type="text" class="form-control" value="{{textInfo.subQuestionIndex}}">
+        {%endif%}
+        
+        <span class="input-group-btn">
+            <button id="skip_btn" class="btn btn-default" type="button" onclick="SkipFunc()">跳转</button>
+        </span>
+      </div><!-- /input-group -->
+      <br />
+      <script>
+        var originalNumber=document.getElementById("number").value;
+
+        function SkipFunc(){
+          var allValidIndex={{allValidIndex|safe}}
+          var papername="{{papername}}"
+
+          skipto=document.getElementById("number").value
+          var i=0;
+          for(i=0;i<allValidIndex.length;i++){
+            if(allValidIndex[i]==skipto){
+              window.location.href="./TagSentence.html?papername="+papername+"&combinedChoiceIndex="+skipto;
+              break;
+            }
+          }
+
+          if(i==allValidIndex.length){   //不是有效的index
+            alert("本试卷中没有这个组合选项，或者该选项不需要拆分，可拆分的选项有："+allValidIndex);
+          }
+
+          //恢复原本的序号
+          document.getElementById("number").value=originalNumber;
+        }
+      </script>
+
+        {% if papertype == "choice"%}
+        <label>所属选择题题号：{{questionIndex}}</label><br>
+        <label>所属选项号:{{textInfo.number}}</label><br><br>
+        {%else%}
+        <label>所属大题题号：{{questionIndex}}</label><br>
+        <label>所属小题号:{{textInfo.number}}</label><br><br>
+        {%endif%}
+
+        {% if lastIndex %}
+          {%if papertype == "choice"%}
+            <a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{lastIndex}}">上一句</a>
+          {%else%}
+            <a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{lastIndex}}">上一句</a>
+          {%endif%}
+         
+        {% endif %}
+        {% if nextIndex %}
+         {%if papertype == "choice"%}
+            <a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{nextIndex}}">上一句</a>
+          {%else%}
+            <a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{nextIndex}}">下一句</a>
+          {%endif%}
+        {% endif %}
+         <br><br><br>
+
+      {%if papertype == "choice"%}
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">题面：</span>
+        <input id="timian" name="timian_name" type="text" class="form-control" value="{{textInfo.timian}}">
+      </div>
+      
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">选项：</span>
+        <input id="xuanxiang" name="xuanxiang_name" type="text" class="form-control" value="{{textInfo.xuanxiang}}">
+      </div>
+      {%else%}
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">题面：</span>
+        <input id="timian" name="timian_name" type="text" class="form-control" value="{{textInfo.text}}">
+      </div>
+      {%endif%}
+      <br>
+      
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">（细粒度）分词：</span>
+        <textarea name="seg_fg_input_name" id="seg_fg_input" type="text" class="form-control" 
+        onblur="editSegEndFunc('_fg');" onfocus="editSegFunc('_fg')"
+        rows="3"></textarea>
+        <script>
+          //分词初始化函数，从数据库初始化
+          function init_seg_func(type){
+            var segres={{textInfoJson|safe}}['segres'+type];
+            var seg_str="";
+            for(var i=0;i<segres.length-1;i++){
+              seg_str+=segres[i]+" ";
+            }
+            seg_str+=segres[i];
+
+            document.getElementById("seg"+type+"_input").value=seg_str;
+          }
+        </script>
+
+        {%if textInfo.segres_fg%}
+          <script>
+            init_seg_func('_fg');
+          </script>
+        {%else%}
+          <script>
+            document.getElementById("seg_fg_input").value="{{textInfo.combinedTextWithoutTab}}";
+          </script>
+        {%endif%}
+
+      </div><!-- /input-group -->
+      <br /><br />
+      <div class="alert alert-warning" role="alert">
+          <a href="#" class="alert-link">时间、地点、术语、数量词、词性都是基于【粗粒度分词】的结果标注的</a>
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">（粗粒度）分词：</span>
+        <textarea name="seg_input_name" id="seg_input" type="text" class="form-control" 
+        onblur="editSegEndFunc('');" onfocus="editSegFunc('')"
+        rows="3"></textarea>
+        
+
+        {%if textInfo.segres%}
+          <script>
+            init_seg_func('');
+          </script>
+        {%else%}
+          <script>
+            document.getElementById("seg_input").value="{{textInfo.combinedTextWithoutTab}}";
+          </script>
+        {%endif%}
+      </div><!-- /input-group -->
+
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">时间：</span>
+        <input name="time_input_name" id="time_input"  type="text" class="form-control" placeholder="请填分词中对应词语的下标，多个<时间词>下标用空格隔开，只允许输入有效下标的数字" autocomplete='off' onblur="checkTimeFunc();checkTLPosConsistency(false);" value="{{textInfo.goldtimes}}">
+      </div><!-- /input-group -->
+
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">地点：</span>
+        <input name="loc_input_name" id="loc_input" type="text" class="form-control" placeholder="请填分词中对应词语的下标，多个<地点词>下标用空格隔开，只允许输入有效下标的数字" autocomplete='off' onblur="checkLocFunc();checkTLPosConsistency(false);" value="{{textInfo.goldlocs}}">
+      </div><!-- /input-group -->
+
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">术语：</span>
+        <input name="term_input_name" id="term_input" type="text" class="form-control" placeholder="请填分词中对应词语的下标，多个<术语>下标用空格隔开，只允许输入有效下标的数字" autocomplete='off' onblur="checkTermFunc();checkTLPosConsistency(false);" value="{{textInfo.goldterms}}">
+      </div><!-- /input-group -->
+
+      <div class="input-group">
+        <span class="input-group-addon" id="sizing-addon1">数量：</span>
+        <input name="quant_input_name" id="quant_input" type="text" class="form-control" placeholder="请填分词中对应词语的下标，多个<地点词>下标用空格隔开，只允许输入有效下标的数字" autocomplete='off' onblur="checkQuantFunc();checkTLPosConsistency(false);" value="{{textInfo.goldquants}}">
+      </div><!-- /input-group -->
+
+      <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon1">词性：</span>
+          <textarea name="pos_input_name" id="pos_input" type="text" class="form-control" rows="3" onblur="checkSegPosConsistencyFunc(true);checkPOSValidFunc();checkTLPosConsistency(true);"></textarea>        
+
+          <script>
+            //词性初始化函数，从数据库初始化
+            function init_pos_func(){              
+              var pos_input=document.getElementById("pos_input");
+              var segres={{textInfoJson|safe}}['segres'];
+              var posres={{textInfoJson|safe}}['posres'];
+
+              pos_input_value="";
+              for(var i=0;i<posres.length-1;i++){
+                  pos_input_value+=segres[i]+"_"+posres[i]+" ";
+              }
+              pos_input_value+=segres[segres.length-1]+"_"+posres[posres.length-1];
+              pos_input.value=pos_input_value;
+            }
+
+            //根据分词结果自动生成词性的函数，在数据库中没有词性信息时使用
+            function fillPOS(){
+              var pos_input=document.getElementById("pos_input");
+              var seg_input=document.getElementById("seg_input");
+              var segres=seg_input.value.split(" ");
+
+              pos_input_value="";
+              for(var i=0;i<segres.length-1;i++){
+                  pos_input_value+=segres[i].split("/")[0]+"_NN ";
+              }
+              pos_input_value+=segres[i].split("/")[0]+"_NN";
+              pos_input.value=pos_input_value;
+            }
+
+          </script>
+
+          {%if textInfo.posres%}          
+          <script>
+            init_pos_func();
+          </script>
+          {%else%}
+          <script>          
+            fillPOS();
+          </script>
+          {%endif%}
+      </div><!-- /input-group -->
+
+      <br><br>
+
+        <strong>成分分析：</strong>
+        {% if papertype == "choice"%}
+          <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
+          <br />
+          <strong>模板标注：</strong>
+          <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用模板标注专用页面</a></font>
+        {%else%}
+          <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
+          <br />
+          <strong>模板标注：</strong>
+          <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用模板标注专用页面</a></font>
+        {%endif%}
+
+      <br />
+      <br />
+
+        <br />
+        {% if textInfo.sentence_tagger%}
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon1"><strong>当前单句标注的标注者：</strong></span>
+              <input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.sentence_tagger}}" readOnly="true">
+        </div><br>
+        {%endif%}
+
+        <div class="input-group">
+          <span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该句单句标注的标注者）：</strong></span>
+              <input id="username_id" name="username_name" type="text" class="form-control">
+           </div>
+        <br />
+
+      <div style="text-align:right";>
+        <button name="save_btn" type="submit" class="btn btn-default navbar-btn" >保存</button>
+        {% if nextIndex %}
+        <button name="saveAndNext_btn" type="submit" class="btn btn-default navbar-btn" >保存并下一句</button>
+        {%endif%}
+      </div>
+
+  </form>
+  
+
+</body>
+</html>
+
+<!--分词所用的聚焦和失焦函数-->
+<script>
+  //页面加载时先执行一次失去焦点的函数，使分词结果中带有下标信息
+  editSegEndFunc("_fg");
+  editSegEndFunc("");
+
+  function editSegFunc(type){
+    var segres=document.getElementById("seg"+type+"_input").value;
+  
+    segres=segres.split(" ");
+    pure_segres="";
+
+    for (var i=0;i<segres.length-1;i++){;
+      if(segres[i]==""){
+        continue;
+      }
+      pure_segres+=segres[i].split("_")[0]+" ";
+    }
+    if(segres[segres.length-1]!=""){
+      pure_segres+=segres[segres.length-1].split("_")[0]
+    }  
+    document.getElementById("seg"+type+"_input").value=pure_segres;
+  }
+
+  //显示下标、检查与原文本一致性
+  function editSegEndFunc(type){
+    var pure_segres=document.getElementById("seg"+type+"_input").value;
+
+    if(!checkSegTextConsistency("editEnd",type)){
+      return false;
+    }
+
+    pure_segres=pure_segres.split(" ");
+    segres="";
+
+    index=0;
+    for(var i=0;i<pure_segres.length-1;i++){
+      if(pure_segres[i]==""){
+        continue;
+      }
+      segres+=pure_segres[i]+"_"+index+" ";
+      index+=1;
+    }
+    if(pure_segres[pure_segres.length-1]!=""){
+      segres+=pure_segres[i]+"_"+index;
+    }
+    document.getElementById("seg"+type+"_input").value=segres;
+    document.getElementById("seg"+type+"_input").style.background="#FFFFFF";
+  }
+
+  function checkSegTextConsistency(mode,type){
+    var papertype="{{papertype}}";
+    var oritext="";
+    if(papertype=="choice"){
+      oritext=document.getElementById("timian").value+document.getElementById('xuanxiang').value;
+    }
+    else{
+      oritext=document.getElementById("timian").value;
+    }
+    
+
+    if(mode=="editEnd"){
+      var pure_segres=document.getElementById("seg"+type+"_input").value;
+      if(pure_segres.replace(/ /g,'')!=oritext){
+        document.getElementById("seg"+type+"_input").style.background="#FFAAAA";
+        alert("分词时不能改变文本内容！");
+        return false;
+      }
+    }
+    else if(mode=="submitCheck"){
+      var segres=document.getElementById("seg"+type+"_input").value.split(" ");
+      var pure_segres="";
+      for(var i=0;i<segres.length;i++){
+        if(segres[i]==""){
+          continue;
+        }
+        pure_segres+=segres[i].split("_")[0];
+      }
+      if(pure_segres!=oritext){
+        document.getElementById("seg"+type+"_input").style.background="#FFAAAA";
+        alert("分词时不能改变文本内容！");
+        return false;
+      }
+    }
+    return true;
+  }
+</script>
+
+
+<!--词性所用的失焦时检查与分词一致性、词性有效性函数，提交form时需检测-->
+<script>
+  function checkSegPosConsistencyFunc(){
+      var pos_input=document.getElementById("pos_input");
+      var seg_input=document.getElementById("seg_input");
+      var posres=pos_input.value.split(" ");
+      var segres=seg_input.value.split(" ");
+
+      rightFlag=true;
+      if(posres.length!=segres.length){
+        document.getElementById("pos_input").style.background="#FFAAAA";
+        alert("分词和词性标注的词语数量不一致！");
+        rightFlag=false;
+      } 
+      else{
+        for(var i=0;i<posres.length;i++){
+          if(segres[i].split("_")[0]!=posres[i].split("_")[0]){
+            document.getElementById("pos_input").style.background="#FFAAAA";
+            alert("第"+i+"个token的分词和词性标注的词语不一致!");
+            rightFlag=false;
+            break;
+          }
+        }
+      }
+      if(rightFlag==true){
+        document.getElementById("pos_input").style.background="#FFFFFF";
+      }
+      return rightFlag;
+  }
+
+  function checkTLPosConsistency(alert_flag){
+    var pos_input=document.getElementById("pos_input").value;
+    var time_input=document.getElementById("time_input").value;
+    var loc_input=document.getElementById("loc_input").value;
+    var term_input=document.getElementById("term_input").value;
+    var quant_input=document.getElementById("quant_input").value;
+
+    //检查时间地点术语数量词标注是否一致
+    var times=new Array();
+    time_input=time_input.split(" ");
+    for(var i=0;i<time_input.length;i++){
+        if (time_input[i]!=""){
+          times[time_input[i]]=1;
+        }
+    }
+    var locs=new Array();
+    loc_input=loc_input.split(" ");
+    for(var i=0;i<loc_input.length;i++){
+      if(loc_input[i]!=""){
+        locs[loc_input[i]]=1;
+      }
+    }
+
+    var terms=new Array();
+    term_input=term_input.split(" ");
+    for(var i=0;i<term_input.length;i++){
+      if(term_input[i]!=""){
+        terms[term_input[i]]=1;
+      }
+    }
+
+    var quants=new Array();
+    quant_input=quant_input.split(" ");
+    for(var i=0;i<quant_input.length;i++){
+      if(quant_input[i]!=""){
+        quants[quant_input[i]]=1;
+      }
+    }
+
+    posres=pos_input.split(" ")
+    for(var i=0;i<posres.length;i++){
+        if(posres[i]==""){
+          continue;
+        }
+        if(posres[i].split("_")[1]=="time" && times[i]!=1 || posres[i].split("_")[1]!="time" && times[i]==1){
+          document.getElementById("pos_input").style.background="#FFAAAA";
+          if(alert_flag){
+            alert("第"+i+"个词的时间标注不一致");
+          }
+          
+          return false;
+        }
+        if(posres[i].split("_")[1]=="loc" && locs[i]!=1 || posres[i].split("_")[1]!="loc" && locs[i]==1){
+          document.getElementById("pos_input").style.background="#FFAAAA";
+          if(alert_flag){
+            alert("第"+i+"个词的地点标注不一致");
+          }
+          
+          return false;
+        }
+        if(posres[i].split("_")[1]=="term" && terms[i]!=1 || posres[i].split("_")[1]!="term" && terms[i]==1){
+          document.getElementById("pos_input").style.background="#FFAAAA";
+          if(alert_flag){
+            alert("第"+i+"个词的术语标注不一致");
+          }
+          
+          return false;
+        }
+        if(posres[i].split("_")[1]=="num" && quants[i]!=1 || posres[i].split("_")[1]!="num" && quants[i]==1){
+          document.getElementById("pos_input").style.background="#FFAAAA";
+          if(alert_flag){
+            alert("第"+i+"个词的数量词标注不一致");
+          }
+          
+          return false;
+        }
+    }
+    document.getElementById("pos_input").style.background="#FFFFFF";
+  }
+
+  function checkPOSValidFunc(){
+    var pos_input=document.getElementById("pos_input").value;
+    var time_input=document.getElementById("time_input").value;
+    var loc_input=document.getElementById("loc_input").value;
+
+    var posres=pos_input.split(" ");
+
+    var validPOS=['AD','AS','BA','CC','CD','CS','DEC','DEG','DER','DEV',
+                  'DT','ETC','FW','IJ','JJ','LB','LC','M','MSP','NN',
+                  'NR','NT','OD','ON','P','PN','PU','SB','SP','VA',
+                  'VC','VE','VV'];
+
+    for(var i=0;i<posres.length;i++){
+      if(posres[i].indexOf("_")==-1){
+        document.getElementById("pos_input").style.background="#FFAAAA";
+        alert("每项中都应该有'_'，第"+i+"项没有");              
+        return false;
+      }
+
+      pos=posres[i].split("_")[1];
+      if(pos!="time"&&pos!="loc"&&pos!="term"&&pos!="num"){
+        for(var j=0;j<validPOS.length;j++){
+          if(pos==validPOS[j]){
+            break;
+          }
+        }
+        if(j==validPOS.length){
+          document.getElementById("pos_input").style.background="#FFAAAA";
+          alert(posres[i]+" 中的词性不是有效词性！有效词性集合为："+validPOS);
+          return false;
+        }
+      }      
+    }
+
+    document.getElementById("pos_input").style.background="#FFFFFF";
+
+    return true;
+  }
+</script>
+
+<!--检查时间词有效性的函数,form提交时需检测-->
+<script>
+  function checkTimeFunc(){
+    var segres=document.getElementById("seg_input").value.split(" ");
+    var timeres=document.getElementById("time_input").value.split(" ");
+
+    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
+    maxIndex=segres[segres.length-1].split("_")[1];
+    for(var i=0;i<timeres.length;i++){
+      if(timeres[i]==""){
+        continue;
+      }
+      else{
+        //单个词时间
+        if(!(re.test(timeres[i]) || timeres[i]=='0')){   //不是数字
+          document.getElementById("time_input").style.background="#FFAAAA";
+          alert("第"+(i+1)+"个时间不是数字下标！");
+          return false;
+        }
+        else{   //不是有效下标
+          time=parseInt(timeres[i]);
+          if(time<0||time>maxIndex){
+            document.getElementById("time_input").style.background="#FFAAAA";
+            alert("第"+(i+1)+"个时间不是有效的词语下标！（有效下标范围是0~"+maxIndex+"）");
+            return false;
+          }
+        }
+      }
+    }
+    document.getElementById("time_input").style.background="#FFFFFF";
+    return true;
+  }
+</script>
+
+<!--检查地点词有效性的函数,form提交时需检测-->
+<script>
+  function checkLocFunc(){
+    var segres=document.getElementById("seg_input").value.split(" ");
+    var locres=document.getElementById("loc_input").value.split(" ");
+
+    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
+    maxIndex=segres[segres.length-1].split("/")[1];
+    for(var i=0;i<locres.length;i++){
+      if(locres[i]==""){
+        continue;
+      }
+      else{
+        /*
+        //含'-',范围地点
+        if (locres[i].indexOf('-')>-1){   
+          a=parseInt(locres[i].split('-')[0]);
+          b=parseInt(locres[i].split('-')[1]);
+          if (!(re.test(a) || a=='0') || !(re.test(b) || b=='0')){
+            alert("第"+(i+1)+"个地点的起止范围不是数字");
+            return false;
+          }
+          if (a>b || a==b || a<0 ||b>maxIndex){
+            alert("第"+(i+1)+"个地点的起止范围不合理");
+            return false;
+          }
+        }*/
+        //单个词地点
+        if(!(re.test(locres[i]) || locres[i]=='0')){   //不是数字
+          document.getElementById("loc_input").style.background="#FFAAAA";
+          alert("第"+(i+1)+"个地点不是数字下标！");
+          return false;
+        }
+        else{   //不是有效下标
+          loc=parseInt(locres[i]);
+          if(loc<0||loc>maxIndex){
+            document.getElementById("loc_input").style.background="#FFAAAA";
+            alert("第"+(i+1)+"个地点不是有效的词语下标！（有效下标范围是0~"+maxIndex+"）");
+            return false;
+          }
+        }
+      }
+    }
+    document.getElementById("loc_input").style.background="#FFFFFF";
+    return true;
+  }
+</script>
+
+<!--检查术语有效性的函数,form提交时需检测-->
+<script>
+  function checkTermFunc(){
+    var segres=document.getElementById("seg_input").value.split(" ");
+    var termres=document.getElementById("term_input").value.split(" ");
+
+    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
+    maxIndex=segres[segres.length-1].split("/")[1];
+    for(var i=0;i<termres.length;i++){
+      if(termres[i]==""){
+        continue;
+      }
+      else{
+        //单个词地点
+        if(!(re.test(termres[i]) || termres[i]=='0')){   //不是数字
+          document.getElementById("term_input").style.background="#FFAAAA";
+          alert("第"+(i+1)+"个术语不是数字下标！");
+          return false;
+        }
+        else{   //不是有效下标
+          term=parseInt(termres[i]);
+          if(term<0||term>maxIndex){
+            document.getElementById("term_input").style.background="#FFAAAA";
+            alert("第"+(i+1)+"个术语不是有效的术语下标！（有效下标范围是0~"+maxIndex+"）");
+            return false;
+          }
+        }
+      }
+    }
+    document.getElementById("term_input").style.background="#FFFFFF";
+    return true;
+  }
+</script>
+
+<!--检查数量词有效性的函数,form提交时需检测-->
+<script>
+  function checkQuantFunc(){
+    var segres=document.getElementById("seg_input").value.split(" ");
+    var quantres=document.getElementById("quant_input").value.split(" ");
+
+    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
+    maxIndex=segres[segres.length-1].split("/")[1];
+    for(var i=0;i<quantres.length;i++){
+      if(quantres[i]==""){
+        continue;
+      }
+      else{
+        //单个词地点
+        if(!(re.test(quantres[i]) || quantres[i]=='0')){   //不是数字
+          document.getElementById("quant_input").style.background="#FFAAAA";
+          alert("第"+(i+1)+"个数量词不是数字下标！");
+          return false;
+        }
+        else{   //不是有效下标
+          quant=parseInt(quantres[i]);
+          if(quant<0||quant>maxIndex){
+            document.getElementById("quant_input").style.background="#FFAAAA";
+            alert("第"+(i+1)+"个数量词不是有效的词语下标！（有效下标范围是0~"+maxIndex+"）");
+            return false;
+          }
+        }
+      }
+    }
+    document.getElementById("quant_input").style.background="#FFFFFF";
+    return true;
+  }
+</script>
+
+<!--检查时间地点术语数量词的-->
+<script>
+  
+</script>
+
+<script>
+  function checkUserName(){
+      username_input=document.getElementById("username_id");
+      if(username_input.value.trim()==""){
+        alert("请输入你的名字");
+        username_input.style.background="#FFAAAA";
+        return false;
+      }
+      username_input.style.background="#FFFFFF";
+    return true;          
+  }
+</script>
+
+<!--表单提交时的检查-->
+<script>
+  function submitCheckFunc(){
+    res=true;
+    res=res&&
+        checkSegTextConsistency("submitCheck","")&&
+        checkSegTextConsistency("submitCheck","_fg")&&
+        checkUserName()&&
+        checkSegPosConsistencyFunc()&&
+        checkPOSValidFunc()&&
+        checkTLPosConsistency(true)&&
+        checkTimeFunc()&&
+        checkLocFunc();  
+        //checkCueword('full')&&
+        //checkCueword('simplified');
+       
+    if(res){
+      alert("如果修改了分词，请修改模板标注；如果修改了词性，请修改模板标注和成分句法标注");
+    }
+    return res;
+  }
+</script>
+

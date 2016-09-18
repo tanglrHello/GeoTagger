@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>标注试题（拆分）-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<!--
+	<link href="http://libs.baidu.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<script src="http://libs.baidu.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	-->
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+          	<li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+          	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>标注试题（选项拆分判断）-{{papername}}：</h1>
+	</div>
+	
+	<div class="container">
+		<a href="./TestpaperInfo.html?papername={{papername}}&papertype=choice"><font size="5">跳转至该试卷详情页面</font></a>
+		<br><br>
+		<div class="input-group">
+			<span class="input-group-addon" id="sizing-addon1">组合选项序号：</span>
+      		<input id="number" type="text" class="form-control" value="{{textInfo.combinedChoiceIndex}}">
+     		<span class="input-group-btn">
+        		<button id="skip_btn" class="btn btn-default" type="button" onclick="SkipFunc()">跳转</button>
+      		</span>
+   		 </div><!-- /input-group -->
+   		 <br />
+
+		<script>
+			var originalNumber=document.getElementById("number").value;
+
+			function SkipFunc(){
+				var allValidIndex={{allValidIndex|safe}}
+				var papername="{{papername}}"
+
+				skipto=document.getElementById("number").value
+				var i=0;
+				for(i=0;i<allValidIndex.length;i++){
+					if(allValidIndex[i]==skipto){
+						window.location.href="./TagSplit.html?papername="+papername+"&combinedChoiceIndex="+skipto;
+						break;
+					}
+				}
+
+				if(i==allValidIndex.length){   //不是有效的index
+					alert("本试卷中没有这个组合选项，或者该选项不需要拆分，可拆分的选项有："+allValidIndex);
+				}
+
+				//恢复原本的序号
+				document.getElementById("number").value=originalNumber;
+			}
+		</script>
+
+		<label>所属选择题题号：{{questionIndex}}</label><br>
+		<label>所属选项号:{{textInfo.number}}</label><br>
+		<label>当前标注状态：{{textInfo.splitinfo}}</label><br><br>
+		{% if lastIndex %}
+   		 <a href="./TagSplit.html?papername={{papername}}&combinedChoiceIndex={{lastIndex}}">上一句</a>
+   		{% endif %}
+   		{% if nextIndex %}
+   		 <a href="./TagSplit.html?papername={{papername}}&combinedChoiceIndex={{nextIndex}}">下一句</a>
+   		{% endif %}
+   		 <br><br><br>
+   		 <div class="input-group">
+			<span class="input-group-addon" id="sizing-addon1">题面：</span>
+      		<input id="timian" type="text" class="form-control" value="{{textInfo.timian}}" readOnly="true">
+   		 </div>
+   		 <div class="input-group">
+			<span class="input-group-addon" id="sizing-addon1">选项：</span>
+      		<input id="xuanxiang" type="text" class="form-control" value="{{textInfo.xuanxiang}}" readOnly="true">
+   		 </div>
+   		 <br>
+
+   		 <form method="POST" onsubmit="return checkUserName();">
+	   		 <label>是否拆分：</label>
+	   		 <input id="doSplitID" type="radio" name="split" value="DoSplit" onclick="doSplitFunc()"/>是&nbsp;&nbsp;&nbsp;
+			 <input id="notSplitID" type="radio" name="split" value="NotSplit" checked="checked" onclick="NotSplitFunc()"/>否
+			<br>
+			<div id="splitResDiv"></div>
+			<div style="text-align:right";>
+				{% if not nextIndex %}
+				<br /><br />
+				<div class="input-group">
+					<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为拆分信息的标注者）：</strong></span>
+		      		<input id="username_id" name="username_name" type="text" class="form-control">
+		   		 </div>
+		   		 <br />
+				{%endif%}
+				<button name="save_btn" type="submit" class="btn btn-default navbar-btn">保存</button>
+				{% if nextIndex %}
+				<button name="saveAndNext_btn" type="submit" class="btn btn-default navbar-btn" >保存并下一句</button>	
+				{% endif %}			
+				
+				
+				
+			</div>
+			<br />
+			{% if not nextIndex %}
+			<font size="4"><a href="./TagEachField.html?papername={{papername}}">继续分词等标注</a></font>
+			{%endif%}
+		</form>
+			<!--拆分的radio按钮事件函数-->
+			<script>
+				function doSplitFunc(){
+					var splitResInDB={{splitRes|safe}};
+					var xuanxiangText=document.getElementById("xuanxiang").value;
+					
+					var splitResHTML="<label>拆分后：</label><br />";
+					if(!splitResInDB){
+						var splitRes=xuanxiangText.split("，");
+						for(var i=0;i<splitRes.length;i++){
+							splitResHTML+="<div class='input-group'><span class='input-group-addon' id='sizing-addon1'>第"+(i+1)+"部分：</span><input name='part"+i+"' type='text' class='form-control' value='"+splitRes[i]+"'></div>";
+						}
+					}
+					else{
+						for(var i=0;i<splitResInDB.length;i++){
+							splitResHTML+="<div class='input-group'><span class='input-group-addon' id='sizing-addon1'>第"+(i+1)+"部分：</span><input name='part"+i+"' type='text' class='form-control' value='"+splitResInDB[i]+"'></div>";
+						}
+					}
+					document.getElementById('splitResDiv').innerHTML=splitResHTML;
+				}
+
+				function NotSplitFunc(){
+					document.getElementById("splitResDiv").innerHTML="";
+				}
+
+				function checkUserName(){
+					username_input=document.getElementById("username_id");
+					if(username_input==null){
+						return true;
+					}
+					else{
+						if(username_input.value==""){
+							alert("请输入你的名字");
+							username_input.style.background="#FFAAAA"
+							return false;
+						}
+					}
+
+				}
+			</script>
+
+			<!--如果数据库中有拆分信息的标注，直接显示-->
+			{% if splitRes%}
+				<script>
+					document.getElementById("doSplitID").checked=true;
+					doSplitFunc();
+				</script>
+			{%endif%}
+
+			
+		<br />
+		<br />
+		<br />
+		<br />
+		<br />
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>实体、术语标注-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />	
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>实体、术语标注-{{papername}}</h1>
+	</div>
+	
+	<div class="container">
+		<div class="container">
+		<font size="4"><a href="./TagEachField.html?papername={{papername}}">回到本试卷单项标注导航页</a></font><br />
+		{% if States.time%}
+		<font size="4"><a href="./TagPos.html?papername={{papername}}&papertype={{papertype}}">前往本试卷【词性】标注页</a></font><br /><br />
+		{%endif%}
+		<form method="POST">
+			<input type="submit" value="生成候选实体、术语" class="btn btn-info" name="generateTimeLoc"/>
+		</form>
+		<br /><br />
+
+		<form method="POST" onsubmit="return checkAllFunc();">
+
+			<div class="alert alert-info" role="alert">
+				<strong><font size="4">实体、术语标注（在粗粒度的分词结果上标注）：</font></strong>用实体、术语短语的下标进行标注<br><br>
+	          <label><font size="4">例子:</font></label><br>
+	          <strong>原文：</strong><br>
+	          &nbsp;&nbsp;&nbsp;&nbsp;北京/0 去年夏天/1 的/2 天气/3 比/4 现在/5 好/6 。/7<br>
+	          <strong>时间标注：</strong>
+	          &nbsp;&nbsp;1 5<br>
+	          &nbsp;&nbsp;&nbsp;&nbsp;（表示有两个时间词，分别为分词结果中下标为1的词表示的时间，和下标为6的词表示的时间）<br>
+	          &nbsp;&nbsp;&nbsp;&nbsp;（多个时间之间用空格隔开，地点、数量词、术语标注规则相同）
+	          <br /><br />
+	          
+			</div>
+			<div class="alert alert-success" role="alert">
+			  	<a href="#" class="alert-link">当前显示的实体、术语标注结果是：{{restype}}</a>
+			</div>
+			<table id="paper_table" class="table table-striped table-bordered table-hover js-table">
+		         <thead>
+		         <tr>
+		            <th width="40%" >分词结果</th>
+		         	<th width="15%">时间短语下标</th>
+		         	<th width="15%">地点短语下标</th>
+		         	<th width="15%">术语下标</th>
+		         	<th width="15%">数量词短语下标</th>
+		         </tr>
+		         </thead>
+		         <tbody id="body-fjShipChkList">
+		         	{%for s_t_l in seg_time_loc%}
+		            <tr>
+		            	<td id="{{forloop.counter0}}_seg">{{s_t_l.0}}</td>
+		            	<td>
+							<input id="{{forloop.counter0}}_time" name="{{forloop.counter0}}_time" class="form-control" onblur="editTimeLocEndFunc({{forloop.counter0}});" value="{{s_t_l.1}}" placeholder="时间">
+		            	</td>
+		            	<td>
+							<input id="{{forloop.counter0}}_loc" name="{{forloop.counter0}}_loc" class="form-control" onblur="editTimeLocEndFunc({{forloop.counter0}});" value="{{s_t_l.2}}" placeholder="地点">
+		            	</td>
+		            	<td>
+							<input id="{{forloop.counter0}}_term" name="{{forloop.counter0}}_term" class="form-control" onblur="editTimeLocEndFunc({{forloop.counter0}});" value="{{s_t_l.3}}" placeholder="术语">
+		            	</td>
+		            	<td>
+							<input id="{{forloop.counter0}}_quant" name="{{forloop.counter0}}_quant" class="form-control" onblur="editTimeLocEndFunc({{forloop.counter0}});" value="{{s_t_l.4}}" placeholder="数字">
+		            	</td>
+		            </tr>
+		            {%endfor%}	           
+		         </tbody>
+		     </table>
+		     <br />
+		     	{% if timeloc_tagger%}
+		        <div class="input-group">
+		          <span class="input-group-addon" id="sizing-addon1"><strong>当前时间地点的标注者：</strong></span>
+		              <input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{timeloc_tagger}}" readOnly="true">
+		        </div><br>
+		        {%endif%}
+				<div class="input-group">
+					<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为时间地点的标注者）：</strong></span>
+		      		<input id="username_id" name="username_name" type="text" class="form-control">
+		   		 </div>
+		   	 <br />
+		     <input type="submit" value="提交" class="btn btn-info" name="submitTimeLoc"/>
+		     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		     
+		 </form>
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+	     <script>
+	     	function editTimeLocEndFunc(index){
+	     		var seg=document.getElementById(index+"_seg").innerText.split(" ");
+
+	     		var types=["_time","_loc","_term","_quant"];
+	     		var chineseTypes=["时间","地点","术语","数量词"]
+	     		var indexes=[];
+
+	     		for(var j=0;j<types.length;j++){
+	     			var thisindex=document.getElementById(index+types[j]).value.split(" ");
+	     			var realIndex=[];
+	     			for(var k=0;k<thisindex.length;k++){
+	     				if(thisindex[k]!=""){
+	     					realIndex.push(thisindex[k]);
+	     				}
+	     			}
+
+	     			indexes.push(realIndex);
+	     		}
+
+	     		//下标要是有效的分词下标,并且不能有前缀0
+	     		wordnum=seg.length;
+	     		
+	     		for(var j=0;j<types.length;j++){
+	     			for(var i=0;i<indexes[j].length;i++){
+	     				var thisindex=indexes[j];
+		     			if(parseInt(thisindex[i])<0 || parseInt(thisindex[i])>=wordnum){
+		     				document.getElementById(index+types[j]).style.background="#FFAAAA";
+		     				alert(chineseTypes[j]+"中，"+thisindex[i]+"不是有效的下标");
+		     				return false;
+		     			}
+		     			if(thisindex[i][0]=='0'&&thisindex[i]!="0"){
+		     				document.getElementById(index+types[j]).style.background="#FFAAAA";
+		     				alert(chineseTypes[j]+"中，"+thisindex[i]+"的格式不正确，不要在前面加上0");
+		     				return false;
+		     			}
+		     		}
+	     		}
+
+
+
+	     	
+
+	     		//同一个词只能是时间、地点、术语、数量中的一种，不能同时被标为其中的两种及以上
+	     		//同一个词不能在时间、地点、术语、数量标注中出现两次
+	     		var tags=new Array();   //四种词语标注结果的列表，每个元素对应一个标注的词语列表
+	     		var exclusiveTags=new Array(seg.length);   //记录时间地点数量词三种标注中，是否会把同一个词标注两次
+
+	     		for(var j=0;j<types.length;j++){
+	     			tags.push(new Array(seg.length));
+	     			for(var i=0;i<indexes[j].length;i++){
+	     				thisindex=indexes[j];
+		     			if(tags[j][parseInt(thisindex[i])]==1){
+		     				document.getElementById(index+types[j]).style.background="#FFAAAA";
+		     				alert("序号为"+thisindex[i]+"的词不能在"+chineseTypes[j]+"中标注两次");
+		     				return false;
+		     			}
+		     			tags[j][parseInt(thisindex[i])]=1;
+		     		}
+		     		document.getElementById(index+types[j]).style.background="#FFFFFF";
+	     		}
+
+	     		
+	     		for(var j=0;j<types.length;j++){
+	     			for(var i=0;i<indexes[j].length;i++){
+	     				thisindex=indexes[j];
+		     			if(exclusiveTags[parseInt(thisindex[i])]==1){
+		     				document.getElementById(index+types[0]).style.background="#FFAAAA";
+		     				document.getElementById(index+types[1]).style.background="#FFAAAA";
+		     				document.getElementById(index+types[2]).style.background="#FFAAAA";
+		     				document.getElementById(index+types[3]).style.background="#FFAAAA";
+		     				alert("序号为"+thisindex[i]+"的词不能同时是时间或地点或术语或数量词");
+		     				return false;
+		     			}
+		     			exclusiveTags[parseInt(thisindex[i])]=1;
+		     		}
+	     		}
+
+	     		for(var j=0;j<types.length;j++){
+	     			document.getElementById(index+types[j]).style.background="#FFFFFF";	     		
+	     		}
+	     		
+	     		return true;
+	     	}
+
+
+	     	function checkUserName(){
+	     		username_input=document.getElementById("username_id");
+	     		if(username_input.value.trim()==""){
+	     			alert("请输入你的名字");
+	     			username_input.style.background="#FFAAAA";
+	     			return false;
+	     		}
+	     		username_input.style.background="#FFFFFF";
+				return true;
+	     	}
+
+	     	function checkAllFunc(){
+	     		if(!checkUserName()){
+	     			return false;
+	     		}
+	     		for(var i=0;i<{{seg_time_loc|length}};i++)
+	     			if(editTimeLocEndFunc(i)==false)
+	     				return false;
+	     		return true;
+	     	}
+	     </script>
+	</div>
+	
+
+</body>
+</html>

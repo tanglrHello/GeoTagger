@@ -1,0 +1,707 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>模板标注-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>模板标注-{{papername}}</h1>
+	</div>
+	
+	<div class="container">
+		<font size="4"><a href="./TagEachField.html?papername={{papername}}&papertype={{papertype}}">回到本试卷单项标注导航页</a></font><br />
+		{%if papertype == "choice"%}
+		<font size="4"><a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">回到本句单句标注页面</a></font>
+		{%else%}
+		<font size="4"><a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">回到本句单句标注页面</a></font>
+		{%endif%}
+		<br /><br />
+
+		<form method="POST">
+			{%if papertype == 'choice'%}
+			<input type="submit" value="生成候选模板标注（整张试卷）" class="btn btn-info" name="generateTemplate" />
+			{%else%}
+			<input type="submit" value="生成候选模板标注（整张试卷）" class="btn btn-info" name="generateTemplate" disabled='disabled'/>
+			{%endif%}
+		</form>
+		<br /><br>
+
+		<form method="POST">
+			<div class="input-group">
+				{% if papertype == "choice"%}
+				<span class="input-group-addon" id="sizing-addon1">组合选项序号：</span>
+				<input id="number" type="text" class="form-control" value="{{textInfo.combinedChoiceIndex}}">
+				{%else%}
+				<span class="input-group-addon" id="sizing-addon1">小题序号：</span>
+				<input id="number" type="text" class="form-control" value="{{textInfo.subQuestionIndex}}">
+				{%endif%}
+	     		<span class="input-group-btn">
+	        		<button id="skip_btn" class="btn btn-default" type="button" onclick="SkipFunc()">跳转</button>
+	      		</span>
+	   		</div><!-- /input-group -->
+	   		<br />
+	   		<script>
+		      var originalNumber=document.getElementById("number").value;
+
+		      function SkipFunc(){		
+		        var allValidIndex={{allValidIndex|safe}};
+		        var papername="{{papername}}";
+
+		        skipto=document.getElementById("number").value;
+
+		        var i=0;
+		        for(i=0;i<allValidIndex.length;i++){
+		          if(allValidIndex[i]==skipto){
+		            window.location.href="./TagTemplate.html?papername="+papername+"&papertype=choice&combinedChoiceIndex="+skipto;
+		            break;
+		          }
+		        }
+
+		        if(i==allValidIndex.length){   //不是有效的index
+		          alert("本试卷中没有这个组合选项，或者该选项不需要拆分，可拆分的选项有："+allValidIndex);
+		        }
+
+		        //恢复原本的序号
+		        document.getElementById("number").value=originalNumber;
+		      }
+		    </script>
+			
+			{% if papertype == "choice"%}
+	   		<label>所属选择题题号：{{questionIndex}}</label><br>
+	        <label>所属选项号:{{textInfo.number}}</label><br><br>
+	        {%else%}
+			<label>所属大题题号：{{questionIndex}}</label><br>
+	        <label>所属小题号:{{textInfo.number}}</label><br><br>
+	        {%endif%}
+
+	        {% if lastIndex %}
+	        	{%if papertype == "choice"%}
+	        		<a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{lastIndex}}">上一句</a>
+	        	{%else%}
+					<a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{lastIndex}}">上一句</a>
+	        	{%endif%}
+	        {% endif %}
+	        {% if nextIndex %}
+	        	{%if papertype == "choice"%}
+	        		<a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{nextIndex}}">下一句</a>
+	        	{%else%}
+					<a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{nextIndex}}">下一句</a>
+	        	{%endif%}
+	        {% endif %}
+	        <br><br><br>
+	    </form>
+
+		
+	    
+		<form method="POST" onsubmit="return submitCheck();">
+			<div class="input-group">
+			{%if papertype == "choice"%}
+				<span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
+				<input type="text" class="form-control" value="{{textInfo.timian}} {{textInfo.xuanxiang}}" readOnly="true">
+			{%else%}
+				<span class="input-group-addon" id="sizing-addon1">题面：</span>
+				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
+			{%endif%}
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">分词：</span>
+				<textarea type="text" name="seg_name" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+			</div>
+		    <div class="panel panel-default">
+			  	<div class="panel-heading"><strong>简化模板：</strong></div>
+			  	<div class="panel-body">
+			  		<strong>插入模板：</strong><br />
+
+			  		<div class="btn-group" role="group">
+			  		{%for chinese_name,abbr_name,suggest,example in template_config%}			  		
+			  		{%if forloop.counter0 == 3 or forloop.counter0 == 9%}
+					</div><br />
+					<div class="btn-group" role="group">
+			  		{%endif%}
+					  <button type="button" class="btn btn-default" onClick="insertTemplate('simplified','{{abbr_name}}')">{{chinese_name}}</button>
+					{%endfor%}
+					</div><br /><br />
+
+			  		当前最大模板下标：<span id="currentSTIndex">-1</span>&nbsp;&nbsp;&nbsp;&nbsp;
+
+			  		<button type="button" class="btn btn-success" onClick="decreaseIndex('simplified')">下标减1</button>
+			  		<button type="button" class="btn btn-success" onClick="increaseIndex('simplified')">下标加1</button>
+			  		<button type="button" class="btn btn-success" onClick="resetTags('simplified')">清空标注</button>
+			  		{%if papertype == "choice"%}
+			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('simplified')">从上一句的简化模板同步（不同步当前最大模板下标）</button>
+			  		{%endif%}
+			  		
+			  		<br /><br />
+					<div id="ST_suggest" class="alert alert-success" role="alert" ></div>
+					{%if tagtype%}
+					<div id="ST_suggest" class="alert alert-info" role="alert" >以下标注为：【{{tagtype}}】；调整时请注意模板下标的调整，不要与已有下标重复（模板下标不需要连续或递增，只要不重复即可）</div>
+					{%endif%}
+			  		<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">模板填充：</span>
+					  <textarea id="ST_input_name" name="ST_input_name" type="text" class="form-control" aria-describedby="basic-addon1" onblur="checkTemplate('simplified');" autocomplete="off">{{textInfo.simplifiedTemplate}}</textarea>
+					</div>
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">模板类型：</span>
+					  <input id="STT_input_name" name="STT_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.simplifiedTemplateTypes}}" autocomplete="off">
+					</div>
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">线 索 词 ：</span>
+					  <input id="STC_input_name" name="STC_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.simplifiedTemplateCueword}}" onblur="checkCueword('simplified');" autocomplete="off">
+					</div>
+					<br />
+				
+			 	</div>
+			</div>
+
+			<div class="input-group">
+			{%if papertype == "choice"%}
+				<span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
+				<input type="text" class="form-control" value="{{textInfo.timian}} {{textInfo.xuanxiang}}" readOnly="true">
+			{%else%}
+				<span class="input-group-addon" id="sizing-addon1">题面：</span>
+				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
+			{%endif%}
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">分词：</span>
+				<textarea type="text" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+			</div>
+
+			<div class="panel panel-default">
+			  	<div class="panel-heading"><strong>完整模板</strong></div>
+			  	<div class="panel-body">
+			  		<strong>插入模板：</strong><br />
+
+			  		<div class="btn-group" role="group">
+			  		{%for chinese_name,abbr_name,suggest,example in template_config%}			  		
+			  		{%if forloop.counter0 == 3 or forloop.counter0 == 9%}
+					</div><br />
+					<div class="btn-group" role="group">
+			  		{%endif%}
+					  <button type="button" class="btn btn-default" onClick="insertTemplate('full','{{abbr_name}}')">{{chinese_name}}</button>
+					{%endfor%}
+					</div><br /><br />
+
+					当前最大模板下标：<span id="currentFTIndex">-1</span>&nbsp;&nbsp;&nbsp;&nbsp;
+			  		<button type="button" class="btn btn-success" onClick="decreaseIndex('full')">下标减1</button>
+			  		<button type="button" class="btn btn-success" onClick="increaseIndex('full')">下标加1</button>
+			  		<button type="button" class="btn btn-success" onClick="resetTags('full')">清空标注</button>
+			  		<button type="button" class="btn btn-success" onClick="copyFromSim()">从简化模板同步</button>
+			  		{%if papertype == "choice"%}
+			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('full')">从上一句的完整模板同步（不同步当前最大模板下标）</button>
+			  		{%endif%}
+			  		<br /><br />
+					
+					<div id="FT_suggest" class="alert alert-success" role="alert" ></div>
+
+					{%if tagtype%}
+					<div id="ST_suggest" class="alert alert-info" role="alert" >以下标注为：【{{tagtype}}】；调整时请注意模板下标的调整，不要与已有下标重复（模板下标不需要连续或递增，只要不重复即可）</div>
+					{%endif%}
+			  		<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">模板填充：</span>
+					  <textarea id="FT_input_name" name="FT_input_name" type="text" class="form-control" aria-describedby="basic-addon1" autocomplete="off" onblur="checkTemplate('full');">{{textInfo.fullTemplate}}</textarea>
+					</div>
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">模板类型：</span>
+					  <input id="FTT_input_name" name="FTT_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.fullTemplateTypes}}" autocomplete="off">
+					</div>
+					<div class="input-group">
+					  <span class="input-group-addon" id="basic-addon1">线 索 词 ：</span>
+					  <input id="FTC_input_name" name="FTC_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.fullTemplateCueword}}" onblur="checkCueword('full');" autocomplete="off">
+					</div>
+			 	</div>
+			</div>
+			<div class="alert alert-danger" role="alert">
+			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+			  注意：不提供模板正确性检查，请对本页自己的所有标注负责！
+			  （提示：模板类型中填写的是模板的类型的集合，如果一个模板多次出现不需要重复填写）
+			</div>
+
+			<br />
+			{% if textInfo.template_tagger%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1"><strong>当前模板结果的标注者：</strong></span>
+	      		<input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.template_tagger}}" readOnly="true">
+	   		</div><br>
+	   		{%endif%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该句模板的标注者）：</strong></span>
+	      		<input id="username_id" name="username_name" type="text" class="form-control">
+	   		 </div>
+	   		 <div id="username_empty_error" class="alert alert-danger" role="alert">姓名不能为空</div>
+		   	<br />
+			<div style="text-align:right";>
+	          <button name="save_btn" type="submit" class="btn btn-default navbar-btn" >保存</button>
+	          {% if nextIndex %}
+	          <button name="saveAndNext_btn" type="submit" class="btn btn-default navbar-btn" >保存并下一句</button>
+	          {%endif%}
+	        </div>
+        </form>
+
+        <div class="panel panel-info">
+		  <div class="panel-heading">模板槽速查</div>
+		  <div class="panel-body">
+		  	<font size="3">
+				#表示槽可以为空<br />
+				*表示槽可以嵌套<br /><br />
+
+				{% for chinese_name,abbr,suggest,example in template_config%}
+				<strong>{{chinese_name}}</strong>{{suggest}}<br />
+				————示例：{{example}}<br><br />
+				{%endfor%}
+			    
+			   
+			</font>
+		  </div>
+		</div>
+		<div class="alert alert-warning" role="alert">  
+        <strong><font size="4">简化模板标注：</font></strong><br><br>
+        <label><font size="4">一个例子:</font></label><br>
+        <strong>原文：</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;河流/0 侵蚀作用/1 使/2 河床/3 加/4 宽/5 变/6 深/7<br>
+        <strong>简化模板：</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;因果_0（河流侵蚀作用，河床加宽变深）<br>
+        <strong>线索词</strong>：<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;0_2（表示下标为0的模板的线索词是分词结果中下标为2的词）
+      </div>
+        
+
+      <div class="alert alert-warning" role="alert">  
+        <strong><font size="4">完整模板标注：</font></strong>除了“一般陈述”和“实体信息陈述”两个模板，其他模板要使用下标编号，下标从0开始计数<br><br>
+        <label><font size="4">一个例子:</font></label><br>
+        <strong>原文：</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;河流/0 侵蚀作用/1 使/2 河床/3 加/4 宽/5 变/6 深/7<br>
+        <strong>完整模板：</strong><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;因果_0（河流侵蚀作用，趋势_1（河床，#，#，加宽变深））<br>
+        <strong>完整模板类型（空格隔开）：</strong>（多个类型之间用空格隔开）<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;因果 趋势<br>
+        <strong>线索词</strong>（多个模板之间用一个空格隔开）：<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;0_2 1_4-5-6-7<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;（表示下标为1的模板的线索词是分词结果中下标为2的词，下标为2的模板的线索词是分词结果中下标为4、5、6、7的这四个词）
+      </div>
+	</div>
+
+
+	
+	<script>
+		//location表明是在简化模板中插入还是在完整模板中插入
+		//type表明插入模板的类型
+		var ST_index=-1;
+		var FT_index=-1;
+
+		function insertTemplate(location,ttype){
+			var templateInfo={{template_config_json|safe}};
+
+			var template_input=null;
+			var ttype_input=null;
+			var cueword_input=null;
+			var index=null;
+			var suggest_div=null;
+			if(location=="simplified"){
+				template_input=document.getElementById("ST_input_name");
+				ttype_input=document.getElementById('STT_input_name');		
+				cueword_input=document.getElementById('STC_input_name');	
+				suggest_div=document.getElementById("ST_suggest");
+
+				ST_index++;
+				index=ST_index;
+				document.getElementById("currentSTIndex").innerText=ST_index;
+			}
+			else if(location=='full'){
+				template_input=document.getElementById("FT_input_name");
+				ttype_input=document.getElementById('FTT_input_name');		
+				cueword_input=document.getElementById('FTC_input_name');
+				suggest_div=document.getElementById("FT_suggest");
+				
+				FT_index++;
+				index=FT_index;
+				document.getElementById("currentFTIndex").innerText=FT_index;
+			}
+			else{
+				alert("unknown error in insertTemplate()");
+			}
+
+			//生成模板名列表、模板格式列表等
+			var template_name=new Array();
+			var template_suggest=new Array();
+			var template_example=new Array();
+			for(var i=0;i<templateInfo.length;i++){   //templateInfo的每一项有四个字段，分别为：模板中文名、模板名缩写、模板格式、模板填充示例
+				var t=templateInfo[i];
+				template_name[t[1]]=t[0];
+				//console.log(template_name);
+				template_suggest[t[1]]=t[0]+t[2];
+				template_example[t[1]]=t[3];
+			}
+
+			for(var key in template_name){
+				if(ttype==key){
+					//显示模板填槽提示
+					suggest_div.innerHTML="格式："+template_suggest[key]+"<br>例子："+template_example[key];
+
+					//修改填充模版
+					insertAtCursor(template_input,template_name[key]+"_"+index+"（）");
+
+					//修改线索词
+					if(ttype!="stxxcs" && ttype!="ybcs"&&ttype!="sjxd"&&ttype!="sstxxcs"){
+						if(cueword_input.value==""){
+							cueword_input.value=index+"_";
+						}
+						else{
+							cueword_input.value=cueword_input.value+" "+index+"_";
+						}
+					}
+					
+					//修改模板类型
+					ttypes=ttype_input.value.split(" ");
+					for(var i=0;i<ttypes.length;i++){
+						if(ttypes[i]==template_name[key]){
+							return;
+						}
+					}
+					if(ttype_input.value==""){
+						ttype_input.value=template_name[key];
+					}
+					else{
+						ttype_input.value=ttype_input.value+" "+template_name[key];
+					}
+				}
+			}
+		}
+
+
+		function insertAtCursor(myField, myValue) 
+		{ 
+			//IE support 
+			if (document.selection) 
+			{ 
+				myField.focus(); 
+				sel = document.selection.createRange(); 
+				sel.text = myValue; 
+				sel.select(); 
+			} 
+			//MOZILLA/NETSCAPE support 
+			else if (myField.selectionStart || myField.selectionStart == '0') 
+			{ 
+				var startPos = myField.selectionStart; 
+				var endPos = myField.selectionEnd; 
+				// save scrollTop before insert 
+				var restoreTop = myField.scrollTop; 
+				myField.value = myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos,myField.value.length); 
+				if (restoreTop > 0) 
+				{ 
+					// restore previous scrollTop 
+					myField.scrollTop = restoreTop; 
+				} 
+				myField.focus(); 
+				myField.selectionStart = startPos + myValue.length; 
+				myField.selectionEnd = startPos + myValue.length; 
+			}
+			else { 
+				myField.value += myValue; 
+				myField.focus(); 
+			} 
+		} 
+
+		function decreaseIndex(location){
+			if(location=="simplified"){
+				if(ST_index==-1){
+					alert("下标为-1，不能再减小");
+					return;
+				}
+					
+				ST_index--;
+				document.getElementById("currentSTIndex").innerText=ST_index;
+			}
+			else if(location=="full"){
+				if(FT_index==0){
+					alert("下标为-1，不能再减小");
+					return;
+				}
+				FT_index--;
+				document.getElementById("currentFTIndex").innerText=FT_index;
+			}
+			else{
+				alert("unknown error in decreaseIndex()");
+			}
+		}
+
+		function increaseIndex(location){
+			if(location=="simplified"){				
+				ST_index++;
+				document.getElementById("currentSTIndex").innerText=ST_index;
+			}
+			else if(location=="full"){			
+				FT_index++;
+				document.getElementById("currentFTIndex").innerText=FT_index;
+			}
+			else{
+				alert("unknown error in decreaseIndex()");
+			}
+		}
+
+		function resetTags(location){
+			var template_input=null;
+			var ttype_input=null;
+			var cueword_input=null;
+			if(location=="simplified"){
+				template_input=document.getElementById("ST_input_name");
+				ttype_input=document.getElementById('STT_input_name');		
+				cueword_input=document.getElementById('STC_input_name');		
+
+				ST_index=-1;
+				document.getElementById("currentSTIndex").innerText="-1";
+
+			}
+			else if(location=="full"){
+				template_input=document.getElementById("FT_input_name");
+				ttype_input=document.getElementById('FTT_input_name');		
+				cueword_input=document.getElementById('FTC_input_name');	
+
+				FT_index=-1;
+				document.getElementById("currentFTIndex").innerText="-1";
+			}
+
+			template_input.value="";
+			ttype_input.value="";
+			cueword_input.value="";
+		}
+
+		function copyFromSim(){
+			document.getElementById("FT_input_name").value=document.getElementById("ST_input_name").value;
+			document.getElementById("FTT_input_name").value=document.getElementById("STT_input_name").value;
+			document.getElementById("FTC_input_name").value=document.getElementById("STC_input_name").value;
+			FT_index=ST_index;
+			document.getElementById("FT_input_name").style.background="#FFFFFF";
+			document.getElementById("currentFTIndex").innerText=FT_index;
+		}
+
+		function copyFromLastSim(type){
+			if(type=="simplified"){
+				var last_ST={{lastTextTemplateInfos|safe}}['simplifiedTemplate'];
+				var last_STT={{lastTextTemplateInfos|safe}}['simplifiedTemplateTypes'];
+				var last_STC={{lastTextTemplateInfos|safe}}['simplifiedTemplateCueword'];
+				
+				document.getElementById("ST_input_name").value=last_ST;
+				document.getElementById("STT_input_name").value=last_STT;
+				document.getElementById("STC_input_name").value=last_STC;
+				document.getElementById("ST_input_name").style.background="#FFFFFF";
+			}
+			else if(type=="full"){
+				var last_FT={{lastTextTemplateInfos|safe}}['fullTemplate'];
+				var last_FTT={{lastTextTemplateInfos|safe}}['fullTemplateTypes'];
+				var last_FTC={{lastTextTemplateInfos|safe}}['fullTemplateCueword'];
+				
+				document.getElementById("FT_input_name").value=last_FT;
+				document.getElementById("FTT_input_name").value=last_FTT;
+				document.getElementById("FTC_input_name").value=last_FTC;
+				document.getElementById("FT_input_name").style.background="#FFFFFF";
+			}
+			
+			//document.getElementById("currentSTIndex").innerText="<font color='red'></font>";
+		}
+
+		function checkCueword(location){
+			var cueword_input=null;
+			var template_input=null;
+			var template_type="";
+
+			if(location=="simplified"){
+				template_input=document.getElementById("ST_input_name");
+				cueword_input=document.getElementById('STC_input_name');
+				template_type="简化模板";
+			}
+			else if(location=="full"){
+				template_input=document.getElementById("FT_input_name");
+				cueword_input=document.getElementById('FTC_input_name');
+				template_type="完整模板";
+			}
+			
+			cuewords=cueword_input.value.split(" ");
+			template_content=template_input.value;
+
+			template_index=[]
+			for(var i=0;i<cuewords.length;i++){
+				if(cuewords[i]==""){
+					continue;
+				}
+				//某一项不含_
+				if(cuewords[i].indexOf("_")==-1){    
+					cueword_input.style.background="#FFAAAA";
+					alert(template_type+"第"+i+"项中没有‘_’");
+					return false;
+				}
+
+				//某个模板被标了两次线索词
+				thisTemplateIndex=cuewords[i].split("_")[0];
+				for(var j=0;j<template_index.length;j++){
+					if(template_index[j]==thisTemplateIndex){
+						cueword_input.style.background="#FFAAAA";
+						alert(template_type+"下标为"+thisTemplateIndex+"的模板的线索词重复标注");
+						return false;
+					}
+				}
+				
+
+				//某一项的模板下标不存在
+				template_index.push(cuewords[i].split("_")[0]);
+				if(template_content.indexOf(cuewords[i].split("_")[0])==-1){
+					cueword_input.style.background="#FFAAAA";
+					alert("没有下标为"+cuewords[i].split("_")[0]+"的模板");
+					return false;
+				}
+
+				//某一个线索词不是有效的词语下标
+
+				cw_index=cuewords[i].split("_")[1];
+
+				segnum=document.getElementById("segres").value.split(" ").length;
+
+				if(cw_index.indexOf("-")==-1){   //仅一个线索词
+					//判断是不是数字
+					var re = /^[1-9]+[0-9]*$/; 
+				    if (!re.test(cw_index) && cw_index!="0")
+				    {
+				    	cueword_input.style.background="#FFAAAA";
+				        alert("模板"+i+"的线索词下标"+cw_index+"不是数字");
+				        return false;
+				    }
+				    //判断是不是有效下标
+					if(parseInt(cw_index)<0 || parseInt(cw_index)>segnum-1){
+						cueword_input.style.background="#FFAAAA";
+						alert(cw_index+"不是有效的词语下标");
+						return false;
+					}
+				}
+				else{   //多个线索词
+					cw_index=cw_index.split("-");
+
+					for(var j=0;j<cw_index.length;j++){
+						//判断是不是数字
+						var re = /^[1-9]+[0-9]*$/;
+					    if (!re.test(cw_index[j]) && cw_index[j]!="0")
+					    {
+					    	cueword_input.style.background="#FFAAAA";
+					        alert("模板"+i+"的线索词下标"+cw_index[j]+"不是数字");
+					        return false;
+					    }
+				    	//判断是不是有效下标
+						if(parseInt(cw_index[j])<0 || parseInt(cw_index[j])>segnum-1){
+							cueword_input.style.background="#FFAAAA";
+							alert(cw_index[j]+"不是有效的词语下标");
+							return false;
+						}
+					}
+				}
+			}
+			cueword_input.style.background="#FFFFFF";
+
+			return true;
+		}
+
+		function checkEmpty(){
+			var ST=document.getElementById("ST_input_name");
+			var FT=document.getElementById("FT_input_name");
+
+			if(ST.value==""){
+				ST.style.background="#FFAAAA";
+				alert("简化模板没有填写");
+				return false;
+			}
+			if(FT.value==""){
+				FT.style.background="#FFAAAA";
+				alert("完整模板没有填写");
+				return false;
+			}
+
+			ST.style.background="#FFFFFF";
+			FT.style.background="#FFFFFF";
+			return true;
+		}
+
+		//错误信息初始为不可见
+		document.getElementById("username_empty_error").style.display="none";		
+		function checkUserName(){
+     		username_input=document.getElementById("username_id");
+     		if(username_input.value.trim()==""){     			
+				document.getElementById("username_empty_error").style.display="block";			
+     			username_input.style.background="#FFAAAA";
+     			return false;
+     		}
+     		username_input.style.background="#FFFFFF";
+			return true;
+     	}
+
+     	//检查模板标注的一些错误是否存在
+     	function checkTemplate(location){
+     		var cueword_input=null;
+			var template_input=null;
+			var template_type="";
+
+			if(location=="simplified"){
+				template_input=document.getElementById("ST_input_name");
+				cueword_input=document.getElementById('STC_input_name');
+				template_type="简化模板";
+			}
+			else if(location=="full"){
+				template_input=document.getElementById("FT_input_name");
+				cueword_input=document.getElementById('FTC_input_name');
+				template_type="完整模板";
+			}
+
+			//是否有重复的下标
+			for(var i=0;i<10;i++){
+				if(template_input.value.indexOf("_"+i)!=template_input.value.lastIndexOf("_"+i)){
+					template_input.style.background="#FFAAAA";
+					alert(template_type+"标注中有重复的模板下标");
+					return false;
+				}
+			}
+
+			//是否含有英文逗号
+			if(template_input.value.indexOf(",")!=-1){
+				template_input.style.background="#FFAAAA";
+				alert(template_type+"标注中不能含有英文逗号");
+				return false;
+			}
+			template_input.style.background="#FFFFFF";
+			return true;
+     	}
+
+		function submitCheck(){
+			return checkUserName()&&checkCueword('simplified')&&checkCueword('full')&&checkEmpty()&&checkTemplate("simplified")&&checkTemplate("full");
+		}
+	</script>
+
+</body>
+</html>

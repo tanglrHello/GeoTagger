@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>添加试题-GeoTagger-njunlp</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" media="all" type="text/css" href="../static/css/fileinput.css" />
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../static/js/fileinput.js" /></script>
+	
+	<script src="../static/js/fileinput_locale_zh.js" /></script>
+</head>
+<body>
+	
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li class="active"><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>添加试题</h1>
+	</div>
+	
+	<div class="container">
+		<div class="alert alert-info" role="alert">
+			<strong>输入文件的格式为 utf-8无BOM格式（可以使用Notepad++设置），如果在文件预览中看到乱码，很可能是因为不是utf8编码</strong>
+			<br><br>
+			<strong>选择题格式：</strong><br>
+			
+				题面占一行，每个选项各占一行，每行开头为编号，编号与文字之间用\t隔开。<br><br>
+				编号规则如下：<br>
+				<table border="1">
+				<tr>
+					<td width="15%">背景型题面:</td>
+					<td>独立编号，如1-、2-</td>
+				</tr>
+				<tr>
+					<td>选择题题面</td>
+					<td>单独编号在-后面，如果有共享的背景型题面，则-前面加上背景型题面的编号，如：-3、2-4</td>
+				</tr>
+				<tr>
+					<td>选择题选项</td>
+					<td>编号为 题面编号-A/B/C/D，如：3-A、4-B（不需要加上背景型题面的编号，只需要小题题面编号即可）</td>
+				</tr>
+
+			</table>
+			<br />
+
+			<strong>主观题格式：</strong><br />
+				题面占一行，每个小问占一行，每行开头为编号，编号与文字之间用\t隔开。<br /><br />
+				编号规则如下：<br />
+				<table border="1">
+					<tr>
+						<td width="25%">大题总题面：</td>
+						<td>独立编号，如1-、2-</td>
+					</tr>
+					<tr>
+						<td>大题内部背景型题面：</td>
+						<td>编号如 题面编号-1/2/3等，表示该题中的第1/2/3个背景题面，如36-1表示36大题中的第一个背景题面</td>
+					</tr>
+					<tr>
+						<td>小题题面：</td>
+						<td>编号如 题面编号-背景型题面本身编号-小题编号，如36-1-2表示36大题的第2小题，依赖36题中的第1个背景题面（如果没有背景题面，则相应位置留空，如36--1）</td>
+					</tr>
+					<tr>
+						<td>小题中嵌套的子题：</td>
+						<td>编号如 小题编号（三个字段）-1/2/3等（目前只支持最多一层小题的嵌套，即编号中有三个'-'）</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+					</tr>
+
+				</table>
+				其他规则：<br />
+				填空题：填空处以【？】替代原下划线，一小题中多个空不拆分成小题<br />
+				编号：采用试卷中的原编号（大题、小题、子题）即可，不需要修改成连续的编号，背景型题面在每题内部需要从1开始连续编号<br />
+				选择题：如果某个小题是选择题，则在题目编号的最后加上*，如36-1-1-1*，并且对应4行选项，每行编号为36-1-1-1-A/B/C/D<br />
+
+				<br><br>
+
+			<strong>关于文件名：</strong><br />
+				文件名应该是试卷名，并且需要保证不能与已上传的文件同名，同一份试卷的选择题和主观题两部分应该同名，例如均为2012.txt（建议本地可以分两个文件夹保存选择题和主观题）
+
+		</div>
+		<br>
+		<br>
+		<br>
+
+		
+		<label>[选择文件后可点击放大镜图标预览]</label><br />
+		<label>[文件选择错误请先点击‘Remove’再重新选择]</label><br /><br />
+
+		<form method="post" enctype="multipart/form-data" onsubmit="return checkUserName('cf');">			
+			<label class="control-lable">试题文件（选择题）:</label><br />
+			<span>你的名字：</span>{{cf.uploadUserName}}
+			{{cf.ChoiceFile}}
+			
+			{% if messages.success_message and choice%}
+				<div class="alert alert-success" role="alert">{{messages.success_message}}</div>
+			{% endif %}
+			{% if messages.error_message and choice%}
+				<div class="alert alert-danger" role="alert">{{messages.error_message}}</div>
+			{%endif%}
+			{% if messages.interpaper_repeat_message and choice%}
+				<div class="alert alert-warning" role="alert">
+					<strong>与其他现存试卷的重复情况（在其他试卷中的题号-在上传试卷中的题号）：</strong><br>
+					{% for oldfile_name,repeat_lines in messages.interpaper_repeat_message.items%}
+						{{oldfile_name}}:<br>
+						{% for q1,q2 in repeat_lines%}
+							{{q1}}-{{q2}}<br>
+						{%endfor%}
+						<br>
+					{%endfor%}
+				</div>
+			{%endif%}
+
+			{% if messages.innerpaper_repeat_message and choice%}				
+				<div class="alert alert-warning" role="alert">
+					<strong>该上传试卷内部的重复试题对（数字为小题的序号）：</strong><br />
+					{% for q1,q2 in messages.innerpaper_repeat_message%}
+						{{q1}}-{{q2}}<br>
+					{%endfor%}
+				</div>
+			{%endif%}
+		</form>
+			
+		<br><br>
+
+		<form method="post" enctype="multipart/form-data" onsubmit="return checkUserName('sf');">
+			
+			<label class="control-lable">试题文件（主观题）:</label><br />
+			<span>你的名字：</span>{{sf.uploadUserName}}
+			{{sf.SubjectiveFile}}
+
+			{% if messages.success_message and subjective%}
+				<div class="alert alert-success" role="alert">{{messages.success_message}}</div>
+			{% endif %}
+			{% if messages.error_message and subjective%}
+				<div class="alert alert-danger" role="alert">{{messages.error_message}}</div>
+			{%endif%}
+			
+			{% if messages.interpaper_repeat_message and subjective%}
+				<div class="alert alert-warning" role="alert">
+					<strong>与其他现存试卷的重复情况（在其他试卷中的题号-在上传试卷中的题号）：</strong><br>
+					{% for oldfile_name,repeat_lines in messages.interpaper_repeat_message.items%}
+						{{oldfile_name}}:<br>
+						{% for q1,q2 in repeat_lines%}
+							{{q1}}-{{q2}}<br>
+						{%endfor%}
+						<br>
+					{%endfor%}
+				</div>
+			{%endif%}
+
+			{% if messages.innerpaper_repeat_message and subjective%}				
+				<div class="alert alert-warning" role="alert">
+					<strong>该上传试卷内部的重复试题对（数字为小题的序号）：</strong><br />
+					{% for q1,q2 in messages.innerpaper_repeat_message%}
+						{{q1}}-{{q2}}<br>
+					{%endfor%}
+				</div>
+			{%endif%}
+			
+			
+		</form>
+		<br><br><br><br><br><br>
+
+		<script>
+			function checkUserName(location){
+				username=null;
+				if(location=="cf"){
+					username=document.getElementById("cf_username_id")
+					
+				}
+				else if(location=="sf"){
+					username=document.getElementById("sf_username_id")
+				}
+
+				if(username.value==""){
+					alert("请输入你的名字");
+					username.style.background="#FFAAAA"
+					return false;
+				}
+				username.style.background="#FFFFFF";
+				return true;
+			}
+		</script>
+
+	</div>
+
+</body>
+</html>

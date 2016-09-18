@@ -1,0 +1,262 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>分词标注-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />	
+</head>
+<body>
+	
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>分词标注-{{papername}}</h1>
+	</div>
+		
+	<div class="container">
+		<font size="4"><a href="./TagEachField.html?papername={{papername}}&papertype={{papertype}}">回到本试卷单项标注导航页</a></font><br />
+		{%if States.seg%}
+		<font size="4"><a href="./TagTimeLoc.html?papername={{papername}}&papertype={{papertype}}">前往本试卷【实体、术语】标注页</a></font><br /><br />
+		{%endif%}
+		<form method="POST">
+			<input type="submit" value="生成候选分词" class="btn btn-info" name="generateSEG"/>
+		</form>
+		<br />
+
+		<form method="POST" onsubmit="return checkAllFunc();">
+			<div class="alert alert-info" role="alert">分词栏中:<br>上一行为粗粒度分词（时间、地点短语内部不分词）<br>
+			下一行为细粒度分词（时间、地点短语内部也分词）<br />
+			<strong>注意：</strong>符号"_"必须单独分成一个词
+			</div>
+			<div class="alert alert-success" role="alert">
+			  	<a href="#" class="alert-link">当前显示的分词结果是：{{restype}}</a>
+			</div>
+			
+			<div class="alert alert-warning" role="alert">
+			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>	
+			  <strong>细粒度：</strong>时间短语、地点短语内部可以进行分词		  
+			</div>
+			<table id="paper_table" class="table table-striped table-bordered table-hover js-table">
+		         <thead> 
+		         <tr>
+		            <th>原文本</th>
+		         	<th>分词结果</th>
+		         </tr>
+		         </thead>
+		         <tbody id="body-fjShipChkList">
+		         	{%for t_s in text_seg%}
+		            <tr>
+		            	<td width="40%">
+						    <div class="input-group">					
+						      <input type="text" class="form-control" id="{{forloop.counter0}}_text_fg" name="{{forloop.counter0}}_text_fg" value="{{t_s.0}}" readOnly="true">
+						      <span class="input-group-btn">
+						        <button class="btn btn-default" id="{{forloop.counter0}}_edit_fg" type="button" onclick="editOriText({{forloop.counter0}},'_fg')">修改</button>
+						      </span>
+						    </div><!-- /input-group -->
+		            	</td>
+		            	<td width="60%">		            		
+		            		<div class="input-group">
+							  <span class="input-group-addon" id="basic-addon1">细粒度</span>
+							  <textarea id="{{forloop.counter0}}_seg_fg" name="{{forloop.counter0}}_seg_fg" rows="2" class="form-control" onblur="editSegEndFunc({{forloop.counter0}},'_fg');">{{t_s.2}}</textarea>
+							</div>		            		
+		            	</td>
+		            </tr>
+		            {%endfor%}	           
+		         </tbody>
+		     </table>
+
+			<button type="button" class="btn btn-success" onClick="copyFromFineSeg()">根据细粒度标注同步粗粒度候选</button>
+			<div class="alert alert-warning" role="alert">
+			  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>	
+			  <strong>粗粒度：</strong>时间短语、地点短语分成一个词，不同于细粒度需要进一步对短语内部分词		  
+			</div>
+		     <table id="paper_table" class="table table-striped table-bordered table-hover js-table">
+		         <thead> 
+		         <tr>
+		            <th>原文本</th>
+		         	<th>分词结果</th>
+		         </tr>
+		         </thead>
+		         <tbody id="body-fjShipChkList">
+		         	{%for t_s in text_seg%}
+		            <tr>
+		            	<td width="40%">
+						    <div class="input-group">
+						      <input type="text" class="form-control" id="{{forloop.counter0}}_text" name="{{forloop.counter0}}_text" value="{{t_s.0}}" readOnly="true">
+						      <span class="input-group-btn">
+						        <button class="btn btn-default" id="{{forloop.counter0}}_edit" type="button" onclick="editOriText({{forloop.counter0}},'')">修改</button>
+						      </span>
+						    </div><!-- /input-group -->
+		            	</td>
+
+		            	<td width="60%">
+		            		<div class="input-group">
+							  <span class="input-group-addon" id="basic-addon1">粗粒度</span>
+							  <textarea id="{{forloop.counter0}}_seg" name="{{forloop.counter0}}_seg" rows="2"class="form-control" onblur="editSegEndFunc({{forloop.counter0}},'');">{{t_s.1}}</textarea>
+							</div>		            		            		
+		            	</td>
+		            </tr>
+		            {%endfor%}	           
+		         </tbody>
+		     </table>
+			<br />
+			{% if seg_tagger%}
+	        <div class="input-group">
+	          <span class="input-group-addon" id="sizing-addon1"><strong>当前分词的标注者：</strong></span>
+	              <input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{seg_tagger}}" readOnly="true">
+	        </div><br>
+	        {%endif%}
+				<div class="input-group">
+					<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为分词的标注者）：</strong></span>
+		      		<input id="username_id" name="username_name" type="text" class="form-control">
+		   		 </div>
+		   	<br />
+		     <input type="submit" value="提交" class="btn btn-info" name="submitSEG"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		     
+		 </form>
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+	     <script>
+	     	function editOriText(index,suffix){
+	     		button=document.getElementById(index+"_edit"+suffix);
+	     		text=document.getElementById(index+"_text"+suffix);
+	     		if(button.innerText=="修改"){
+	     			text.readOnly=false;
+	     			button.innerText="保存";
+	     		}
+	     		else if(button.innerText=="保存"){
+	     			text.readOnly=true;
+	     			button.innerText="修改";
+	     		}
+	     	}
+
+
+	     	function copyFromFineSeg(){
+	     		var segnum={{text_seg|length}};
+	     		alert
+	     		for(var i=0;i<segnum;i++){
+	     			var fine_seg=document.getElementById(i+"_seg_fg");
+	     			var coarse_seg=document.getElementById(i+"_seg");
+
+	     			coarse_seg.value=fine_seg.value;
+
+	     			var coarse_text=document.getElementById(i+"_text");
+	     			var fine_text=document.getElementById(i+"_text_fg");
+	     			coarse_text.value=fine_text.value;
+	     		}
+
+	     	}
+	     	function editSegEndFunc(index,suffix){
+	     		var papertype={{papertype}};
+	     		var text="";
+	     		if(papertype=="choice"){
+	     			text=document.getElementById(index+"_text"+suffix).value.split("\t");
+		     		if(text.length!=2){
+		     			document.getElementById(index+"_text"+suffix).style.background="#FFAAAA";
+		     			alert("原文本中请用一个\t将题面与选项内容隔开");
+		     			return false;
+		     		}
+		     		text=text[0]+text[1];		     		
+	     		}
+	     		else{
+	     			text=document.getElementById(index+"_text"+suffix).value;
+	     		}
+
+	     		var seg=document.getElementById(index+"_seg"+suffix).value.split(" ");	     	
+
+	     		var segtext="";
+	     		for(var i=0;i<seg.length;i++){
+	     			segtext+=seg[i];
+	     		}
+
+	     		if(text!=segtext){
+	     			console.log(text,segtext);
+	     			document.getElementById(index+"_seg"+suffix).style.background="#FFAAAA";	
+	     			alert("分词过程中不能改变文本内容！");
+	     			return false;
+	     		}
+	     		else{
+	     			document.getElementById(index+"_seg"+suffix).style.background="#FFFFFF";	
+	     		}
+	     		return true;
+	     	}
+
+	     	function checkUserName(){
+	     		username_input=document.getElementById("username_id");
+	     		if(username_input.value.trim()==""){
+	     			alert("请输入你的名字");
+	     			username_input.style.background="#FFAAAA";
+	     			return false;
+	     		}
+	     		username_input.style.background="#FFFFFF";
+				return true;	     		
+	     	}
+
+	     	//因为可以修改原文本，该函数检查粗粒度和细粒度对应的原文本是否一致
+	     	function checkTextConsistency(){
+	     		for(var i=0;i<{{text_seg|length}};i++){
+	     			oritext=document.getElementById(i+"_text");
+	     			oritext_fg=document.getElementById(i+"_text_fg");
+	     			if(oritext.value!=oritext_fg.value){
+	     				alert("第"+i+"个试题文本在粗粒度和细粒度中不一致");
+	     				oritext.style.background="#FFAAAA";
+	     				oritext_fg.style.background="#FFAAAA";
+	     				return false;
+	     			}
+	     			oritext.style.background="#FFFFFF";
+	     			oritext_fg.style.background="#FFFFFF";
+	     		}
+	     		return true;
+	     	}
+
+	     	function checkAllFunc(){
+	     		if(!checkUserName()){
+	     			return false;
+	     		}
+
+	     		if(!checkTextConsistency()){
+	     			return false;
+	     		}
+	     		for(var i=0;i<{{text_seg|length}};i++)
+	     			if(editSegEndFunc(i,"")==false||editSegEndFunc(i,"_fg")==false)
+	     				return false;
+	     		
+	     		return true;
+	     	}
+
+
+	     </script>
+	</div>
+	
+</body>
+</html>

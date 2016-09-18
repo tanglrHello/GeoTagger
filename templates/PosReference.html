@@ -1,0 +1,426 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>词性参考-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />	
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>词性参考</h1>
+	</div>
+	
+	<div class="container">
+		<table border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td valign="top">
+<p><strong>标记</strong></p>
+</td>
+<td valign="top">
+<p>英语解释</p>
+</td>
+<td valign="top">
+<p>中文解释</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>AD</strong></p>
+</td>
+<td valign="top">
+<p>adverbs</p>
+</td>
+<td valign="top">
+<p>副词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>AS</strong></p>
+</td>
+<td valign="top">
+<p>Aspect marker </p>
+</td>
+<td valign="top">
+<p>体态词，体标记（例如：了，在，着，过）</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>BA</strong></p>
+</td>
+<td valign="top">
+<p>把 in ba-const</p>
+</td>
+<td valign="top">
+<p>“把”，“将”的词性标记</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>CC</strong></p>
+</td>
+<td valign="top">
+<p>Coordinating conjunction</p>
+</td>
+<td valign="top">
+<p>并列连词，“和”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>CD</strong></p>
+</td>
+<td valign="top">
+<p>Cardinal numbers</p>
+</td>
+<td valign="top">
+<p>数字，“一百”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>CS</strong></p>
+</td>
+<td valign="top">
+<p>Subordinating conj</p>
+</td>
+<td valign="top">
+<p>从属连词 （例子：若，如果，如…）</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>DEC</strong></p>
+</td>
+<td valign="top">
+<p>的 for relative-clause etc</p>
+</td>
+<td valign="top">
+<p>“的”词性标记</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>DEG</strong></p>
+</td>
+<td valign="top">
+<p>Associative 的</p>
+</td>
+<td valign="top">
+<p>联结词“的”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>DER</strong></p>
+</td>
+<td valign="top">
+<p>得 in V-de construction, and V-de-R</p>
+</td>
+<td valign="top">
+<p>“得”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>DEV</strong></p>
+</td>
+<td valign="top">
+<p>地 before VP</p>
+</td>
+<td valign="top">
+<p>地</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>DT</strong></p>
+</td>
+<td valign="top">
+<p>Determiner</p>
+</td>
+<td valign="top">
+<p>限定词，“这”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>ETC</strong></p>
+</td>
+<td valign="top">
+<p>Tag for words 等，等等 in coordination phrase</p>
+</td>
+<td valign="top">
+<p>等，等等</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>FW</strong></p>
+</td>
+<td valign="top">
+<p>Foreign words</p>
+</td>
+<td valign="top">
+<p>例子：ISO</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>IJ</strong></p>
+</td>
+<td valign="top">
+<p>interjection</p>
+</td>
+<td valign="top">
+<p>感叹词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>JJ</strong></p>
+</td>
+<td valign="top">
+<p>Noun-modifier other than nouns</p>
+</td>
+<td valign="top">
+<p>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>LB</strong></p>
+</td>
+<td valign="top">
+<p>被 in long bei-construction</p>
+</td>
+<td valign="top">
+<p>例子：被，给</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>LC</strong></p>
+</td>
+<td valign="top">
+<p>Localizer</p>
+</td>
+<td valign="top">
+<p>定位词，例子：“里”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>M</strong></p>
+</td>
+<td valign="top">
+<p>Measure word (including classifiers)</p>
+</td>
+<td valign="top">
+<p>量词，例子：“个”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>MSP</strong></p>
+</td>
+<td valign="top">
+<p>Some particles</p>
+</td>
+<td valign="top">
+<p>例子：“所”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>NN</strong></p>
+</td>
+<td valign="top">
+<p>Common nouns</p>
+</td>
+<td valign="top">
+<p>普通名词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>NR</strong></p>
+</td>
+<td valign="top">
+<p>Proper nouns</p>
+</td>
+<td valign="top">
+<p>专有名词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>NT</strong></p>
+</td>
+<td valign="top">
+<p>Temporal nouns</p>
+</td>
+<td valign="top">
+<p>时序词，表示时间的名词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>OD</strong></p>
+</td>
+<td valign="top">
+<p>Ordinal numbers</p>
+</td>
+<td valign="top">
+<p>序数词，“第一”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>ON</strong></p>
+</td>
+<td valign="top">
+<p>Onomatopoeia</p>
+</td>
+<td valign="top">
+<p>拟声词，“哈哈”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>P</strong></p>
+</td>
+<td valign="top">
+<p>Prepositions (excluding 把 and 被)</p>
+</td>
+<td valign="top">
+<p>介词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>PN</strong></p>
+</td>
+<td valign="top">
+<p>pronouns</p>
+</td>
+<td valign="top">
+<p>代词</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>PU</strong></p>
+</td>
+<td valign="top">
+<p>Punctuations</p>
+</td>
+<td valign="top">
+<p>标点</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>SB</strong></p>
+</td>
+<td valign="top">
+<p>被in long bei-construction</p>
+</td>
+<td valign="top">
+<p>例子：“被，给”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>SP</strong></p>
+</td>
+<td valign="top">
+<p>Sentence-final particle</p>
+</td>
+<td valign="top">
+<p>句尾小品词，“吗”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>VA</strong></p>
+</td>
+<td valign="top">
+<p>Predicative adjective</p>
+</td>
+<td valign="top">
+<p>表语形容词，“红”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>VC</strong></p>
+</td>
+<td valign="top">
+<p>Copula 是</p>
+</td>
+<td valign="top">
+<p>系动词，“是”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>VE</strong></p>
+</td>
+<td valign="top">
+<p>有 as the main verb</p>
+</td>
+<td valign="top">
+<p>“有”</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><strong>VV</strong></p>
+</td>
+<td valign="top">
+<p>Other verbs</p>
+</td>
+<td valign="top">
+<p>其他动词</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+	</div>
+	
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>删除试卷-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+</head>
+<body  onload="PrintParseTree()">
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="./SingleSentenceAnalyze.html">单句分析 <span class="sr-only">(current)</span></a></li>
+	        <li><a href="./AddTestPaper.html">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>删除试题-《{{papername}}》-{{papertype}}</h1>
+	</div>
+
+	<form method="POST">
+		<div class="container">
+			<div class="input-group">
+			  <span class="input-group-addon" id="sizing-addon2">请输入删除密码：</span>
+			  <input name="delpwd" type="password" class="form-control" placeholder="Password" aria-describedby="sizing-addon2">
+			  <span class="input-group-btn">
+		        <button class="btn btn-default" type="submit">删除</button>
+		      </span>
+			</div>
+			{%if error_msg%}
+			<div class="alert alert-danger" role="alert">
+			  <a href="#" class="alert-link">{{error_msg}}</a>
+			</div>
+			{%endif%}
+		</div>
+	</form>
+	
+
+	
+
+
+</body>
+</html>

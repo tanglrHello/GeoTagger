@@ -1,0 +1,354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>按试卷查看试题-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right .nav-justified" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+
+	        {%if papertype == 'choice'%}
+	     	<li class="active"><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	     	{%else%}
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	     	{%endif%}
+
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+
+	        {%if papertype == 'choice'%}
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        {%else%}
+			<li class="active"><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        {%endif%}
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>试卷列表：</h1>
+	</div>
+	<br>
+
+	<div class="container" margin="100">
+		<strong>试卷类型：</strong>
+		{% if papertype == 'choice'%}
+	  	<button type="button" class="btn btn-lg btn-success" onclick="choosePapertype('choice')">选择题</button>
+		<button type="button" class="btn btn-default btn-lg" onclick="choosePapertype('subjective')">主观题</button>
+		{%else%}
+		<button type="button" class="btn btn-lg btn-default" onclick="choosePapertype('choice')">选择题</button>
+		<button type="button" class="btn btn-success btn-lg" onclick="choosePapertype('subjective')">主观题</button>
+		{%endif%}		
+		<br /><br />
+		<script>
+			function choosePapertype(papertype){
+				if(papertype=="choice"){
+					window.location.href="BrowseByPaper.html?papertype=choice";
+				}
+				else if(papertype=="subjective"){
+					window.location.href="BrowseByPaper.html?papertype=subjective";
+				}
+			}
+		</script>
+
+		<form method="POST">
+			<div class="input-group">		  
+			  <input id="query_kw_id" name="query_kw_name" rows="1"class="form-control" placeholder="试卷名关键字" value={{qeury_kw}}>
+			  <span class="input-group-btn">
+		        <button class="btn btn-success" type="submit">检索</button>
+		      </span>
+			</div>	
+		</form>
+		<br /><br />
+
+		<form method="POST"  onsubmit="return checkCHKState()">				
+				 <table id="paper_table" class="table table-striped table-bordered table-hover js-table">
+			         <thead> 
+			         <tr>
+			             <th width="9%">
+			             	<input id="choosePaperControl" type="checkbox" value="chooseAllPaper" onclick="paperSelectAllOrNone()">全选<br>
+			         	</th>
+			             <th width="13%">试卷名/上传时间</th>
+			             <th width="5%">题量</th>
+			             <th width="15%">标注者</th>
+			             <th width="45%">标注状态</th>
+			             <th width="13%">操作</th>
+			             
+			         </tr>
+			         </thead>
+			         <tbody id="body-fjShipChkList">
+			            {%for paper in paperInfoData%}
+			                 <tr class="odd gradeX">
+			                     <td class="bs-checkbox">
+			                     	<input name="choosePaper" type="checkbox" value={{paper.testpaperName}}>
+			                     </td>
+			                     <td>
+			                         <strong>{{paper.testpaperName}}</strong><br>
+			                         <font color="#5cadad">{{paper.uploadTime}}</font>
+			                     </td>
+			                     <td>
+			                     	{{paper.QuestionNum}}
+			                     </td>
+			                     <td>
+									{%if paper.relativeUsernames.uploder%}
+									上传：{{paper.relativeUsernames.uploder}}<br>
+									{%endif%}
+									{%if paper.relativeUsernames.split_tagger%}
+									拆分：{{paper.relativeUsernames.split_tagger}}<br>
+									{%endif%}
+									{%if paper.relativeUsernames.seg_tagger%}
+									分词：{{paper.relativeUsernames.seg_tagger}}<br>
+									{%endif%}
+									{%if paper.relativeUsernames.timeloc_tagger%}
+									时间地点：{{paper.relativeUsernames.timeloc_tagger}}<br>
+									{%endif%}
+									{%if paper.relativeUsernames.pos_tagger%}
+									词性：{{paper.relativeUsernames.pos_tagger}}<br>
+									{%endif%}
+									{%if paper.relativeUsernames.conpparse_tagger%}
+									成分分析：{{paper.relativeUsernames.conpparse_tagger}}<br>
+									{%endif%}
+									{%if paper.relativeUsernames.template_tagger%}
+									模板：{{paper.relativeUsernames.template_tagger}}<br>
+									{%endif%}
+			                     </td>
+			                     <td>
+			                     	
+			                     	{% for abbr,chinese,newlineFlag in showStateFields_Info%}                     	
+			                     		{% if newlineFlag == "1" and not forloop.first%}
+											<br>
+			                     		{%endif%}	                     		
+			                     		{% for field,state in paper.States.items%}
+											{% if field == abbr %}
+												{{chinese}}{% if state%}<font color="#00a600">√</font>{%else%}<font color="#ce0000">×</font>{% endif %}
+											{%endif%}
+			                     		{%endfor%}
+										
+			                     	{%endfor%}
+			                     	
+			                     	
+			                     </td>
+			                     <td>
+								{% if papertype == "choice"%}
+									{%if paper.States.split and not paper.States.seg%}
+										<a href="./TagSplitViews.html?papername={{paper.testpaperName}}&combinedChoiceIndex=0">标注拆分</a><br />										
+									{%endif%}
+									{% if not paper.States.split %}
+										<a href="./TagSplitViews.html?papername={{paper.testpaperName}}&combinedChoiceIndex=0">标注拆分</a><br />
+									{%else%}
+										<a href="./TagEachField.html?papername={{paper.testpaperName}}">单项标注</a><br />
+									{%endif%}	
+
+
+		                     		{%if paper.States.time and paper.States.pos%}
+		                     			<a href="./TagSentence.html?papername={{paper.testpaperName}}&combinedChoiceIndex=1">单句标注</a><br />
+		                     		{%endif%}
+		                     		
+			                        <a href="./TestpaperInfo.html?papername={{paper.testpaperName}}&papertype=choice">查看</a>
+			                        <br>
+			                        <a href="./DeleteTestpaper.html?papername={{paper.testpaperName}}&papertype=choice">删除</a>
+			                     
+			                    {%else%}
+		                     		<a href="./TagEachField.html?papername={{paper.testpaperName}}&&papertype=subjective">单项标注</a><br />
+		                     		{%if paper.States.time and paper.States.pos%}
+		                     			<a href="./TagSentence.html?papername={{paper.testpaperName}}&subQuestionIndex=1&&papertype=subjective">单句标注</a><br />
+		                     		{%endif%}
+		                     		
+			                    	<a href="./TestpaperInfo.html?papername={{paper.testpaperName}}&papertype=subjective">查看</a>
+			                        <br>
+			                        <a href="./DeleteTestpaper.html?papername={{paper.testpaperName}}&papertype=subjective">删除</a>
+			                    {%endif%}
+								</td>
+			                 </tr>
+						{% endfor %}
+			         </tbody>
+			     </table>
+			     <!--表格中的全选全不选功能-->
+			     <script>
+			     	function paperSelectAllOrNone(){
+			     		var controlCheckbox=document.getElementById("choosePaperControl");
+			     		if (controlCheckbox.checked==true){  //全选
+			     			var papers=document.getElementsByName("choosePaper");
+			     			for(var i=0;i<papers.length;i++){
+			     				papers[i].checked=true;
+			     			}
+			     		}
+			     		else{    //全不选
+			     			var papers=document.getElementsByName("choosePaper");
+			     			for(var i=0;i<papers.length;i++){
+			     				papers[i].checked=false;
+			     			}
+			     		}
+			     	}
+			     </script>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+				      	<h2 class="panel-title">
+				         导出选中试卷内容及标注信息：
+				      	</h2>
+				  	</div>
+					<div class="panel-body">
+					    <label>导出内容：</label>&nbsp;&nbsp;&nbsp;&nbsp;
+					    <input id="chooseAllContent" type="checkbox" value="chooseAllContent" onclick="chooseAllContentFunc()">全选
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<input id="chooseNoContent" type="checkbox" value="chooseNoContent" onclick="chooseNoContentFunc()">全不选
+					    <br>	
+				     	{{papertype}}
+				     	{%if papertype == 'subjective'%}
+				     	<table id="outchoice_table" width="700">
+				     		<tr>
+				     			<td  width="25%">
+				     				<p><input type="checkbox" name="outcontent" value="sourceChk" />来源</p>
+				     			</td>
+				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
+									{%if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 or forloop.counter0 == 12 or forloop.counter0 == 16 or forloop.counter0 == 20 or forloop.counter0 == 24%}
+									</tr>
+			     					<tr>
+									{%endif%}
+									{%if forloop.counter0 == 16%}
+										<td>-----------------------------------</td>
+										<td>-----------------------------------</td>
+										<td>-----------------------------------</td>
+										<td>-----------------------------------</td>
+									</tr>
+						     		<tr>
+									{%endif%}
+									<td  width="25%">
+					     				<p><input type="checkbox" name="outcontent" value="{{tag_abbr}}Chk" />{{tag_chinese}}</p>
+					     			</td>
+				     			{%endfor%}
+				     			
+				     	</table>
+				     	
+				     	{%else%}
+						<table id="outchoice_table" width="700">
+				     		<tr>
+				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
+									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25%}
+									</tr>
+			     					<tr>
+									{%endif%}
+									{%if forloop.counter0 == 17%}
+										<td>-----------------------------------</td>
+										<td>-----------------------------------</td>
+										<td>-----------------------------------</td>
+										<td>-----------------------------------</td>
+									</tr>
+						     		<tr>
+									{%endif%}
+									<td  width="25%">
+					     				<p><input type="checkbox" name="outcontent" value="{{tag_abbr}}Chk" />{{tag_chinese}}</p>
+					     			</td>
+				     			{%endfor%}
+				     			
+				     	</table>
+				     	{%endif%}
+				     	
+				     	<!--导出内容的的全选全不选功能-->
+				     	<script>
+				     		function chooseAllContentFunc(){
+				     			if(document.getElementById("chooseAllContent").checked==false)
+				     				return;
+					     		var chooseNoContent=document.getElementById("chooseNoContent");
+					     		chooseNoContent.checked=false;
+					     		
+					     		var contents=document.getElementsByName("outcontent");
+					     		for(var i=0;i<contents.length;i++){
+					     			contents[i].checked=true;
+					     		}
+					     	}
+
+					     	function chooseNoContentFunc(){
+					     		if(document.getElementById("chooseNoContent").checked==false)
+					     			return;
+					     		var chooseAllContent=document.getElementById("chooseAllContent");
+					     		chooseAllContent.checked=false;
+
+					     		var contents=document.getElementsByName("outcontent");
+					     		for(var i=0;i<contents.length;i++){
+					     			contents[i].checked=false;
+					     		}
+					     	}
+				     	</script>
+
+
+						<br /><br />
+				     	<div class="alert alert-info" role="alert">
+				     		<strong>输出文件格式说明：</strong><br />
+				     		输出为一个.zip压缩包，其中的每个文件为.csv文件<br>
+
+				     		<br>
+							<br />
+							<strong>csv文件命名及格式：</strong><br>
+							以试卷名命名，加后缀（如下）<br>
+							每个输出文件对应一份试卷<br>
+							每一行对应一个未拆分的或拆分后的题面+选项的试题文本，会包含选中的导出内容，文件名为 [试卷名].[题型].tag.csv
+				     	</div>
+				     	<br />
+				     	
+						<button id="export_btn" class="btn btn-default" type="submit">确认导出</button>
+						      
+		
+						<!--提交表单时的验证函数-->
+						<script>
+							function checkCHKState(){
+								var papers=document.getElementsByName("choosePaper");
+								hasPaperSelected=false;
+								for(var i=0;i<papers.length;i++){
+									if(papers[i].checked==true){
+										hasPaperSelected=true;
+										break
+									}
+								}
+									
+								var outcontents=document.getElementsByName("outcontent");
+								hasContentSelected=false;
+								for(var i=0;i<outcontents.length;i++){
+									if(outcontents[i].checked==true){
+										hasContentSelected=true;
+									}
+								}
+
+								if(hasPaperSelected==false){
+									alert("请至少选择一个试卷！");
+									return false;
+								}
+								if(hasContentSelected==false){
+									alert("请至少选择一项导出内容!");
+									return false;
+								}
+								return true;
+							}
+						</script>
+						<br />
+		   			</div>
+				</div>
+				
+			
+		</form>
+	</div>
+
+</body>
+</html>

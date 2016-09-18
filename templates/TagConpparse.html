@@ -1,0 +1,243 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>成分句法分析标注-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />	
+
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../static/js/myjs/TagParseTree.js"></script>
+	<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+	
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>成分句法分析标注-{{papername}}</h1>
+	</div>
+	
+	<div class="container">
+		<font size="4"><a href="./TagEachField.html?papername={{papername}}">回到本试卷单项标注导航页</a></font><br />
+		<font size="4"><a href="./TagSentence.html?papername={{papername}}&combinedChoiceIndex={{thisIndex}}">回到本句单句标注页面</a></font><br /><br>
+		<form method="POST">
+			<input type="submit" value="生成候选成分分析结果（整张试卷）" class="btn btn-info" name="generateBPres"/>
+		</form>
+		<br />
+
+		<form method="POST">
+			
+			<div class="input-group">
+				{% if papertype == "choice"%}
+		        <span class="input-group-addon" id="sizing-addon1">组合选项序号：</span>
+		        <input id="number" type="text" class="form-control" value="{{textInfo.combinedChoiceIndex}}">
+		        {%else%}
+		        <span class="input-group-addon" id="sizing-addon1">小题序号：</span>
+		        <input id="number" type="text" class="form-control" value="{{textInfo.subQuestionIndex}}">
+		        {%endif%}
+	     		<span class="input-group-btn">
+	        		<button id="skip_btn" class="btn btn-default" type="button" onclick="SkipFunc()">跳转</button>
+	      		</span>
+	   		</div><!-- /input-group -->
+	   		<br />
+	   		<script>
+		      var originalNumber=document.getElementById("number").value;
+
+		      function SkipFunc(){
+		        var allValidIndex={{allValidIndex|safe}};
+		        var papername="{{papername}}";
+
+		        skipto=document.getElementById("number").value;
+		        var i=0;
+		        for(i=0;i<allValidIndex.length;i++){
+		          if(allValidIndex[i]==skipto){
+		            window.location.href="./TagConpparse.html?papername="+papername+"&papertype=choice&combinedChoiceIndex="+skipto;
+		            break;
+		          }
+		        }
+
+		        if(i==allValidIndex.length){   //不是有效的index
+		          alert("本试卷中没有这个组合选项，或者该选项不需要拆分，可拆分的选项有："+allValidIndex);
+		        }
+
+		        //恢复原本的序号
+		        document.getElementById("number").value=originalNumber;
+		      }
+		    </script>
+
+	   		{% if papertype == "choice"%}
+	   		<label>所属选择题题号：{{questionIndex}}</label><br>
+	        <label>所属选项号:{{textInfo.number}}</label><br><br>
+	        {%else%}
+			<label>所属大题题号：{{questionIndex}}</label><br>
+	        <label>所属小题号:{{textInfo.number}}</label><br><br>
+	        {%endif%}
+	        
+	        {% if lastIndex %}
+	        <a href="./TagConpparse.html?papername={{papername}}&papertype=choice&combinedChoiceIndex={{lastIndex}}">上一句</a>
+	        {% endif %}
+	        {% if nextIndex %}
+	        <a href="./TagConpparse.html?papername={{papername}}&papertype=choice&combinedChoiceIndex={{nextIndex}}">下一句</a>
+	        {% endif %}
+	        <br><br>
+	    </form>
+
+		{%if papertype == "choice"%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">原试题文本：</span>
+				<textarea id="oriText" type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">分词和词性：</span>
+				<textarea id="segpos" type="text" class="form-control" readOnly="true">{{textInfo.segpos}}</textarea>
+			</div>
+		{%else%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">原试题文本：</span>
+				<textarea id="oriText" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.text}}</textarea>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">分词和词性：</span>
+				<textarea id="segpos" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.segpos}}</textarea>
+			</div>
+		{%endif%}
+		<br>
+	    
+		<form method="POST" onsubmit="return checkOnSubmit();">
+			<div class="alert alert-success" role="alert">
+				<a href="#" class="alert-link">当前显示的成分分析标注结果是：{{restype}}</a>
+			</div>
+
+			<div class="input-group">
+			  <span class="input-group-addon" id="basic-addon1">节点序号：</span>
+			  <input type="text" id="nodeIndexID" onblur="getNodeContent();" autocomplete="off" class="form-control" aria-describedby="basic-addon1">
+			</div>
+			<div class="input-group">
+			  <span class="input-group-addon" id="basic-addon1">节点内容：</span>
+			  <input type="text" id="nodeContentID" autocomplete="off" class="form-control" aria-describedby="basic-addon1">
+			</div>
+
+         	<button type="button" id="deleteNodeBtn" onclick="deleteNodeFunc();" class="btn btn-danger" onClick="deleteNode()">删除单个节点</button>
+         	<button type="button" id="deleteNodeBtn" onclick="deleteSubtreeFunc();" class="btn btn-danger">删除子树</button>
+       
+         	<button type="button" id="editNodeBtn" onclick="editNodeFunc();" class="btn btn-warning">修改内容</button>
+
+         	<button type="button" id="addLeftBtn" onclick="addSibling('left')" class="btn btn-info">添加左兄弟</button>
+
+         	<button type="button" id="addRightBtn" onclick="addSibling('right')" class="btn btn-info">添加右兄弟</button>
+
+         	<button type="button" id="addChildBtn" onclick="addRightChild();" class="btn btn-info">添加子节点</button>
+
+         	<button type="button" id="resetTreeBtn" onclick="resetTreeFunc()" class="btn btn-primary">恢复原标注</button>			     		   
+
+			<br><br>
+
+			<div class="input-group">
+			  <span class="input-group-addon" id="basic-addon1">父子节点：</span>
+			  <input type="text" id="parent_child_ID" class="form-control" placeholder="（输入“3 5”表示将节点3作为节点5的父节点）" aria-describedby="basic-addon1">
+			  <span class="input-group-btn">
+		        <button class="btn btn-warning" onclick="linkNodes();" type="button">确认修改</button>
+		      </span>
+			</div>
+			
+			<br>
+			<button type="button" id="showNodeIndexBtn" onclick="showNodeIndexFunc();" class="btn btn-success">隐藏节点序号</button>
+
+	        <div id="bpres_tree_container" style="width:100%;height:500px"></div>
+
+
+
+		    <div class="input-group">
+		      	<span class="input-group-addon" id="sizing-addon1"><strong>原句法树：</strong></span>
+		      	<textarea name="conpparse_input_ori_name" id="conpparse_ori" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.conpparse}}</textarea>		      
+		    </div><!-- /input-group -->		
+		    <div class="input-group">
+		      	<span class="input-group-addon" id="sizing-addon1"><strong>当前结构：</strong></span>
+		      	<textarea name="conpparse_input_new_name" id="conpparse_now" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.conpparse}}</textarea>
+		    </div><!-- /input-group -->
+
+			
+			<br /><br>
+		  	{% if textInfo.conpparse_tagger%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1"><strong>当前句法结果的标注者：</strong></span>
+	      		<input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.conpparse_tagger}}" readOnly="true">
+	   		</div><br>
+	   		{%endif%}
+
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该句句法分析结果的标注者）：</strong></span>
+	      		<input id="username_id" name="username_name" type="text" class="form-control">
+	   		</div>
+
+			
+
+	        <div style="text-align:right";>
+	          <button name="save_btn" type="submit" class="btn btn-default navbar-btn" >保存</button>
+	          {% if nextIndex %}
+	          <button name="saveAndNext_btn" type="submit" class="btn btn-default navbar-btn" >保存并下一句</button>
+	          {%endif%}
+	        </div>
+
+        </form>
+	</div>
+
+
+	<script>	
+		PrintTree();
+		function PrintTree(){
+			var is_ch = /chrome/.test(navigator.userAgent.toLowerCase()); 
+			var bpres=document.getElementById("conpparse_ori").value;
+
+			if(bpres==""){
+				return;
+			}
+
+			iscorrect=validateTree(bpres);
+			if(iscorrect){
+				createJsTree(bpres);
+				showEchartsTree(document.getElementById("bpres_tree_container"),getCompleteEchartsTree(true));
+			}
+			else{
+				alert("句法分析结果有误！")
+			}
+		}		
+
+		function checkUserName(){
+     		username_input=document.getElementById("username_id");
+     		if(username_input.value.trim()==""){
+     			alert("请输入你的名字");
+     			username_input.style.background="#FFAAAA";
+     			return false;
+     		}
+     		username_input.style.background="#FFFFFF";
+			return true;	     		
+     	}		
+	</script>
+	
+</body>
+</html>

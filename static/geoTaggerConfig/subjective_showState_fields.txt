@@ -1,0 +1,12 @@
+seg	分词	1
+time	时间	0
+loc	地点	0
+term	术语	0
+quant	数量词	0
+pos	词性	1
+auto_bpres	自动成分分析	0
+bpres	人工成分分析	0
+simplifiedTemplate	简化模板	1
+fullTemplate	完整模板	0
+autoTemplate	自动简化模板	1
+autoTemplate	自动完整模板	0

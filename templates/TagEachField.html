@@ -64,7 +64,7 @@
 	            <tr>
 					{%if not States.seg%}
 	            	<td>
-	            		时间、地点标注(需要先完成【分词】标注)
+	            		时间、地点、术语、数量词标注(需要先完成【分词】标注)
 	            	</td>
 	            	{% elif not States.pos  %}
 	            	<td>
@@ -116,6 +116,21 @@
 	            	{%else%}
 	            	<td>
 						模板标注（需要先完成【分词】标注）
+					</td>
+	            	{%endif%}
+	            </tr>
+                <tr>
+	            	{% if States.seg %}
+	            	<td>
+	            		{%if papertype == "choice"%}
+	            			<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">题干选项标注</a>
+	            		{%else%}
+							<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex=1">题干选项标注</a>
+	            		{%endif%}
+	            	</td>
+	            	{%else%}
+	            	<td>
+						题干选项标注（需要先完成【分词】标注）
 					</td>
 	            	{%endif%}
 	            </tr>

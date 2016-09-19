@@ -119,7 +119,6 @@ def browseByPaper(request):
                                 tag_tmpf.write(",")
                         tag_tmpf.write("\n")       
 
-
                 #关闭文件
                 tag_tmpf.close()
         
@@ -139,9 +138,7 @@ def browseByPaper(request):
         response=HttpResponse(buffer.read())
         response['Content-Type']="application/x-zip"
         response['Content-Disposition']='attachment; filename='+timestamp+".byPaper."+papertype+".zip"
-        #response['Content-Length']=temp.tell()
-        #temp.seek(0)
-        
+
         #删除未打包的文件夹
         shutil.rmtree(source_dir)
         
@@ -205,6 +202,8 @@ def getData(conn,papertype,paperName_kw):
             data['States']['auto_bpres']=False
         if 'autoTemplate' not in data['States']:
             data['States']['autoTemplate']=False
+        if "questionInfo" not in data['States']:
+            data['States']['questionInfo']=False
 
         paperInfoData.append(data)
     return paperInfoData

@@ -183,13 +183,13 @@ def tagTemplate(request):
 
         #print tagInfo
         if "save_btn" in request.POST:
-            if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
+            if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username,request):
                 checkGlobalTagState(papername,papertype)
                 return HttpResponseRedirect('./TagTemplate?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+globalIndex)
             else:
                 return HttpResponse("保存出错")
         elif "saveAndNext_btn" in request.POST:
-            if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
+            if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username,request):
                 checkGlobalTagState(papername,papertype)
                 nextIndex=checkAndFindTextInfoInDB(papername,papertype,globalIndex)[3]
                 return HttpResponseRedirect('./TagTemplate?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+nextIndex)
@@ -330,7 +330,7 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
         return False
 
 
-def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
+def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username,request):
     #连接数据库
     configFile=open("static/config.txt",'r')
     mongoIP=configFile.readline().split("\t")[1].strip()

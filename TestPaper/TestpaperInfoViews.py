@@ -48,6 +48,8 @@ def testpaperInfo(request):
             #数据预处理，将列表类型的数据修改为拼接好的字符串供前端直接使用
             for question in paperdata['Questions']:
                 for ctext in question[textFieldName]:
+                    segres=ctext['segres']
+
                     may_empty_fields=['segres_fg','auto_seg',"auto_seg_fg","auto_time","auto_loc","auto_pos","auto_bpres"]
                     for mef in may_empty_fields:
                         if mef not in ctext:
@@ -60,8 +62,17 @@ def testpaperInfo(request):
                             else:
                                 ctext[tagField[0]]=""
                         elif tagField[2]=="list_num":
-                            if tagField[0] in ctext:                                  
-                                ctext[tagField[0]]=" ".join([str(l) for l in ctext[tagField[0]]])
+                            if tagField[0] in ctext:
+                                info_str1=""
+                                info_str2=""
+                                for index in ctext[tagField[0]]:
+                                    try:
+                                        info_str1 += segres[int(index)]+" "
+                                        info_str2 += str(index)+" "
+                                    except:
+                                        info_str2 += str(index)+" "
+
+                                ctext[tagField[0]]=info_str1+"\n("+info_str2+")"
                             else:
                                 ctext[tagField[0]]=""
                         elif tagField[2]=="list_string_index":
@@ -73,7 +84,7 @@ def testpaperInfo(request):
                             if tagField[0] in ctext:
                                 ctext[tagField[0]]=" ".join(ctext[tagField[0]])
                             else:
-                                ctext[tagField[0]]=""                    
+                                ctext[tagField[0]]=""
 
                     if papertype=="choice":
                         ctext['number']=str(question[questionIndexFieldName])+"-"+ctext['number']

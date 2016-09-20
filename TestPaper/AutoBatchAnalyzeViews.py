@@ -151,7 +151,7 @@ def autoBatchAnalyze(request):
                         tag_lists.append([])
 
                     tmpstr=""
-                    s=s.decode("gbk")
+                    s=s.decode("utf-8")
                     for index,w in enumerate(s.strip().split()):                                
                         if "_" in w:
                             tmpstr+=w.split("_")[0]+"_"+str(index)+" "

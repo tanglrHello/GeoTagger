@@ -72,6 +72,8 @@ def browseByTemplate(request):
         for paper in papers:
             for question in paper['Questions']:
                 for ctext in question[textFieldName]:
+                    segres = ctext['segres']
+
                     flag=False
                     if t_type=="FT":   #按完整模板查询                 
                         if 'fullTemplateTypes' in ctext and tname in ctext['fullTemplateTypes']:
@@ -96,8 +98,17 @@ def browseByTemplate(request):
                                 else:
                                     singleText[tagField[0]]=""
                             elif tagField[2]=="list_num":
-                                if tagField[0] in singleText:                                  
-                                    singleText[tagField[0]]=" ".join([str(l) for l in singleText[tagField[0]]])
+                                if tagField[0] in singleText:
+                                    info_str1 = ""
+                                    info_str2 = ""
+                                    for index in ctext[tagField[0]]:
+                                        try:
+                                            info_str1 += segres[int(index)] + " "
+                                            info_str2 += str(index) + " "
+                                        except:
+                                            info_str2 += str(index) + " "
+
+                                    ctext[tagField[0]] = info_str1 + "\n(" + info_str2 + ")"
                                 else:
                                     singleText[tagField[0]]=""
                             elif tagField[2]=="list_string_index":

@@ -249,15 +249,22 @@
 
         <strong>成分分析：</strong>
         {% if papertype == "choice"%}
-          <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
-          <br />
-          <strong>模板标注：</strong>
-          <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用模板标注专用页面</a></font>
+            <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
+            <br />
+            <strong>模板标注：</strong>
+            <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用模板标注专用页面</a></font>
+            <br />
+            <strong>题干选项标注：</strong>
+            <font size="3"><a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用题干选项标注专用页面</a></font>
+
         {%else%}
-          <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
-          <br />
-          <strong>模板标注：</strong>
-          <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用模板标注专用页面</a></font>
+            <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
+            <br />
+            <strong>模板标注：</strong>
+            <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用模板标注专用页面</a></font>
+            <br />
+            <strong>题干选项标注：</strong>
+            <font size="3"><a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用题干选项标注专用页面</a></font>
         {%endif%}
 
       <br />

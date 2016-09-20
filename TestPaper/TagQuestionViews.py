@@ -320,7 +320,7 @@ def checkGlobalTagState(papername, papertype):
                 else:
                     taggers[ctext['question_tagger']] += 1
 
-    paperInfo['relativeUsernames']['template_tagger'] = list(taggers)
+    paperInfo['relativeUsernames']['question_tagger'] = list(taggers)
 
     paperInfo['States']['questionInfo'] = question_info_state
 

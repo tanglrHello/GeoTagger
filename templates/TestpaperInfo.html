@@ -59,12 +59,12 @@
 
 		     			
 		     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25%}
+							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29%}
 							</tr>
 	     					<tr>
 							{%endif%}
 
-							{%if forloop.counter0 == 17%}
+							{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
 								<td>--------------------------------</td>
 								<td>--------------------------------</td>
 								<td>--------------------------------</td>
@@ -125,7 +125,7 @@
 
 		     			
 		     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-							{%if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 or forloop.counter0 == 12 or forloop.counter0 == 16 or forloop.counter0 == 20 or forloop.counter0 == 24%}
+							{%if forloop.counter0 == 2 or forloop.counter0 == 6 or forloop.counter0 == 8 or forloop.counter0 == 12 or forloop.counter0 == 16 or forloop.counter0 == 20 or forloop.counter0 == 24 %}
 							</tr>
 	     					<tr>
 							{%endif%}
@@ -240,7 +240,7 @@
  					[13,14,15,16,],
  					[17,18,19,20,],
  					[21,22,23,24],
- 					[25,26,27,28]]
+ 					[25,26,27,28]
  			}
  			else{
  				row_chk=[[0,1],

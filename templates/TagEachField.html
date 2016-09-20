@@ -120,19 +120,17 @@
 	            	{%endif%}
 	            </tr>
                 <tr>
+                {%if papertype == "choice"%}
 	            	{% if States.seg %}
 	            	<td>
-	            		{%if papertype == "choice"%}
-	            			<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">题干选项标注</a>
-	            		{%else%}
-							<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex=1">题干选项标注</a>
-	            		{%endif%}
+                        <a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">题干选项标注</a>
 	            	</td>
 	            	{%else%}
 	            	<td>
 						题干选项标注（需要先完成【分词】标注）
 					</td>
 	            	{%endif%}
+                {%endif%}
 	            </tr>
 	         </tbody>
 	     </table>

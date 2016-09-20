@@ -61,6 +61,8 @@ def tagQuestion(request):
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
 
+    username = request.COOKIES.get("username", "")
+
     if request.method == 'GET':
         if textInfo['segres'] == []:
             return HttpResponse("请先完成对该句的分词标注")
@@ -88,7 +90,8 @@ def tagQuestion(request):
                                    'papername': papername,
                                    'papertype': papertype,
                                    'allValidIndex': json.dumps(allValidIndex),
-                                   'fullQuestion': json.dumps(fullQuestion)
+                                   'fullQuestion': json.dumps(fullQuestion),
+                                   'username': username
                                    })
 
     elif request.method == 'POST':
@@ -114,16 +117,20 @@ def tagQuestion(request):
         if "save_btn" in request.POST:
             if saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, request):
                 checkGlobalTagState(papername, papertype)
-                return HttpResponseRedirect(
+                response = HttpResponseRedirect(
                     './TagQuestion?papername=' + papername + "&papertype=" + papertype + "&" + globalIndexFieldName + "=" + globalIndex)
+                response.set_cookie("username", username.strip(),3600)
+                return response
             else:
                 return HttpResponse("保存出错")
         elif "saveAndNext_btn" in request.POST:
             if saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, request):
                 checkGlobalTagState(papername, papertype)
                 nextIndex = checkAndFindTextInfoInDB(papername, papertype, globalIndex)[3]
-                return HttpResponseRedirect(
+                response = HttpResponseRedirect(
                     './TagQuestion?papername=' + papername + "&papertype=" + papertype + "&" + globalIndexFieldName + "=" + nextIndex)
+                response.set_cookie("username", username.strip(), 3600)
+                return response
             else:
                 return HttpResponse("保存出错")
 

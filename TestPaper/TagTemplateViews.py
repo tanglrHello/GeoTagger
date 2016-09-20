@@ -64,6 +64,8 @@ def tagTemplate(request):
             textInfo['xuanxiang']=textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab']=textInfo['text'].replace("\t","") 
 
+    username = request.COOKIES.get("username","")
+
     tagtype=""
     if request.method=='GET':      
         if textInfo['segres']==[]:
@@ -98,7 +100,8 @@ def tagTemplate(request):
                             'template_config':template_Info,
                             'template_config_json':json.dumps(template_Info),
                             'tagtype':tagtype,
-                             'fullQuestion': json.dumps(fullQuestion)
+                             'fullQuestion': json.dumps(fullQuestion),
+                             'username': username
                             })
 
     elif request.method=="POST" and "generateTemplate" in request.POST:   #自动生成整张试卷所有试题文本的模板标注
@@ -160,7 +163,8 @@ def tagTemplate(request):
                                 'template_config':template_Info,
                                 'template_config_json':json.dumps(template_Info),
                                 'tagtype':tagtype,
-                                'fullQuestion': json.dumps(fullQuestion)
+                                'fullQuestion': json.dumps(fullQuestion),
+                                 'username': username
                                 })
 
     elif request.method=='POST':
@@ -187,14 +191,18 @@ def tagTemplate(request):
         if "save_btn" in request.POST:
             if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username,request):
                 checkGlobalTagState(papername,papertype)
-                return HttpResponseRedirect('./TagTemplate?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+globalIndex)
+                response = HttpResponseRedirect('./TagTemplate?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+globalIndex)
+                response.set_cookie('username', username.strip(), 3600)
+                return response
             else:
                 return HttpResponse("保存出错")
         elif "saveAndNext_btn" in request.POST:
             if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username,request):
                 checkGlobalTagState(papername,papertype)
                 nextIndex=checkAndFindTextInfoInDB(papername,papertype,globalIndex)[3]
-                return HttpResponseRedirect('./TagTemplate?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+nextIndex)
+                response = HttpResponseRedirect('./TagTemplate?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+nextIndex)
+                response.set_cookie('username', username.strip(), 3600)
+                return response
             else:
                 return HttpResponse("保存出错")
 

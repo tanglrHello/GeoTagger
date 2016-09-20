@@ -50,11 +50,11 @@ def tagQuestion(request):
         return HttpResponse("<h1>非法访问，该试卷没有这个选项文本")
     else:
         textInfo = result[0]
-        print textInfo
         questionIndex = result[1]
         lastIndex = result[2]
         nextIndex = result[3]
         allValidIndex = result[4]
+        fullQuestion = result[5]
         if papertype == "choice":
             # 将text拆成题面和选项，供前端显示
             textInfo['timian'] = textInfo['text'].split("\t")[0]
@@ -88,6 +88,7 @@ def tagQuestion(request):
                                    'papername': papername,
                                    'papertype': papertype,
                                    'allValidIndex': json.dumps(allValidIndex),
+                                   'fullQuestion': json.dumps(fullQuestion)
                                    })
 
     elif request.method == 'POST':
@@ -188,6 +189,8 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
 
     allValidIndex = []
 
+    fullQuestion = None
+
     for question in paperInfo['Questions']:
         for ctext in question[textFieldName]:
             allValidIndex.append(ctext[globalIndexFieldName])
@@ -203,6 +206,18 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
                 elif papertype == "subjective":
                     res.append(question['number'])
                 findFlag = True
+
+                if papertype=="choice":
+                    # generate full question text
+                    fullQuestionInfo=[]
+                    fullQuestionInfo.append(question['timian'])
+                    for sc in question['smallChoices']:
+                        fullQuestionInfo.append(sc['choiceIndex']+" "+sc['choiceContent'])
+                    for c in question['choices']:
+                        fullQuestionInfo.append(c['choiceIndex']+" "+c['choiceContent'])
+                    fullQuestion = "\n".join(fullQuestionInfo)
+                else:
+                    fullQuestion = ""
             else:
                 lastIndex = ctext[globalIndexFieldName]
 
@@ -210,6 +225,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
         res.append(lastIndex)
         res.append(nextIndex)
         res.append(allValidIndex)
+        res.append(fullQuestion)
         return res
     else:
         # 如果遍历后没有找到则返回False

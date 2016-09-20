@@ -313,6 +313,10 @@
       </div>
 	</div>
 
+    <button class="btn btn-info" onclick="showFullQuestion();" style="position:fixed;right:25px;top:300px;z-index:10000;">
+        <span>完整题目</span>
+    </button>
+
 
 	
 	<script>
@@ -696,6 +700,11 @@
 			template_input.style.background="#FFFFFF";
 			return true;
      	}
+
+        function showFullQuestion(){
+            var fullQuestion = {{fullQuestion|safe}};
+            alert(fullQuestion);
+        }
 
 		function submitCheck(){
 			return checkUserName()&&checkCueword('simplified')&&checkCueword('full')&&checkEmpty()&&checkTemplate("simplified")&&checkTemplate("full");

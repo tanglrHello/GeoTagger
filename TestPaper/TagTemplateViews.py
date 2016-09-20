@@ -57,6 +57,7 @@ def tagTemplate(request):
         nextIndex=result[3]
         allValidIndex=result[4]
         lastTextTemplateInfos=result[5]
+        fullQuestion=result[6]
         if papertype=="choice":
             #将text拆成题面和选项，供前端显示
             textInfo['timian']=textInfo['text'].split("\t")[0]
@@ -96,7 +97,8 @@ def tagTemplate(request):
                             'allValidIndex':json.dumps(allValidIndex),
                             'template_config':template_Info,
                             'template_config_json':json.dumps(template_Info),
-                            'tagtype':tagtype
+                            'tagtype':tagtype,
+                             'fullQuestion': json.dumps(fullQuestion)
                             })
 
     elif request.method=="POST" and "generateTemplate" in request.POST:   #自动生成整张试卷所有试题文本的模板标注
@@ -143,7 +145,6 @@ def tagTemplate(request):
         textInfo['segres']=" ".join([w+"_"+str(i) for w,i in zip(textInfo['segres'],range(len(textInfo['segres'])))])
 
         tagtype=u"自动标注"
-        
 
         return render_to_response("TagTemplate.html",
                                 {'textInfoJson':json.dumps(textInfo),
@@ -158,7 +159,8 @@ def tagTemplate(request):
                                 'allValidIndex':json.dumps(allValidIndex),
                                 'template_config':template_Info,
                                 'template_config_json':json.dumps(template_Info),
-                                'tagtype':tagtype
+                                'tagtype':tagtype,
+                                'fullQuestion': json.dumps(fullQuestion)
                                 })
 
     elif request.method=='POST':
@@ -285,6 +287,8 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
                         'simplifiedTemplateTypes']
     autoFieldNames=["auto_"+n for n in relativeFieldNames]
 
+    fullQuestion = None
+
     for question in paperInfo['Questions']:
         for ctext in question[textFieldName]:
             allValidIndex.append(ctext[globalIndexFieldName])
@@ -310,6 +314,18 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
                 elif papertype=="subjective":
                     res.append(question['number'])
                 findFlag=True
+
+                if papertype=="choice":
+                    # generate full question text
+                    fullQuestionInfo = []
+                    fullQuestionInfo.append(question['timian'])
+                    for sc in question['smallChoices']:
+                        fullQuestionInfo.append(sc['choiceIndex'] + " " + sc['choiceContent'])
+                    for c in question['choices']:
+                        fullQuestionInfo.append(c['choiceIndex'] + " " + c['choiceContent'])
+                    fullQuestion = "\n".join(fullQuestionInfo)
+                else:
+                    fullQuestion = ""
             else:
                 lastIndex=ctext[globalIndexFieldName]
                 if papertype=="choice":     #只有选择题需要从上一题同步的功能
@@ -324,6 +340,7 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
         res.append(nextIndex)
         res.append(allValidIndex)
         res.append(lastTextTemplateInfos)
+        res.append(fullQuestion)
         return res
     else:
         #如果遍历后没有找到则返回False

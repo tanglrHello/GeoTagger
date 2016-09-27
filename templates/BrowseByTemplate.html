@@ -156,12 +156,12 @@
 
 		     			
 		     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25%}
+							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29%}
 							</tr>
 	     					<tr>
 							{%endif%}
 
-							{%if forloop.counter0 == 17%}
+							{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
 								<td>--------------------------------</td>
 								<td>--------------------------------</td>
 								<td>--------------------------------</td>
@@ -511,11 +511,11 @@
 				     				<p><input type="checkbox" name="outcontent" value="sourceChk" />来源</p>
 				     			</td>
 				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25%}
+									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29 or forloop.counter0 == 33%}
 									</tr>
 			     					<tr>
 									{%endif%}
-									{%if forloop.counter0 == 17%}
+									{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>

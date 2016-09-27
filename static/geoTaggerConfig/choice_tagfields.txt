@@ -27,3 +27,8 @@ auto_simplifiedTemplateCueword	（auto）简化模板线索词	list_string	auto_
 auto_fullTemplateCueword	（auto）完整模板线索词	list_string	auto_template_valid	5	26
 auto_simplifiedTemplateTypes	（auto）简化模板类型	list_string	auto_template_valid	5	27
 auto_fullTemplateTypes	（auto）完整模板类型	list_string	auto_template_valid	5	28
+choice_type	选项类别	string	null	5	29
+qiandao_type	题干前导类型	string	null	5	30
+core_type	题干核心类型	string	null	5	31
+core_verb	题干核心动词	string	null	5	32
+delete_part	可删除的套话	string	null	5	33

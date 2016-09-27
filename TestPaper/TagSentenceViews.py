@@ -251,10 +251,10 @@ def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
                     ctext['segres']=[p.split("_")[0] for p in tagInfo['seg'].split()]
                     ctext['segres_fg']=[p.split("_")[0] for p in tagInfo['seg_fg'].split()]
                     ctext['posres']=[p.split("_")[1] for p in tagInfo['pos'].split()]
-                    ctext['goldtimes']=tagInfo['time'].split()
-                    ctext['goldlocs']=tagInfo['loc'].split()
-                    ctext['goldterms']=tagInfo['term'].split()
-                    ctext['goldquants']=tagInfo['quant'].split()
+                    ctext['goldtimes']=[int(x) for x in tagInfo['time'].split()]
+                    ctext['goldlocs']=[int(x) for x in tagInfo['loc'].split()]
+                    ctext['goldterms']=[int(x) for x in tagInfo['term'].split()]
+                    ctext['goldquants']=[int(x) for x in tagInfo['quant'].split()]
 
                     #试题文本，如果有修改，添加一个字段，记录之前的试题文本的内容
                     if papertype=="choice":

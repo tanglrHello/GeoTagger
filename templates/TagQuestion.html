@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>题干选项标注-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../static/css/hover.css" type="text/css" />
+    <script src="../static/js/hover.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>题干选项标注-{{papername}}</h1>
+	</div>
+
+	<div class="container">
+		<font size="4"><a href="./TagEachField.html?papername={{papername}}&papertype={{papertype}}">回到本试卷单项标注导航页</a></font><br />
+
+        {%if papertype == "choice"%}
+		<font size="4"><a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">回到本句单句标注页面</a></font>
+		{%else%}
+		<font size="4"><a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">回到本句单句标注页面</a></font>
+		{%endif%}<br>
+
+        <font size="4"><a href="./TestpaperInfo.html?papername={{papername}}&papertype={{papertype}}">查看本试卷所有试题信息</a></font><br />
+		<br /><br />
+
+		<form method="POST">
+			<div class="input-group">
+				{% if papertype == "choice"%}
+				<span class="input-group-addon" id="sizing-addon1">组合选项序号：</span>
+				<input id="number" type="text" class="form-control" value="{{textInfo.combinedChoiceIndex}}">
+				{%else%}
+				<span class="input-group-addon" id="sizing-addon1">小题序号：</span>
+				<input id="number" type="text" class="form-control" value="{{textInfo.subQuestionIndex}}">
+				{%endif%}
+	     		<span class="input-group-btn">
+	        		<button id="skip_btn" class="btn btn-default" type="button" onclick="SkipFunc()">跳转</button>
+	      		</span>
+	   		</div><!-- /input-group -->
+	   		<br />
+	   		<script>
+		      var originalNumber=document.getElementById("number").value;
+
+		      function SkipFunc(){
+		        var allValidIndex={{allValidIndex|safe}};
+		        var papername="{{papername}}";
+
+		        skipto=document.getElementById("number").value;
+
+		        var i=0;
+		        for(i=0;i<allValidIndex.length;i++){
+		          if(allValidIndex[i]==skipto){
+		            window.location.href="./TagQuestion.html?papername="+papername+"&papertype=choice&combinedChoiceIndex="+skipto;
+		            break;
+		          }
+		        }
+
+		        if(i==allValidIndex.length){   //不是有效的index
+		          alert("本试卷中没有这个组合选项，或者该选项不需要拆分，可拆分的选项有："+allValidIndex);
+		        }
+
+		        //恢复原本的序号
+		        document.getElementById("number").value=originalNumber;
+		      }
+		    </script>
+
+			{% if papertype == "choice"%}
+	   		<label>所属选择题题号：{{questionIndex}}</label><br>
+	        <label>所属选项号:{{textInfo.number}}</label><br>
+	        {%else%}
+			<label>所属大题题号：{{questionIndex}}</label><br>
+	        <label>所属小题号:{{textInfo.number}}</label><br>
+	        {%endif%}
+
+	        {% if lastIndex %}
+	        	{%if papertype == "choice"%}
+	        		<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{lastIndex}}">上一句</a>
+	        	{%else%}
+					<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{lastIndex}}">上一句</a>
+	        	{%endif%}
+	        {% endif %}
+	        {% if nextIndex %}
+	        	{%if papertype == "choice"%}
+	        		<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{nextIndex}}">下一句</a>
+	        	{%else%}
+					<a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{nextIndex}}">下一句</a>
+	        	{%endif%}
+	        {% endif %}
+	        <br><br>
+	    </form>
+
+		<form method="POST" onsubmit="return submitCheck();">
+			<div class="input-group">
+                {%if papertype == "choice"%}
+                    <span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
+                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
+                {%else%}
+                    <span class="input-group-addon" id="sizing-addon1">题面：</span>
+                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
+                {%endif%}
+			</div><br>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon1">选项类别:</span>
+                <input type="text" class="form-control" readOnly="true" name="choice_type_input_name" value="{{textInfo.choice_type}}">
+			</div>
+            <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">名词短语(时间/地点/实体/其他)</button>
+            <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">名词短语序列(List<时间/地点/实体/其他>)</button><br>
+            <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">不含主语的句子（动词短语)</button>
+            <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">含主语的句子</button>
+            <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">自定义类别</button><br><br>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类:</span>
+                <input type="text" class="form-control" readOnly="true" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
+			</div>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">时间状语</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">范围限定</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">目的状语</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">条件状语</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">陈述句</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button><br><br>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon1">题干核心成分分类:</span>
+                <input type="text" class="form-control" readOnly="true" name="core_type_input_name" value="{{textInfo.core_type}}">
+			</div>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">范围限定</button>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">名词短语(包括时间/地点短语)</button><br>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">名词短语+动词短语</button>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">动词短语</button>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">自定义类别</button><br>
+
+            <div id="for_core_verb" hidden="true">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon1">核心成分中的动词:</span>
+                    <input type="text" class="form-control" placeholder="例如:3 或者 3-5,表示第3个词语或者是第3和5两个词语(不包括第4个)"
+                           name="core_verb_input_name" value="{{textInfo.core_verb}}">
+                </div>
+
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon1">分词：</span>
+                    <textarea type="text" name="seg_name" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+                </div>
+                <br>
+            </div>
+            <br>
+
+            <div id="delete_part">
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon1">可删除的套话:</span>
+                    <input type="text" class="form-control" name="delete_part_input_name"
+                           value="{{textInfo.delete_part}}"
+                           placeholder="例如:3 或者 3-5,表示第3个词语或者是第3到第5三个词语(包括第4个)">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon" id="sizing-addon1">分词：</span>
+                    <textarea type="text" name="seg_name" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+                </div>
+            </div>
+            <br>
+
+			{% if textInfo.question_tagger%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1"><strong>当前页面的标注者：</strong></span>
+	      		<input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.question_tagger}}" readOnly="true">
+	   		</div><br>
+	   		{%endif%}
+			<div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该页内容的标注者）：</strong></span>
+	      		<input id="username_id" name="username_name" type="text" class="form-control" value="{{ username }}">
+	   		 </div>
+	   		 <div id="username_empty_error" class="alert alert-danger" role="alert">姓名不能为空</div>
+		   	<br />
+			<div style="text-align:right";>
+	          <button name="save_btn" type="submit" class="btn btn-default navbar-btn" >保存</button>
+	          {% if nextIndex %}
+	          <button name="saveAndNext_btn" type="submit" class="btn btn-default navbar-btn" >保存并下一句</button>
+	          {%endif%}
+	        </div>
+        </form>
+
+	</div>
+
+    <button class="btn btn-info" onclick="showFullQuestion();" style="position:fixed;right:25px;top:300px;z-index:10000;">
+        <span>完整题目</span>
+    </button>
+
+	<script>
+
+		//错误信息初始为不可见
+		document.getElementById("username_empty_error").style.display="none";
+
+        //根据核心成分分类,判断是否显示核心动词相关内容
+        var core_verb = document.getElementById("for_core_verb");
+        if (input_ele.value=="名词短语+动词短语"||input_ele.value=="动词短语"){
+            core_verb.style.display="table-cell";
+        }
+
+        function click_button(element){
+            var input_ele = document.getElementsByName(element.name.split("_")[0]+"_type_input_name")[0];
+            input_ele.value = element.innerText;
+
+            // core_type contains verb, show core_verb input
+            if (element.name.split("_")[0]=="core"){
+                var core_verb = document.getElementById("for_core_verb");
+                if (input_ele.value=="名词短语+动词短语"||input_ele.value=="动词短语"){
+                    core_verb.style.display="block";
+                }
+                else{
+                    core_verb.style.display="none";
+                }
+            }
+        }
+
+        function submitCheck(){
+            //check empty
+            var choice_type=document.getElementsByName("choice_type_input_name")[0];
+            if (choice_type.value==""){
+                choice_type.style.background="#FFAAAA";
+                alert("请选择选项类别");
+                return false;
+            }
+            choice_type.style.background="#FFFFFF";
+
+            var qiandao_type=document.getElementsByName("qiandao_type_input_name")[0];
+            if (qiandao_type.value==""){
+                qiandao_type.style.background="#FFAAAA";
+                alert("请选择前导部分分类");
+                return false;
+            }
+            qiandao_type.style.background="#FFFFFF";
+
+            var core_type=document.getElementsByName("core_type_input_name")[0];
+            if (core_type.value==""){
+                core_type.style.background="#FFAAAA";
+                alert("请选择核心成分分类");
+                return false;
+            }
+            core_type.style.background="#FFFFFF";
+
+            var username = document.getElementById("username_id");
+            if (username.value==""){
+                username.style.background="#FFAAAA";
+                alert("请输入你的名字");
+                return false;
+            }
+            username.style.background="#FFFFFF";
+            //---check empty end---
+
+            //check index
+            var seglen = document.getElementsByName("seg_name")[0].value.split(" ").length;
+
+            var core_verb=document.getElementsByName("core_verb_input_name")[0];
+            if (core_type.value=="名词短语+动词短语"||core_type.value=="动词短语"){
+                if (core_verb.value==""){
+                    core_verb.style.background="#FFAAAA";
+                    alert("当题干核心成分分类为 动词短语/名词短语+动词短语 时,请填写动词");
+                    return false;
+                }
+                if (!checkIndex(core_verb.value, seglen)){
+                    core_verb.style.background="#FFAAAA";
+                    return false;
+                }
+            }
+            core_verb.style.background="#FFFFFF";
+
+            var delete_part=document.getElementsByName("delete_part_input_name")[0];
+            if (delete_part.value!=""){
+                if (!checkIndex(delete_part.value, seglen)){
+                    delete_part.style.background="#FFAAAA";
+                    return false;
+                }
+            }
+            delete_part.style.background="#FFFFFF";
+            //---check index end---
+
+            return true;
+        }
+
+        function checkIndex(index_str,seglen){
+            var index_arr=index_str.split("-");
+            for (var i=0; i<index_arr.length; i++){
+                if (index_arr[i]==""){
+                    alert("多余的-");
+                    return false;
+                }
+                index=parseInt(index_arr[i]);
+                if (index>=seglen){
+                    alert("下标溢出");
+                    return false;
+                }
+            }
+
+            //判断是不是数字
+            var re = /^[1-9]+[0-9]*$/;
+            if (!re.test(cw_index) && cw_index!="0") {
+                alert("存在不是数字的下标");
+                return false;
+            }
+        }
+
+        function showFullQuestion(){
+            var fullQuestion = {{fullQuestion|safe}};
+            alert(fullQuestion);
+        }
+
+
+	</script>
+
+</body>
+</html>

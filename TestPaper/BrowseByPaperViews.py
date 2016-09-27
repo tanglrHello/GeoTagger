@@ -117,8 +117,7 @@ def browseByPaper(request):
 
                             if index<len(outContent)-1:
                                 tag_tmpf.write(",")
-                        tag_tmpf.write("\n")       
-
+                        tag_tmpf.write("\n")
 
                 #关闭文件
                 tag_tmpf.close()
@@ -139,9 +138,7 @@ def browseByPaper(request):
         response=HttpResponse(buffer.read())
         response['Content-Type']="application/x-zip"
         response['Content-Disposition']='attachment; filename='+timestamp+".byPaper."+papertype+".zip"
-        #response['Content-Length']=temp.tell()
-        #temp.seek(0)
-        
+
         #删除未打包的文件夹
         shutil.rmtree(source_dir)
         
@@ -195,6 +192,8 @@ def getData(conn,papertype,paperName_kw):
             data['relativeUsernames']['template_tagger']=" ".join(data['relativeUsernames']['template_tagger'])
         if 'conpparse_tagger' in data['relativeUsernames']:
             data['relativeUsernames']['conpparse_tagger']=" ".join(data['relativeUsernames']['conpparse_tagger'])
+        if 'question_tagger' in data['relativeUsernames']:
+            data['relativeUsernames']['question_tagger']=" ".join(data['relativeUsernames']['question_tagger'])
 
         data['States']=paper['States']
         if 'term' not in data['States']:
@@ -205,6 +204,8 @@ def getData(conn,papertype,paperName_kw):
             data['States']['auto_bpres']=False
         if 'autoTemplate' not in data['States']:
             data['States']['autoTemplate']=False
+        if "questionInfo" not in data['States']:
+            data['States']['questionInfo']=False
 
         paperInfoData.append(data)
     return paperInfoData

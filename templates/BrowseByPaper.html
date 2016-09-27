@@ -133,19 +133,21 @@
 									{%if paper.relativeUsernames.template_tagger%}
 									模板：{{paper.relativeUsernames.template_tagger}}<br>
 									{%endif%}
+                                    {%if paper.relativeUsernames.question_tagger%}
+									题干选项：{{paper.relativeUsernames.question_tagger}}<br>
+									{%endif%}
 			                     </td>
 			                     <td>
 			                     	
 			                     	{% for abbr,chinese,newlineFlag in showStateFields_Info%}                     	
-			                     		{% if newlineFlag == "1" and not forloop.first%}
+			                     		{% if newlineFlag == "1" and not forloop.first %}
 											<br>
-			                     		{%endif%}	                     		
+			                     		{% endif %}
 			                     		{% for field,state in paper.States.items%}
 											{% if field == abbr %}
 												{{chinese}}{% if state%}<font color="#00a600">√</font>{%else%}<font color="#ce0000">×</font>{% endif %}
 											{%endif%}
 			                     		{%endfor%}
-										
 			                     	{%endfor%}
 			                     	
 			                     	
@@ -239,18 +241,17 @@
 					     				<p><input type="checkbox" name="outcontent" value="{{tag_abbr}}Chk" />{{tag_chinese}}</p>
 					     			</td>
 				     			{%endfor%}
-				     			
 				     	</table>
 				     	
 				     	{%else%}
 						<table id="outchoice_table" width="700">
 				     		<tr>
 				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25%}
+									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29 or forloop.counter0 == 33%}
 									</tr>
 			     					<tr>
 									{%endif%}
-									{%if forloop.counter0 == 17%}
+									{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>

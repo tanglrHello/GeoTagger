@@ -173,7 +173,7 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
                     'simplifiedTemplateCueword':False,
                     "fullTemplateCueword":False,
                     "fullTemplateTypes":False,
-                    "fullTemplate":False
+                    "fullTemplate":False,
                     }
         
         for index,line in enumerate(choiceFile.readlines()):

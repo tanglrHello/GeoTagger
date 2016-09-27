@@ -45,8 +45,9 @@
 		<font size="4"><a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">回到本句单句标注页面</a></font>
 		{%else%}
 		<font size="4"><a href="./TagSentence.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">回到本句单句标注页面</a></font>
-		{%endif%}
-		<br /><br />
+		{%endif%}<br>
+        <font size="4"><a href="./TestpaperInfo.html?papername={{papername}}&papertype={{papertype}}">查看本试卷所有试题信息</a></font><br />
+		<br />
 
 		<form method="POST">
 			{%if papertype == 'choice'%}
@@ -55,7 +56,7 @@
 			<input type="submit" value="生成候选模板标注（整张试卷）" class="btn btn-info" name="generateTemplate" disabled='disabled'/>
 			{%endif%}
 		</form>
-		<br /><br>
+		<br />
 
 		<form method="POST">
 			<div class="input-group">
@@ -99,10 +100,10 @@
 			
 			{% if papertype == "choice"%}
 	   		<label>所属选择题题号：{{questionIndex}}</label><br>
-	        <label>所属选项号:{{textInfo.number}}</label><br><br>
+	        <label>所属选项号:{{textInfo.number}}</label><br>
 	        {%else%}
 			<label>所属大题题号：{{questionIndex}}</label><br>
-	        <label>所属小题号:{{textInfo.number}}</label><br><br>
+	        <label>所属小题号:{{textInfo.number}}</label><br>
 	        {%endif%}
 
 	        {% if lastIndex %}
@@ -119,7 +120,7 @@
 					<a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{nextIndex}}">下一句</a>
 	        	{%endif%}
 	        {% endif %}
-	        <br><br><br>
+	        <br><br>
 	    </form>
 
 		
@@ -128,7 +129,7 @@
 			<div class="input-group">
 			{%if papertype == "choice"%}
 				<span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
-				<input type="text" class="form-control" value="{{textInfo.timian}} {{textInfo.xuanxiang}}" readOnly="true">
+				<textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
 			{%else%}
 				<span class="input-group-addon" id="sizing-addon1">题面：</span>
 				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
@@ -257,7 +258,7 @@
 	   		{%endif%}
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该句模板的标注者）：</strong></span>
-	      		<input id="username_id" name="username_name" type="text" class="form-control">
+	      		<input id="username_id" name="username_name" type="text" class="form-control" value="{{ username }}">
 	   		 </div>
 	   		 <div id="username_empty_error" class="alert alert-danger" role="alert">姓名不能为空</div>
 		   	<br />
@@ -311,6 +312,10 @@
         &nbsp;&nbsp;&nbsp;&nbsp;（表示下标为1的模板的线索词是分词结果中下标为2的词，下标为2的模板的线索词是分词结果中下标为4、5、6、7的这四个词）
       </div>
 	</div>
+
+    <button class="btn btn-info" onclick="showFullQuestion();" style="position:fixed;right:25px;top:300px;z-index:10000;">
+        <span>完整题目</span>
+    </button>
 
 
 	
@@ -506,30 +511,28 @@
 			document.getElementById("currentFTIndex").innerText=FT_index;
 		}
 
-		function copyFromLastSim(type){
-			if(type=="simplified"){
-				var last_ST={{lastTextTemplateInfos|safe}}['simplifiedTemplate'];
-				var last_STT={{lastTextTemplateInfos|safe}}['simplifiedTemplateTypes'];
-				var last_STC={{lastTextTemplateInfos|safe}}['simplifiedTemplateCueword'];
-				
-				document.getElementById("ST_input_name").value=last_ST;
-				document.getElementById("STT_input_name").value=last_STT;
-				document.getElementById("STC_input_name").value=last_STC;
-				document.getElementById("ST_input_name").style.background="#FFFFFF";
-			}
-			else if(type=="full"){
-				var last_FT={{lastTextTemplateInfos|safe}}['fullTemplate'];
-				var last_FTT={{lastTextTemplateInfos|safe}}['fullTemplateTypes'];
-				var last_FTC={{lastTextTemplateInfos|safe}}['fullTemplateCueword'];
-				
-				document.getElementById("FT_input_name").value=last_FT;
-				document.getElementById("FTT_input_name").value=last_FTT;
-				document.getElementById("FTC_input_name").value=last_FTC;
-				document.getElementById("FT_input_name").style.background="#FFFFFF";
-			}
-			
-			//document.getElementById("currentSTIndex").innerText="<font color='red'></font>";
-		}
+		function copyFromLastSim(type) {
+            if (type == "simplified") {
+                var last_ST = {{lastTextTemplateInfos|safe}}['simplifiedTemplate'];
+                var last_STT = {{lastTextTemplateInfos|safe}}['simplifiedTemplateTypes'];
+                var last_STC = {{lastTextTemplateInfos|safe}}['simplifiedTemplateCueword'];
+
+                document.getElementById("ST_input_name").value = last_ST;
+                document.getElementById("STT_input_name").value = last_STT;
+                document.getElementById("STC_input_name").value = last_STC;
+                document.getElementById("ST_input_name").style.background = "#FFFFFF";
+            }
+            else if (type == "full") {
+                var last_FT = {{lastTextTemplateInfos|safe}}['fullTemplate'];
+                var last_FTT = {{lastTextTemplateInfos|safe}}['fullTemplateTypes'];
+                var last_FTC = {{lastTextTemplateInfos|safe}}['fullTemplateCueword'];
+
+                document.getElementById("FT_input_name").value = last_FT;
+                document.getElementById("FTT_input_name").value = last_FTT;
+                document.getElementById("FTC_input_name").value = last_FTC;
+                document.getElementById("FT_input_name").style.background = "#FFFFFF";
+            }
+        }
 
 		function checkCueword(location){
 			var cueword_input=null;
@@ -550,7 +553,7 @@
 			cuewords=cueword_input.value.split(" ");
 			template_content=template_input.value;
 
-			template_index=[]
+			template_index=[];
 			for(var i=0;i<cuewords.length;i++){
 				if(cuewords[i]==""){
 					continue;
@@ -697,6 +700,11 @@
 			template_input.style.background="#FFFFFF";
 			return true;
      	}
+
+        function showFullQuestion(){
+            var fullQuestion = {{fullQuestion|safe}};
+            alert(fullQuestion);
+        }
 
 		function submitCheck(){
 			return checkUserName()&&checkCueword('simplified')&&checkCueword('full')&&checkEmpty()&&checkTemplate("simplified")&&checkTemplate("full");

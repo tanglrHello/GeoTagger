@@ -67,6 +67,8 @@ def tagConpparse(request):
     
     textInfo['segpos']=" ".join([s+"_"+p for s,p in zip(textInfo['segres'],textInfo['posres'])])
 
+    username = request.COOKIES.get("username", "")
+
     if request.method=='GET':  
         if 'bpres' not in textInfo:   #主观题没有标注结果的时候
             textInfo['conpparse']=textInfo['text']
@@ -93,7 +95,9 @@ def tagConpparse(request):
                             'nextIndex':nextIndex,
                             'papertype':papertype,
                             'papername':papername,
-                            'allValidIndex':json.dumps(allValidIndex)})
+                            'allValidIndex':json.dumps(allValidIndex),
+                             'username': username
+                             })
 
     elif request.method=="POST" and "generateBPres" in request.POST:   #自动生成整张试卷所有试题文本的成分分析结果
         input_sentences_goldseg=[]
@@ -167,7 +171,8 @@ def tagConpparse(request):
                                 'nextIndex':nextIndex,
                                 'papertype':papertype,
                                 'papername':papername,
-                                'allValidIndex':json.dumps(allValidIndex)})
+                                'allValidIndex':json.dumps(allValidIndex),
+                                 'username': username})
 
 
     elif request.method=='POST':
@@ -178,14 +183,18 @@ def tagConpparse(request):
         if "save_btn" in request.POST:
             if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
                 checkGlobalTagState(papername,papertype)
-                return HttpResponseRedirect('./TagConpparse?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+globalIndex)
+                response = HttpResponseRedirect('./TagConpparse?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+globalIndex)
+                response.set_cookie("username", username.strip(), 3600)
+                return response
             else:
                 return HttpResponse("保存出错")
         elif "saveAndNext_btn" in request.POST:
             if saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
                 checkGlobalTagState(papername,papertype)
                 nextIndex=checkAndFindTextInfoInDB(papername,papertype,globalIndex)[3]
-                return HttpResponseRedirect('./TagConpparse?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+nextIndex)
+                response = HttpResponseRedirect('./TagConpparse?papername='+papername+"&papertype="+papertype+"&"+globalIndexFieldName+"="+nextIndex)
+                response.set_cookie("username", username.strip(), 3600)
+                return response
             else:
                 return HttpResponse("保存出错")
     

@@ -71,70 +71,6 @@ def tagTerm(request):
 
     elif request.method == 'POST' and "generateTimeLoc" in request.POST:  # 自动生成时间地点候选标注
         return HttpResponse("暂不支持")
-        tl_input_sentences = []
-        for question in paperInfo['Questions']:
-            for ctext in question[textFieldName]:
-                tl_input_sentences.append(" ".join(ctext['segres']))
-
-        # 自动分词
-        geo_processor = geoProcessor.geo_Processor()
-        segtl_output_sentences = geo_processor.process(tl_input_sentences, 4)  # 接口4（分词结果-》含时间地点的分词）
-
-        # 对时间地点的结果进行处理
-        AllSegStrs = []
-
-        All_tltq_lists = []
-        for n in names:
-            All_tltq_lists.append([])
-
-        for s in segtl_output_sentences:
-            tag_lists = []
-            for n in names:
-                tag_lists.append([])
-
-            tmpstr = ""
-            s = s.decode("utf-8")
-            for index, w in enumerate(s.strip().split()):
-                if "_" in w:
-                    tmpstr += w.split("_")[0] + "_" + str(index) + " "
-                    for i, n in enumerate(names):
-                        if w.split("_")[1] == n:
-                            tag_lists[i].append(index)
-                            break
-                    else:
-                        print "error"
-                        print w
-                        return HttpResponse("出错了！")
-                else:
-                    tmpstr += w + "_" + str(index) + " "
-            AllSegStrs.append(tmpstr)
-
-            for i, atl in enumerate(All_tltq_lists):
-                atl.append(tag_lists[i])
-
-        # 将自动分析的时间地点放入数据库
-        paperInfo = dataCollection.find_one({'testpaperName': papername})
-
-        index = 0
-        for question in paperInfo['Questions']:
-            for ctext in question[textFieldName]:
-                for i, afn in enumerate(auto_fieldNames):
-                    ctext[afn] = All_tltq_lists[i][index]
-                index += 1
-        dataCollection.save(paperInfo)
-
-        # 时间地点格式处理，供前端显示
-        All_tltq_str_lists = []
-        for i in range(len(All_tltq_lists)):
-            All_tltq_str_lists.append([" ".join([str(i) for i in t]) for t in All_tltq_lists[i]])
-
-        return render_to_response("TagTerm.html",
-                                  {'States': paperInfo['States'],
-                                   "restype": u"自动标注",
-                                   "seg_term": zip(AllSegStrs, All_tltq_str_lists[0], All_tltq_str_lists[1],
-                                                       All_tltq_str_lists[2], All_tltq_str_lists[3]),
-                                   'papername': papername,
-                                   'papertype': papertype})
 
     else:  # 直接显示页面
         paperInfo = dataCollection.find_one({'testpaperName': papername})
@@ -160,7 +96,6 @@ def tagTerm(request):
                 if paperInfo['States']['term'] == True:  # 有人工标注的时间地点
                     if 'goldterms' in ctext:
                         termres.append(" ".join([str(i) for i in ctext['goldterms']]))
-                        print "***",ctext['goldterms']
                     else:
                         termres.append("")
                 else:
@@ -170,8 +105,6 @@ def tagTerm(request):
                         termres.append(" ".join([str(i) for i in ctext['auto_term']]))
                     else:
                         termres.append("")
-        print len(termres),len(seg)
-        print termres
 
         if paperInfo['States']['term'] == True:
             restype = u"人工标注"

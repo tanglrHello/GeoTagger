@@ -142,7 +142,7 @@
 				<textarea type="text" name="seg_name" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
 			</div>
 		    <div class="panel panel-default">
-			  	<div class="panel-heading"><strong>高阶模板：</strong></div>
+			  	<div class="panel-heading"><strong>一级模板：</strong></div>
 			  	<div class="panel-body">
 			  		<strong>插入模板：</strong><br />
 
@@ -160,7 +160,7 @@
 			  		<button type="button" class="btn btn-success" onClick="increaseIndex('top')">下标加1</button>
 			  		<button type="button" class="btn btn-success" onClick="resetTags('top')">清空标注</button>
 			  		{%if papertype == "choice"%}
-			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('top')">从上一句的高阶模板同步（不同步当前最大模板下标）</button>
+			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('top')">从上一句的一级模板同步（不同步当前最大模板下标）</button>
 			  		{%endif%}
 
 			  		<br /><br />
@@ -200,7 +200,7 @@
 			</div>
 
 			<div class="panel panel-default">
-			  	<div class="panel-heading"><strong>完整模板</strong></div>
+			  	<div class="panel-heading"><strong>二级模板</strong></div>
 			  	<div class="panel-body">
 			  		<strong>插入模板：</strong><br />
 
@@ -216,9 +216,9 @@
 			  		<button type="button" class="btn btn-success" onClick="decreaseIndex('second')">下标减1</button>
 			  		<button type="button" class="btn btn-success" onClick="increaseIndex('second')">下标加1</button>
 			  		<button type="button" class="btn btn-success" onClick="resetTags('second')">清空标注</button>
-			  		<button type="button" class="btn btn-success" onClick="copyFromSim()">从简化模板同步</button>
+			  		<button type="button" class="btn btn-success" onClick="copyFromSim()">从一级模板同步</button>
 			  		{%if papertype == "choice"%}
-			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('second')">从上一句的完整模板同步（不同步当前最大模板下标）</button>
+			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('second')">从上一句的二级模板同步（不同步当前最大模板下标）</button>
 			  		{%endif%}
 			  		<br /><br />
 
@@ -290,11 +290,11 @@
 		  </div>
 		</div>
 		<div class="alert alert-warning" role="alert">
-        <strong><font size="4">简化模板标注：</font></strong><br><br>
+        <strong><font size="4">一级模板标注：</font></strong><br><br>
         <label><font size="4">一个例子:</font></label><br>
         <strong>原文：</strong><br>
         &nbsp;&nbsp;&nbsp;&nbsp;河流/0 侵蚀作用/1 使/2 河床/3 加/4 宽/5 变/6 深/7<br>
-        <strong>简化模板：</strong><br>
+        <strong>一级模板：</strong><br>
         &nbsp;&nbsp;&nbsp;&nbsp;因果_0（河流侵蚀作用，河床加宽变深）<br>
         <strong>线索词</strong>：<br>
         &nbsp;&nbsp;&nbsp;&nbsp;0_2（表示下标为0的模板的线索词是分词结果中下标为2的词）
@@ -302,13 +302,13 @@
 
 
       <div class="alert alert-warning" role="alert">
-        <strong><font size="4">完整模板标注：</font></strong>除了“一般陈述”和“实体信息陈述”两个模板，其他模板要使用下标编号，下标从0开始计数<br><br>
+        <strong><font size="4">二级模板标注：</font></strong>除了“一般陈述”和“实体信息陈述”两个模板，其他模板要使用下标编号，下标从0开始计数<br><br>
         <label><font size="4">一个例子:</font></label><br>
         <strong>原文：</strong><br>
         &nbsp;&nbsp;&nbsp;&nbsp;河流/0 侵蚀作用/1 使/2 河床/3 加/4 宽/5 变/6 深/7<br>
-        <strong>完整模板：</strong><br>
+        <strong>二级模板：</strong><br>
         &nbsp;&nbsp;&nbsp;&nbsp;因果_0（河流侵蚀作用，趋势_1（河床，#，#，加宽变深））<br>
-        <strong>完整模板类型（空格隔开）：</strong>（多个类型之间用空格隔开）<br>
+        <strong>二级模板类型（空格隔开）：</strong>（多个类型之间用空格隔开）<br>
         &nbsp;&nbsp;&nbsp;&nbsp;因果 趋势<br>
         <strong>线索词</strong>（多个模板之间用一个空格隔开）：<br>
         &nbsp;&nbsp;&nbsp;&nbsp;0_2 1_4-5-6-7<br>
@@ -323,7 +323,7 @@
 
 
 	<script>
-		//location表明是在简化模板中插入还是在完整模板中插入
+		//location表明是在一级模板中插入还是在二级模板中插入
 		//type表明插入模板的类型
 		var ST_index=-1;
 		var FT_index=-1;
@@ -381,7 +381,7 @@
 					insertAtCursor(template_input,template_name[key]+"_"+index+"（）");
 
 					//修改线索词
-					if(ttype!="stxxcs" && ttype!="ybcs"&&ttype!="sjxd"&&ttype!="sstxxcs"){
+					if(ttype!="qtgl" && ttype!="qtcs"){
 						if(cueword_input.value==""){
 							cueword_input.value=index+"_";
 						}
@@ -558,7 +558,7 @@
             cq_index = cq.split("-");
             for (var i=0;i<cq_index.length;i++){
                 var re = /^[1-9]+[0-9]*$/;
-                if (!re.test(cq_index[i]) && cq_index!="0")
+                if (!re.test(cq_index[i]) && cq_index[i]!="0")
                 {
                     cq_input.style.background="#FFAAAA";
                     alert("选项问句范围中的下标"+cq_index[i]+"不是数字");
@@ -589,12 +589,12 @@
 			if(location=="top"){
 				template_input=document.getElementById("ST_input_name");
 				cueword_input=document.getElementById('STC_input_name');
-				template_type="高阶模板";
+				template_type="一级模板";
 			}
 			else if(location=="second"){
 				template_input=document.getElementById("FT_input_name");
 				cueword_input=document.getElementById('FTC_input_name');
-				template_type="二阶模板";
+				template_type="二级模板";
 			}
 
 			cuewords=cueword_input.value.split(" ");
@@ -605,6 +605,7 @@
 				if(cuewords[i]==""){
 					continue;
 				}
+
 				//某一项不含_
 				if(cuewords[i].indexOf("_")==-1){
 					cueword_input.style.background="#FFAAAA";
@@ -621,7 +622,6 @@
 						return false;
 					}
 				}
-
 
 				//某一项的模板下标不存在
 				template_index.push(cuewords[i].split("_")[0]);
@@ -683,14 +683,10 @@
 			var ST=document.getElementById("ST_input_name");
 			var FT=document.getElementById("FT_input_name");
 
-			if(ST.value==""){
+			if(ST.value=="" && FT.value==""){
 				ST.style.background="#FFAAAA";
-				alert("简化模板没有填写");
-				return false;
-			}
-			if(FT.value==""){
-				FT.style.background="#FFAAAA";
-				alert("完整模板没有填写");
+                FT.style.background="#FFAAAA";
+				alert("一级模板和二级模板至少要填写一个");
 				return false;
 			}
 
@@ -721,12 +717,12 @@
 			if(location=="top"){
 				template_input=document.getElementById("ST_input_name");
 				cueword_input=document.getElementById('STC_input_name');
-				template_type="简化模板";
+				template_type="一级模板";
 			}
 			else if(location=="second"){
 				template_input=document.getElementById("FT_input_name");
 				cueword_input=document.getElementById('FTC_input_name');
-				template_type="完整模板";
+				template_type="二级模板";
 			}
 
 			//是否有重复的下标

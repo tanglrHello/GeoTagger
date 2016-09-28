@@ -61,6 +61,7 @@ def tagQuestion(request):
             textInfo['timian'] = textInfo['text'].split("\t")[0]
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
+            textInfo['posinfo'] = " ".join([seg+"_"+pos for seg,pos in zip(textInfo['segres'],textInfo['posres'])])
 
     username = request.COOKIES.get("username", "")
 
@@ -111,7 +112,7 @@ def tagQuestion(request):
 
         checkres = checkTagInfo(tagInfo)
         if checkres != "":
-            return HttpResponse(u"提交出错，标注中存在错误：" + checkres + \
+            return HttpResponse(u"提交出错，标注中存在错误：" + checkres +
                                 u"<br>可能是因为浏览器问题，前端检查没有正确执行" +
                                 u"<br>可以使用浏览器退回功能回到刚刚的标注状态中")
 
@@ -143,7 +144,7 @@ def checkTagInfo(tagInfo):
     if tagInfo['choice_type']=="":
         return u"请选择:选项类别"
     if tagInfo['qiandao_type']=="":
-        return u"请选择:题干前导部分分类"
+       return u"请选择:题干前导部分分类"
     if tagInfo['core_type']=="":
         return u"请选择:题干核心成分分类"
 

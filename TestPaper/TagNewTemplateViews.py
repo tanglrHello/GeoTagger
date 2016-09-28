@@ -58,8 +58,6 @@ def tagNewTemplate(request):
         nextIndex = result[3]
         allValidIndex = result[4]
         lastTextNewTemplateInfos = result[5]
-        print "????????"
-        print lastTextNewTemplateInfos
         fullQuestion = result[6]
         if papertype == "choice":
             # 将text拆成题面和选项，供前端显示
@@ -221,15 +219,16 @@ def checkTagInfo(tagInfo):
     chn_tname = {"top": u"高阶模板", "second": u"二阶模板"}
 
     seg = tagInfo['seg']
+
+    if tagInfo["topTemplate"].strip() == "" and tagInfo['secondTemplate'].strip()=="":
+        return u"一级模板和二级模板至少要填写一个"
+
     for t in types:
         template = tagInfo[t + "Template"]
         ttype = tagInfo[t + "TemplateTypes"]
         cueword = tagInfo[t + "TemplateCueword"]
 
         cq = tagInfo["choiceQuestionSentence"]
-
-        if template.strip() == "":
-            return chn_tname[t] + u"标注为空"
 
         # 检查模板下标是否重复
         for i in range(10):

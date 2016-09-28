@@ -122,12 +122,17 @@
 		<form method="POST" onsubmit="return submitCheck();">
 			<div class="input-group">
                 {%if papertype == "choice"%}
-                    <span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
-                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
+                    <span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
+                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}}@{{textInfo.xuanxiang}}</textarea>
                 {%else%}
                     <span class="input-group-addon" id="sizing-addon1">题面：</span>
                     <textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
                 {%endif%}
+			</div><br>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon1">分词+词性：</span>
+                <textarea type="text" class="form-control" readOnly="true">{{textInfo.posinfo}}</textarea>
 			</div><br>
 
             <div class="input-group">
@@ -142,7 +147,7 @@
 
             {% if isFirstSubQuestion %}
             <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类:</span>
+                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类(可为空):</span>
                 <input type="text" class="form-control" readOnly="true" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
 			</div>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">时间状语</button>
@@ -150,7 +155,8 @@
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">目的状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">条件状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">陈述句</button>
-            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button><br><br>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">null</button><br><br>
 
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon1">题干核心成分分类:</span>
@@ -256,6 +262,7 @@
                 return false;
             }
             choice_type.style.background="#FFFFFF";
+
 
             var qiandao_type=document.getElementsByName("qiandao_type_input_name")[0];
             if (qiandao_type.value==""){

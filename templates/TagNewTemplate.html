@@ -130,8 +130,8 @@
 		<form method="POST" onsubmit="return submitCheck();">
 			<div class="input-group">
 			{%if papertype == "choice"%}
-				<span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
-				<textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
+				<span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
+				<textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}}@{{textInfo.xuanxiang}}</textarea>
 			{%else%}
 				<span class="input-group-addon" id="sizing-addon1">题面：</span>
 				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
@@ -141,54 +141,69 @@
 				<span class="input-group-addon" id="sizing-addon1">分词：</span>
 				<textarea type="text" name="seg_name" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
 			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">词性：</span>
+				<textarea type="text" name="pos_name" id="segpos" class="form-control" rows="3" readOnly="true">{{textInfo.posinfo}}</textarea>
+			</div>
 		    <div class="panel panel-default">
 			  	<div class="panel-heading"><strong>一级模板：</strong></div>
-			  	<div class="panel-body">
-			  		<strong>插入模板：</strong><br />
 
-			  		<div class="btn-group" role="group">
-			  		{%for chinese_name,abbr_name,level,suggest,example in template_config%}
-                        {%if level == "1" %}
-                            <button type="button" class="btn btn-default" onClick="insertTemplate('top','{{abbr_name}}')">{{chinese_name}}</button>
-                        {% endif %}
-                    {%endfor%}
-					</div><br /><br />
+                <div class="panel-body">
+                {% if not textInfo.topTemplate and textInfo.secondTemplate %}
+                    <label>是否有一级模板：</label>
+                    <input id="hastop_id" type="radio" name="hastop" value="true" onclick="showTopTemplate(true)"/>有&nbsp;&nbsp;&nbsp;
+                    <input id="notop_id" type="radio" name="hastop" value="false" onclick="showTopTemplate(false)" checked="checked" />无<br>
+                {% else %}
+                    <label>是否有一级模板：</label>
+                    <input id="hastop_id" type="radio" name="hastop" onclick="showTopTemplate(true)" checked="checked" />有&nbsp;&nbsp;&nbsp;
+                    <input id="notop_id" type="radio" name="hastop"  onclick="showTopTemplate(false)"/>无<br>
+                {% endif %}
+                    <div id="topTemplateTags">
+                        <strong>插入模板：</strong><br />
 
-			  		当前最大模板下标：<span id="currentSTIndex">-1</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="btn-group" role="group">
+                        {%for chinese_name,abbr_name,level,suggest,example in template_config%}
+                            {%if level == "1" %}
+                                <button type="button" class="btn btn-default" onClick="insertTemplate('top','{{abbr_name}}')">{{chinese_name}}</button>
+                            {% endif %}
+                        {%endfor%}
+                        </div><br /><br />
 
-			  		<button type="button" class="btn btn-success" onClick="decreaseIndex('top')">下标减1</button>
-			  		<button type="button" class="btn btn-success" onClick="increaseIndex('top')">下标加1</button>
-			  		<button type="button" class="btn btn-success" onClick="resetTags('top')">清空标注</button>
-			  		{%if papertype == "choice"%}
-			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('top')">从上一句的一级模板同步（不同步当前最大模板下标）</button>
-			  		{%endif%}
+                        当前最大模板下标：<span id="currentSTIndex">-1</span>&nbsp;&nbsp;&nbsp;&nbsp;
 
-			  		<br /><br />
-					<div id="ST_suggest" class="alert alert-success" role="alert" ></div>
-					{%if tagtype%}
-					<div id="ST_suggest" class="alert alert-info" role="alert" >以下标注为：【{{tagtype}}】；调整时请注意模板下标的调整，不要与已有下标重复（模板下标不需要连续或递增，只要不重复即可）</div>
-					{%endif%}
-			  		<div class="input-group">
-					  <span class="input-group-addon" id="basic-addon1">模板填充：</span>
-					  <textarea id="ST_input_name" name="ST_input_name" type="text" class="form-control" aria-describedby="basic-addon1" onblur="checkTemplate('top');" autocomplete="off">{{textInfo.topTemplate}}</textarea>
-					</div>
-					<div class="input-group">
-					  <span class="input-group-addon" id="basic-addon1">模板类型：</span>
-					  <input id="STT_input_name" name="STT_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.topTemplateTypes}}" autocomplete="off">
-					</div>
-					<div class="input-group">
-					  <span class="input-group-addon" id="basic-addon1">线 索 词 ：</span>
-					  <input id="STC_input_name" name="STC_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.topTemplateCueword}}" onblur="checkCueword('top');" autocomplete="off">
-					</div>
-					<br />
+                        <button type="button" class="btn btn-success" onClick="decreaseIndex('top')">下标减1</button>
+                        <button type="button" class="btn btn-success" onClick="increaseIndex('top')">下标加1</button>
+                        <button type="button" class="btn btn-success" onClick="resetTags('top')">清空标注</button>
+                        {%if papertype == "choice"%}
+                        <button type="button" class="btn btn-success" onClick="copyFromLastSim('top')">从上一句的一级模板同步（不同步当前最大模板下标）</button>
+                        {%endif%}
 
+                        <br /><br />
+                        <div id="ST_suggest" class="alert alert-success" role="alert" ></div>
+                        {%if tagtype%}
+                        <div id="ST_suggest" class="alert alert-info" role="alert" >以下标注为：【{{tagtype}}】；调整时请注意模板下标的调整，不要与已有下标重复（模板下标不需要连续或递增，只要不重复即可）</div>
+                        {%endif%}
+                        <div class="input-group">
+                          <span class="input-group-addon" id="basic-addon1">模板填充：</span>
+                          <textarea id="ST_input_name" name="ST_input_name" type="text" class="form-control" aria-describedby="basic-addon1" onblur="checkTemplate('top');" autocomplete="off">{{textInfo.topTemplate}}</textarea>
+                        </div>
+                        <div class="input-group">
+                          <span class="input-group-addon" id="basic-addon1">模板类型：</span>
+                          <input id="STT_input_name" name="STT_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.topTemplateTypes}}" autocomplete="off">
+                        </div>
+                        <div class="input-group">
+                          <span class="input-group-addon" id="basic-addon1">线 索 词 ：</span>
+                          <input id="STC_input_name" name="STC_input_name" type="text" class="form-control" aria-describedby="basic-addon1" value="{{textInfo.topTemplateCueword}}" onblur="checkCueword('top');" autocomplete="off">
+                        </div>
+                        <br />
+                    </div>
 			 	</div>
 			</div>
 
 			<div class="input-group">
 			{%if papertype == "choice"%}
-				<span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
-				<input type="text" class="form-control" value="{{textInfo.timian}} {{textInfo.xuanxiang}}" readOnly="true">
+				<span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
+				<input type="text" class="form-control" value="{{textInfo.timian}}@{{textInfo.xuanxiang}}" readOnly="true">
 			{%else%}
 				<span class="input-group-addon" id="sizing-addon1">题面：</span>
 				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
@@ -197,6 +212,10 @@
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">分词：</span>
 				<textarea type="text" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">词性：</span>
+				<textarea type="text" name="pos_name" id="segpos" class="form-control" rows="3" readOnly="true">{{textInfo.posinfo}}</textarea>
 			</div>
 
 			<div class="panel panel-default">
@@ -253,7 +272,7 @@
 			</div>
 
 			<br />
-			{% if textInfo.template_tagger%}
+			{% if textInfo.new_template_tagger%}
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1"><strong>当前模板结果的标注者：</strong></span>
 	      		<input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.new_template_tagger}}" readOnly="true">
@@ -690,6 +709,12 @@
 				return false;
 			}
 
+            var hastop = document.getElementById("hastop_id");
+            if (hastop.checked == true && ST.value==""){
+                alert("一级模板需要填写");
+                return false;
+            }
+
 			ST.style.background="#FFFFFF";
 			FT.style.background="#FFFFFF";
 			return true;
@@ -752,6 +777,20 @@
 		function submitCheck(){
 			return checkUserName()&&checkCueword('top')&&checkCueword('second')&&checkEmpty()&&checkTemplate("top")&&checkTemplate("second");
 		}
+
+        var hastop = document.getElementById("hastop_id");
+        if (hastop.checked == false){
+            showTopTemplate(false);
+        }
+        function showTopTemplate(flag){
+            var topdiv = document.getElementById("topTemplateTags");
+            if (flag==false){
+                topdiv.style.display = "none";
+            }
+            else{
+                topdiv.style.display = "block";
+            }
+        }
 	</script>
 
 </body>

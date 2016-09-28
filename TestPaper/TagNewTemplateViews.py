@@ -64,6 +64,7 @@ def tagNewTemplate(request):
             textInfo['timian'] = textInfo['text'].split("\t")[0]
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
+            textInfo['posinfo'] = " ".join([seg + "_" + pos for seg, pos in zip(textInfo['segres'], textInfo['posres'])])
 
     username = request.COOKIES.get("username", "")
 
@@ -183,6 +184,8 @@ def tagNewTemplate(request):
         tagInfo['seg'] = request.POST.get("seg_name")
         username = request.POST.get("username_name")
 
+        tagInfo['hastop'] = request.POST.get("hastop")
+
         if username.strip() == "":
             return HttpResponse(u"提交出错，用户名为空")
 
@@ -222,6 +225,9 @@ def checkTagInfo(tagInfo):
 
     if tagInfo["topTemplate"].strip() == "" and tagInfo['secondTemplate'].strip()=="":
         return u"一级模板和二级模板至少要填写一个"
+
+    if tagInfo['hastop']=="true" and tagInfo['topTemplate'].strip()=="":
+        return u"一级模板需要填写"
 
     for t in types:
         template = tagInfo[t + "Template"]
@@ -442,7 +448,7 @@ def saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, reques
             for question in real_paperInfo['Questions']:
                 for ctext in question[textFieldName]:
                     if globalIndex == ctext[globalIndexFieldName]:
-                        if 'topTemplate' not in ctext or ctext['topTemplate'] == "":
+                        if 'topTemplate' not in ctext or (ctext['topTemplate'] == "" and ctext['secondTemplate'] == ""):
                             dataCollection.save(paperInfo)
                         else:
                             saveok = True

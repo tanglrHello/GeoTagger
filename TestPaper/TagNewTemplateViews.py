@@ -364,10 +364,10 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
                 lastIndex = ctext[globalIndexFieldName]
                 if papertype == "choice":  # 只有选择题需要从上一题同步的功能
                     for f in relativeFieldNames[:3]:
-                        lastTextNewTemplateInfos[f] = ctext[f]
+                        lastTextNewTemplateInfos[f] = ctext.get(f,"")
 
                     for f in relativeFieldNames[3:]:
-                        lastTextNewTemplateInfos[f] = " ".join(ctext[f])
+                        lastTextNewTemplateInfos[f] = " ".join(ctext.get(f,[]))
 
     if findFlag:
         res.append(lastIndex)

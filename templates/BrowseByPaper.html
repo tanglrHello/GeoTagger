@@ -131,7 +131,10 @@
 									成分分析：{{paper.relativeUsernames.conpparse_tagger}}<br>
 									{%endif%}
 									{%if paper.relativeUsernames.template_tagger%}
-									模板：{{paper.relativeUsernames.template_tagger}}<br>
+									旧模板：{{paper.relativeUsernames.template_tagger}}<br>
+									{%endif%}
+                                    {%if paper.relativeUsernames.new_template_tagger%}
+									新模板：{{paper.relativeUsernames.new_template_tagger}}<br>
 									{%endif%}
                                     {%if paper.relativeUsernames.question_tagger%}
 									题干选项：{{paper.relativeUsernames.question_tagger}}<br>
@@ -247,11 +250,11 @@
 						<table id="outchoice_table" width="700">
 				     		<tr>
 				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29 or forloop.counter0 == 33%}
+									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 18 or forloop.counter0 == 22 or forloop.counter0 == 26 or forloop.counter0 == 30 or forloop.counter0 == 31 or forloop.counter0 == 35%}
 									</tr>
 			     					<tr>
 									{%endif%}
-									{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
+									{%if forloop.counter0 == 18 or forloop.counter0 == 31%}
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>

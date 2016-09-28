@@ -21,6 +21,31 @@ def getTemplateConfig(papertype):
     template_file.close()
     return zip(template_chinese,template_abbr,template_suggest,template_example)
 
+def getNewTemplateConfig(papertype):
+    if papertype=="choice":
+        template_file = open("static/geoTaggerConfig/" + papertype + "_new_template.txt")
+        template_chinese = []
+        template_abbr = []
+        template_level = []
+        template_suggest = []
+        template_example = []
+
+        for l in template_file.readlines():
+            if l.strip() == "":
+                continue
+            else:
+                l = l.strip().split("\t")
+                template_chinese.append(l[0])
+                template_abbr.append(l[1])
+                template_level.append(l[2])
+                template_suggest.append(l[3])
+                template_example.append(l[4])
+
+        template_file.close()
+        return zip(template_chinese, template_abbr, template_level, template_suggest, template_example)
+    else:
+        print "no new template config for subjective papertype"
+
 def getTagFieldConfig(papertype):
     tagfield_file=open('static/geoTaggerConfig/'+papertype+"_tagfields.txt")
     tf_abbr=[]

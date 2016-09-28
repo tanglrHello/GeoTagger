@@ -3,7 +3,7 @@ from django.contrib import admin
 from . import AddTestPaperViews,BrowseByPaperViews,BrowseByTemplateViews
 from . import TagSentenceViews,TagSplitViews,TagEachFieldViews
 from . import TagSegmentViews,TagTimeLocViews,TagPosViews,TagConpparseViews
-from . import TagTemplateViews
+from . import TagTemplateViews,TagNewTemplateViews
 from . import PosReferenceViews
 from . import TestpaperInfoViews,DeleteTestpaperViews
 from . import SearchTextViews,AutoBatchAnalyzeViews
@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'PosReference',PosReferenceViews.posReference),
     url(r'TagConpparse',TagConpparseViews.tagConpparse),
     url(r'TagTemplate',TagTemplateViews.tagTemplate),
+    url(r'TagNewTemplate',TagNewTemplateViews.tagNewTemplate),
 	url(r'TagSplit',TagSplitViews.tagSplit),
 	url(r'TestpaperInfo',TestpaperInfoViews.testpaperInfo),
 	url(r'DeleteTestpaper',DeleteTestpaperViews.deleteTestpaper),

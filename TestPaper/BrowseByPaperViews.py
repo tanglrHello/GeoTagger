@@ -194,6 +194,8 @@ def getData(conn,papertype,paperName_kw):
             data['relativeUsernames']['conpparse_tagger']=" ".join(data['relativeUsernames']['conpparse_tagger'])
         if 'question_tagger' in data['relativeUsernames']:
             data['relativeUsernames']['question_tagger']=" ".join(data['relativeUsernames']['question_tagger'])
+        if 'new_template_tagger' in data['relativeUsernames']:
+            data['relativeUsernames']['new_template_tagger']=" ".join(data['relativeUsernames']['new_template_tagger'])
 
         data['States']=paper['States']
         if 'term' not in data['States']:
@@ -206,6 +208,10 @@ def getData(conn,papertype,paperName_kw):
             data['States']['autoTemplate']=False
         if "questionInfo" not in data['States']:
             data['States']['questionInfo']=False
+        if "topTemplate" not in data['States']:
+            data['States']['topTemplate']=False
+        if "secondTemplate" not in data['States']:
+            data['States']['secondTemplate']=False
 
         paperInfoData.append(data)
     return paperInfoData

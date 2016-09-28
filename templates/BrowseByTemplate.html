@@ -83,6 +83,7 @@
 		      	</h2>
 		  	</div>
 		  	<div class="panel-body">
+                {% if papertype == "subjective" %}
 				<form method="POST">
 					<!--设置选择的模板-->
 					<label><font size="5">模板：</font></label>
@@ -126,6 +127,56 @@
 						<span class="glyphicon glyphicon-search"></span>&nbsp;查询
 					</button><br><br>
 				</form>
+            {% elif papertype == "choice" %}
+                <form method="POST">
+					<!--设置选择的模板-->
+					<label><font size="5">高阶模板：</font></label>
+					<table id="template_table" width="600">
+			     		<tr>
+			     			{%for chinese_name,abbr_name,level,suggest,example in template_config%}
+                                {% if level == "1" %}
+				     			{% if templateSeltected == abbr_name%}
+				     			<td  width="25%">
+				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" checked="true" />{{chinese_name}}</p>
+				     			</td>
+				     			{%else%}
+					     			<td  width="25%">
+				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" />{{chinese_name}}</p>
+				     			</td>
+				     			{%endif%}
+                                {% endif %}
+			     			{%endfor%}
+			     		</tr>
+			     	</table>
+                    <label><font size="5">二阶模板：</font></label>
+					<table id="template_table" width="600">
+			     		<tr>
+			     			{%for chinese_name,abbr_name,level,suggest,example in template_config%}
+                                {%if forloop.counter0 == 8 %}
+			     					</tr>
+			     					<tr>
+			     				{%endif%}
+                                {% if level == "2" %}
+				     			{% if templateSeltected == abbr_name%}
+				     			<td  width="25%">
+				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" checked="true" />{{chinese_name}}</p>
+				     			</td>
+				     			{%else%}
+					     			<td  width="25%">
+				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" />{{chinese_name}}</p>
+				     			</td>
+				     			{%endif%}
+                                {% endif %}
+			     			{%endfor%}
+			     		</tr>
+			     	</table>
+
+					<br />
+					<button name="queryBtn" type="submit" class="btn btn-info">
+						<span class="glyphicon glyphicon-search"></span>&nbsp;查询
+					</button><br><br>
+				</form>
+            {% endif %}
 			</div>
 		</div>
 		<br><br>
@@ -156,12 +207,12 @@
 
 		     			
 		     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29%}
+							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 18 or forloop.counter0 == 22 or forloop.counter0 == 26 or forloop.counter0 == 30 or forloop.counter0 == 31%}
 							</tr>
 	     					<tr>
 							{%endif%}
 
-							{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
+							{%if forloop.counter0 == 18 or forloop.counter0 == 31%}
 								<td>--------------------------------</td>
 								<td>--------------------------------</td>
 								<td>--------------------------------</td>
@@ -191,17 +242,17 @@
 			     				<p><input type="checkbox" name="selectRow" value="3" onclick="selectContentRow(5);"/>选择本行</p>
 			     			</td>
 							{%endif%}
-							{% if forloop.counter0 == 17%}
+							{% if forloop.counter0 == 18%}
 							<td width="20%">
 			     				<p><input type="checkbox" name="selectRow" value="3" onclick="selectContentRow(6);"/>选择本行</p>
 			     			</td>
 							{%endif%}
-							{% if forloop.counter0 == 21%}
+							{% if forloop.counter0 == 22%}
 							<td width="20%">
 			     				<p><input type="checkbox" name="selectRow" value="3" onclick="selectContentRow(7);"/>选择本行</p>
 			     			</td>
 							{%endif%}
-							{% if forloop.counter0 == 25%}
+							{% if forloop.counter0 == 26%}
 							<td width="20%">
 			     				<p><input type="checkbox" name="selectRow" value="3" onclick="selectContentRow(8);"/>选择本行</p>
 			     			</td>
@@ -332,8 +383,8 @@
 		     		//默认只显示来源和文本
 		     		document.getElementById('sourceChk').checked=true;
 		     		document.getElementById('textChk').checked=true;
-		     		document.getElementById("simplifiedTemplateChk").checked=true;
-		     		document.getElementById("fullTemplateChk").checked=true;
+		     		document.getElementById("topTemplateChk").checked=true;
+		     		document.getElementById("secondTemplateChk").checked=true;
 		     		changeTable();
 
 		     		function selectContentRow(rownum){
@@ -347,10 +398,10 @@
 		     					[4,5,6,7],
 		     					[8,9],
 		     					[10,11,12,13],
-		     					[14,15,16,17],
-		     					[18,19,20,21],
-		     					[22,23,24,25],
-		     					[26,27,28,29]];
+		     					[14,15,16,17,18],
+		     					[19,20,21,22],
+		     					[23,24,25,26],
+		     					[27,28,29,30,31]];
 		     			}
 		     			else{
 		     				row_chk=[[0,1,2],
@@ -453,7 +504,7 @@
 					    <table id="outchoice_table" width="600">
 				     		<tr>
 				     			{%for chinese_name,abbr_name,suggest,example in template_config%}
-				     				{%if forloop.counter0 == 4 or forloop.counter0 == 8 or forloop.counter0 == 12 or forloop.counter0 == 16%}
+				     				{%if forloop.counter0 == 4 or forloop.counter0 == 8%}
 				     					</tr>
 				     					<tr>
 				     				{%endif%}
@@ -465,11 +516,13 @@
 				     	</table>				    
 				     	<br />
 
+                        {% if papertype == "subjective" %}
 				     	<label>按哪种类型检索：</label>
 						<input id="ST_ID" type="radio" name="ExtractTemplateType" value="ST" onclick="ExtractUseSTFunc()" checked="checked" />简化模板&nbsp;&nbsp;&nbsp;
 						<input id="FT_ID" type="radio" name="ExtractTemplateType" value="FT" onclick="ExtractUseFTFunc()"  checked="checked"/>完整模板
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 						<br /><br />
+                        {% endif  %}
 				     	
 				     	<!--导出模板类型的全选全不选功能-->
 				     	<script>
@@ -511,11 +564,11 @@
 				     				<p><input type="checkbox" name="outcontent" value="sourceChk" />来源</p>
 				     			</td>
 				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 21 or forloop.counter0 == 25 or forloop.counter0 == 29 or forloop.counter0 == 33%}
+									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 18 or forloop.counter0 == 22 or forloop.counter0 == 26 or forloop.counter0 == 30 or forloop.counter0 == 31 or forloop.counter0 == 35%}
 									</tr>
 			     					<tr>
 									{%endif%}
-									{%if forloop.counter0 == 17 or forloop.counter0 == 29%}
+									{%if forloop.counter0 == 18 or forloop.counter0 == 31%}
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>
 										<td>-----------------------------------</td>

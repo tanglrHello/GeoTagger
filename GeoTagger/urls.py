@@ -17,12 +17,12 @@ Including another URLconf
 from django.conf.urls import url,include
 from django.contrib import admin
 import settings
-from TestPaper import BrowseByPaperViews
+#from TestPaper import BrowseByPaperViews
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^static/(?P<path>.*)$', 'django.views.static.serve',{ 'document_root':settings.STATIC_URL }),
     url(r'^SingleSentenceAnalyze/',include('SingleSentenceAnalyze.urls')),
     url(r'^TestPaper/',include('TestPaper.urls')),
-    url(r'^$',BrowseByPaperViews.browseByPaper)
+    #url(r'^TestPaper$',BrowseByPaperViews.browseByPaper)
 ]

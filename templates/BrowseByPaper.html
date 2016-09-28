@@ -124,6 +124,9 @@
 									{%if paper.relativeUsernames.timeloc_tagger%}
 									时间地点：{{paper.relativeUsernames.timeloc_tagger}}<br>
 									{%endif%}
+                                    {%if paper.relativeUsernames.term_tagger%}
+									术语：{{paper.relativeUsernames.term_tagger}}<br>
+									{%endif%}
 									{%if paper.relativeUsernames.pos_tagger%}
 									词性：{{paper.relativeUsernames.pos_tagger}}<br>
 									{%endif%}

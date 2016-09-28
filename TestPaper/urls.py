@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from . import AddTestPaperViews,BrowseByPaperViews,BrowseByTemplateViews
 from . import TagSentenceViews,TagSplitViews,TagEachFieldViews
-from . import TagSegmentViews,TagTimeLocViews,TagPosViews,TagConpparseViews
+from . import TagSegmentViews,TagTimeLocViews,TagPosViews,TagConpparseViews,TagTermViews
 from . import TagTemplateViews,TagNewTemplateViews
 from . import PosReferenceViews
 from . import TestpaperInfoViews,DeleteTestpaperViews
@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'TagEachField',TagEachFieldViews.tagEachField),
     url(r'TagSegment',TagSegmentViews.tagSegment),
     url(r'TagTimeLoc',TagTimeLocViews.tagTimeLoc),
+    url(r'TagTerm',TagTermViews.tagTerm),
     url(r'TagPos',TagPosViews.tagPos),
     url(r'PosReference',PosReferenceViews.posReference),
     url(r'TagConpparse',TagConpparseViews.tagConpparse),

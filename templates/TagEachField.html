@@ -104,6 +104,22 @@
 	            	</td>
 	            	{%endif%}
 	            </tr>
+                <tr>
+	            	{% if States.seg %}
+	            	<td>
+	            		{%if papertype == "choice"%}
+	            			<a href="./TagTerm.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">术语标注</a>
+	            		{%else%}
+							<a href="./TagTerm.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex=1">术语标注</a>
+	            		{%endif%}
+	            	</td>
+	            	{%else%}
+	            	<td>
+						术语标注（需要先完成【分词】标注）
+					</td>
+	            	{%endif%}
+	            </tr>
+                <tr>
 	            <tr>
 	            	{% if States.seg %}
 	            	<td>

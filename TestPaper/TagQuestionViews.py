@@ -212,7 +212,6 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
             if globalIndex == ctext[globalIndexFieldName]:
                 if index > 0:
                     isFirstSubQuestion = False
-                    
                 res.append(ctext)
                 if papertype == "choice":
                     res.append(question['QuestionIndex'])

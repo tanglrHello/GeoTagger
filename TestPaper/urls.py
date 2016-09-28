@@ -8,6 +8,7 @@ from . import PosReferenceViews
 from . import TestpaperInfoViews,DeleteTestpaperViews
 from . import SearchTextViews,AutoBatchAnalyzeViews
 from . import TagQuestionViews
+from . import homepageViews
 
 
 urlpatterns = [
@@ -29,5 +30,6 @@ urlpatterns = [
 	url(r'DeleteTestpaper',DeleteTestpaperViews.deleteTestpaper),
     url(r'SearchText',SearchTextViews.searchText),
     url(r'AutoBatchAnalyze',AutoBatchAnalyzeViews.autoBatchAnalyze),
-    url(r'TagQuestion',TagQuestionViews.tagQuestion)
+    url(r'TagQuestion',TagQuestionViews.tagQuestion),
+    url(r'index',homepageViews.homepage)
 ]

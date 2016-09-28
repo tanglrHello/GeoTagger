@@ -140,6 +140,7 @@
             <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">含主语的句子</button>
             <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">自定义类别</button><br><br>
 
+            {% if isFirstSubQuestion %}
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon1">题干前导部分分类:</span>
                 <input type="text" class="form-control" readOnly="true" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
@@ -189,6 +190,9 @@
                 </div>
             </div>
             <br>
+            {% else %}
+                (只有每道选择题的第一个题干选项的组合文本对应的页面里,可以进行题干的标注)<br><br>
+            {% endif %}
 
 			{% if textInfo.question_tagger%}
 			<div class="input-group">

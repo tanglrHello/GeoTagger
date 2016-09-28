@@ -55,6 +55,7 @@ def tagQuestion(request):
         nextIndex = result[3]
         allValidIndex = result[4]
         fullQuestion = result[5]
+        isFirstSubQuestion = result[6]
         if papertype == "choice":
             # 将text拆成题面和选项，供前端显示
             textInfo['timian'] = textInfo['text'].split("\t")[0]
@@ -91,7 +92,8 @@ def tagQuestion(request):
                                    'papertype': papertype,
                                    'allValidIndex': json.dumps(allValidIndex),
                                    'fullQuestion': json.dumps(fullQuestion),
-                                   'username': username
+                                   'username': username,
+                                   'isFirstSubQuestion':isFirstSubQuestion
                                    })
 
     elif request.method == 'POST':
@@ -197,9 +199,10 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
     allValidIndex = []
 
     fullQuestion = None
+    isFirstSubQuestion = True
 
     for question in paperInfo['Questions']:
-        for ctext in question[textFieldName]:
+        for index,ctext in enumerate(question[textFieldName]):
             allValidIndex.append(ctext[globalIndexFieldName])
             if findFlag == True and nextFlag == False:  # 只有在nextFlag为False的时候才对nextIndex赋值
                 nextIndex = ctext[globalIndexFieldName]
@@ -207,6 +210,9 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
             if findFlag == True:
                 continue
             if globalIndex == ctext[globalIndexFieldName]:
+                if index > 0:
+                    isFirstSubQuestion = False
+                    
                 res.append(ctext)
                 if papertype == "choice":
                     res.append(question['QuestionIndex'])
@@ -233,6 +239,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
         res.append(nextIndex)
         res.append(allValidIndex)
         res.append(fullQuestion)
+        res.append(isFirstSubQuestion)
         return res
     else:
         # 如果遍历后没有找到则返回False

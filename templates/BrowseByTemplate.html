@@ -152,7 +152,7 @@
 					<table id="template_table" width="600">
 			     		<tr>
 			     			{%for chinese_name,abbr_name,level,suggest,example in template_config%}
-                                {%if forloop.counter0 == 8 %}
+                                {%if forloop.counter0 == 8 or forloop.counter0 == 12%}
 			     					</tr>
 			     					<tr>
 			     				{%endif%}
@@ -504,7 +504,7 @@
 					    <table id="outchoice_table" width="600">
 				     		<tr>
 				     			{%for chinese_name,abbr_name,suggest,example in template_config%}
-				     				{%if forloop.counter0 == 4 or forloop.counter0 == 8%}
+				     				{%if forloop.counter0 == 4 or forloop.counter0 == 8 or forloop.counter0 == 12%}
 				     					</tr>
 				     					<tr>
 				     				{%endif%}

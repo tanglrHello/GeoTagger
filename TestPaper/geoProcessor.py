@@ -21,7 +21,7 @@ class geo_Processor():
             infile.write(s.encode("utf-8")+"\n")
         infile.close()
         
-        cmd="java -jar nlptools/cws_tag_file/Geo_3pra.jar "+str(typeIndex)+" nlptools/cws_tag_file/ "+timestamp+"_"+str(typeIndex)
+        cmd="java -Xmx2g -jar nlptools/cws_tag_file/Geo_3pra.jar "+str(typeIndex)+" nlptools/cws_tag_file/ "+timestamp+"_"+str(typeIndex)
         
         print "runcommand_geoProcessor"
         print cmd

@@ -219,7 +219,7 @@
 	</div>
 	<script>
 		//默认只显示文本、粗粒度分词、时间、地点、成分分析、简化模板、完整模板（均为人工标注的版本）
-		var showWhich=['number','text','segres','goldtimes',"goldlocs","posres","bpres","simplifiedTemplate","fullTemplate"];
+		var showWhich=['number','text','segres','goldtimes',"goldlocs","posres","bpres","topTemplate","secondTemplate"];
 		for(var i=0;i<showWhich.length;i++){
 			//console.log(showWhich[i]+"Chk");
 			document.getElementById(showWhich[i]+"Chk").checked=true;

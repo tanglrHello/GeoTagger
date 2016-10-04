@@ -50,21 +50,21 @@ def transformSQLChoiceFile(sqlfile):
 
         # generate timian line
         if bgtext_str == "":
-            paperContent.append("-"+str(question_index)+"\t"+line[qtext].replace(" ",""))
+            paperContent.append("-"+str(question_index)+"\t"+line[qtext].replace(" ","").replace(",",u"，"))
         else:
-            paperContent.append(str(bgtext_index)+"-"+str(question_index)+"\t"+line[qtext].replace(" ",""))
+            paperContent.append(str(bgtext_index)+"-"+str(question_index)+"\t"+line[qtext].replace(" ","").replace(",",u"，"))
 
         # generate choice line
         if line[isMulti]=="0":
             for i in range(4):
-                paperContent.append(str(question_index)+"-"+choicesName[i]+"\t"+line[choiceStart+i].replace(" ",""))
+                paperContent.append(str(question_index)+"-"+choicesName[i]+"\t"+line[choiceStart+i].replace(" ","").replace(",",u"，"))
         else:
             for i in range(9):
                 if line[smallChoiceStart+i]=="":
                     continue
-                paperContent.append(str(question_index)+"-"+smallChoicesName[i]+"\t"+line[smallChoiceStart+i].replace(" ",""))
+                paperContent.append(str(question_index)+"-"+smallChoicesName[i]+"\t"+line[smallChoiceStart+i].replace(" ","").replace(",",u"，"))
             for i in range(4):
-                paperContent.append(str(question_index)+"-"+choicesName[i]+"\t"+line[choiceStart+i].replace(" ",""))
+                paperContent.append(str(question_index)+"-"+choicesName[i]+"\t"+line[choiceStart+i].replace(" ","").replace(",",u"，"))
 
         question_index+=1
 

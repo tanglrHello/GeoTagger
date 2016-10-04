@@ -45,7 +45,6 @@
 	  </div><!-- /.container-fluid -->
 	</nav>
 
-
 	<div> &nbsp;</div>
 	<div class="page-header">
 	  	<h1>试卷列表：</h1>
@@ -74,22 +73,68 @@
 		</script>
 
 		<form method="POST">
-			<div class="input-group">		  
+			<div class="input-group">
 			  <input id="query_kw_id" name="query_kw_name" rows="1"class="form-control" placeholder="试卷名关键字" value={{qeury_kw}}>
 			  <span class="input-group-btn">
 		        <button class="btn btn-success" type="submit">检索</button>
 		      </span>
-			</div>	
+			</div>
+            <br>
 		</form>
-		<br /><br />
 
+        <form method="POST">
+            <table id="state_table" class="table table-striped table-bordered table-hover js-table">
+                <tr>
+                    <td>拆分:</td>
+                    <td><input id="split_all_ID" type="radio" name="splitRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="split_yes_ID" type="radio" name="splitRadio" value="yes" />完成</td>
+                    <td><input id="split_no_ID" type="radio" name="splitRadio" value="no" />未完成</td>
+                </tr>
+                <tr>
+                    <td>分词:</td>
+                    <td><input id="seg_all_ID" type="radio" name="segRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="seg_yes_ID" type="radio" name="segRadio" value="yes" />完成</td>
+                    <td><input id="seg_no_ID" type="radio" name="segRadio" value="no" />未完成</td>
+                </tr>
+                <tr>
+                    <td>实体:</td>
+                    <td><input id="time_all_ID" type="radio" name="timeRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="time_yes_ID" type="radio" name="timeRadio" value="yes"/>完成</td>
+                    <td><input id="time_no_ID" type="radio" name="timeRadio" value="no"/>未完成</td>
+                </tr>
+                <tr>
+                    <td>词性:</td>
+                    <td><input id="pos_all_ID" type="radio" name="posRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="pos_yes_ID" type="radio" name="posRadio" value="yes"/>完成</td>
+                    <td><input id="pos_no_ID" type="radio" name="posRadio" value="no"/>未完成</td>
+                </tr>
+                <tr>
+                    <td>术语:</td>
+                    <td><input id="term_all_ID" type="radio" name="termRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="term_yes_ID" type="radio" name="termRadio" value="yes"/>完成</td>
+                    <td><input id="term_no_ID" type="radio" name="termRadio" value="no"/>未完成</td>
+                </tr>
+                <tr>
+                    <td>模板:</td>
+                    <td><input id="topTemplate_all_ID" type="radio" name="topTemplateRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="topTemplate_yes_ID" type="radio" name="topTemplateRadio" value="yes"/>完成</td>
+                    <td><input id="topTemplate_no_ID" type="radio" name="topTemplateRadio" value="no"/>未完成</td>
+                </tr>
+                </tr>
+                    <td></td><td></td><td></td>
+                    <td><button class="btn btn-success" type="submit">查询</button></td>
+                </tr>
+            </table>
+        </form>
+
+        当前该类型的试卷共有: {{paper_num}}份
 		<form method="POST"  onsubmit="return checkCHKState()">				
 				 <table id="paper_table" class="table table-striped table-bordered table-hover js-table">
 			         <thead> 
 			         <tr>
 			             <th width="9%">
 			             	<input id="choosePaperControl" type="checkbox" value="chooseAllPaper" onclick="paperSelectAllOrNone()">全选<br>
-			         	</th>
+			         	 </th>
 			             <th width="13%">试卷名/上传时间</th>
 			             <th width="5%">题量</th>
 			             <th width="15%">标注者</th>

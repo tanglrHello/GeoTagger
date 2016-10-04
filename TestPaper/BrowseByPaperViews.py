@@ -151,18 +151,36 @@ def browseByPaper(request):
                                 {'paperInfoData':paperInfoData,
                                  'papertype':papertype,
                                  'tagFields_config':tagFields_Info,
-                                 "showStateFields_Info":showStateFields_Info})
+                                 "showStateFields_Info":showStateFields_Info,
+                                 "paper_num":len(paperInfoData)})
 
-        
+    elif request.method=='POST' and 'splitRadio' in request.POST:   #按标注状态查询试卷请求
+        print "search paper by tagging state..."
+        state={}
+        field = ['split','seg','time','pos','term','topTemplate']
+        for fname in field:
+            tmp = request.POST[fname+"Radio"]
+            if tmp != "all":
+                state[fname] = tmp
+
+        paperInfoData=getData(conn,papertype,"",state)
+        return render_to_response("BrowseByPaper.html",
+                                  {'paperInfoData': paperInfoData,
+                                   'papertype': papertype,
+                                   'tagFields_config': tagFields_Info,
+                                   "showStateFields_Info": showStateFields_Info,
+                                   "paper_num": len(paperInfoData)})
+
     elif request.method=="GET":
         paperInfoData=getData(conn,papertype,"")
         return render_to_response("BrowseByPaper.html",
                                 {'paperInfoData':paperInfoData,
                                  'papertype':papertype,
                                  'tagFields_config':tagFields_Info,
-                                 "showStateFields_Info":showStateFields_Info})
+                                 "showStateFields_Info":showStateFields_Info,
+                                 "paper_num": len(paperInfoData)})
 
-def getData(conn,papertype,paperName_kw):
+def getData(conn,papertype,paperName_kw,state={}):
     GeopaperDB=conn['GeoPaper']
     if papertype=="choice":
         dataCollection=GeopaperDB['ChoiceData']
@@ -172,9 +190,24 @@ def getData(conn,papertype,paperName_kw):
     papers=dataCollection.find().sort("uploadTimestamp",pymongo.DESCENDING)
     paperInfoData=[]
     for paper in papers:
+        # filter by keyword
         if paperName_kw!="":
             if paperName_kw not in paper['testpaperName']:
                 continue
+
+        # filter by tag state
+        not_satisfy = False
+        for fname in state:
+            if state[fname] == "yes":
+                if fname not in paper['States'] or paper['States'][fname] == False:
+                    not_satisfy = True
+            if state[fname] == "no":
+                if fname in paper['States'] and paper['States'][fname] == True:
+                    not_satisfy = True
+        if not_satisfy:
+            continue
+
+
         data={}
         data['testpaperName']=paper['testpaperName']
         data['uploadTime']=paper['uploadTime']

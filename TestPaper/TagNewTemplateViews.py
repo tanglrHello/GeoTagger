@@ -368,7 +368,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
                     fullQuestion = ""
             else:
                 lastIndex = ctext[globalIndexFieldName]
-                if papertype == "choice" and ctext['number'] in "ABCD":  # 只有选择题需要从上一题同步的功能
+                if papertype == "choice" and (ctext['number'] in "ABCD" or ctext['number'] in u"①②③④⑤⑥⑦⑧⑨"):  # 只有选择题需要从上一题同步的功能
                     for f in relativeFieldNames[:3]:
                         lastOriTextNewTemplateInfos[f] = ctext.get(f,"")
 

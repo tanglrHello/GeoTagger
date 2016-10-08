@@ -147,7 +147,7 @@
 
             {% if isFirstSubQuestion %}
             <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类(可为空):</span>
+                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类(可为空、可多选):</span>
                 <input type="text" class="form-control" readOnly="true" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
 			</div>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">时间状语</button>
@@ -156,7 +156,8 @@
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">条件状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">陈述句</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button>
-            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">null</button><br><br>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">null</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">[清空]</button><br><br>
 
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon1">题干核心成分分类:</span>
@@ -239,7 +240,13 @@
 
         function click_button(element){
             var input_ele = document.getElementsByName(element.name.split("_")[0]+"_type_input_name")[0];
-            input_ele.value = element.innerText;
+
+            if (element.innerText == "[清空]"){
+                input_ele.value = "";
+                return;
+            }
+
+            input_ele.value += " "+element.innerText;
 
             // core_type contains verb, show core_verb input
             if (element.name.split("_")[0]=="core"){

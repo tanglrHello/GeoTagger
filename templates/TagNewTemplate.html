@@ -175,7 +175,7 @@
                         <button type="button" class="btn btn-success" onClick="increaseIndex('top')">下标加1</button>
                         <button type="button" class="btn btn-success" onClick="resetTags('top')">清空标注</button>
                         {%if papertype == "choice"%}
-                        <button type="button" class="btn btn-success" onClick="copyFromLastSim('top')">从上一句的一级模板同步（不同步当前最大模板下标）</button>
+                        <button type="button" class="btn btn-success" onClick="copyFromLastSim('top')">从最近原始选项的一级模板同步（不同步当前最大模板下标）</button>
                         {%endif%}
 
                         <br /><br />
@@ -237,7 +237,7 @@
 			  		<button type="button" class="btn btn-success" onClick="resetTags('second')">清空标注</button>
 			  		<button type="button" class="btn btn-success" onClick="copyFromSim()">从一级模板同步</button>
 			  		{%if papertype == "choice"%}
-			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('second')">从上一句的二级模板同步（不同步当前最大模板下标）</button>
+			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('second')">从最近原始选项的二级模板同步（不同步当前最大模板下标）</button>
 			  		{%endif%}
 			  		<br /><br />
 

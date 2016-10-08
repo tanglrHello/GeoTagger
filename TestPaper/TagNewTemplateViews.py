@@ -314,7 +314,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
     findFlag = False
     nextFlag = False
 
-    lastTextNewTemplateInfos = {}
+    lastOriTextNewTemplateInfos = {}
 
     allValidIndex = []
 
@@ -368,18 +368,18 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
                     fullQuestion = ""
             else:
                 lastIndex = ctext[globalIndexFieldName]
-                if papertype == "choice":  # 只有选择题需要从上一题同步的功能
+                if papertype == "choice" and ctext['number'] in "ABCD":  # 只有选择题需要从上一题同步的功能
                     for f in relativeFieldNames[:3]:
-                        lastTextNewTemplateInfos[f] = ctext.get(f,"")
+                        lastOriTextNewTemplateInfos[f] = ctext.get(f,"")
 
                     for f in relativeFieldNames[3:]:
-                        lastTextNewTemplateInfos[f] = " ".join(ctext.get(f,[]))
+                        lastOriTextNewTemplateInfos[f] = " ".join(ctext.get(f,[]))
 
     if findFlag:
         res.append(lastIndex)
         res.append(nextIndex)
         res.append(allValidIndex)
-        res.append(lastTextNewTemplateInfos)
+        res.append(lastOriTextNewTemplateInfos)
         res.append(fullQuestion)
         return res
     else:

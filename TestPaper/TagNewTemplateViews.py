@@ -495,8 +495,8 @@ def checkGlobalTagState(papername, papertype):
                 'template_valid'] == False:
                 second_template_state = False
 
-            if 'topTemplate' not in ctext or ctext['topTemplate'] == "" or 'template_valid' in ctext and \
-                            ctext['template_valid'] == False:
+            # topTemplate may be empty, but this field doesn't exist before tagged
+            if 'topTemplate' not in ctext or 'template_valid' in ctext and ctext['template_valid'] == False:
                 top_template_state = False
 
             if 'new_template_tagger' in ctext:

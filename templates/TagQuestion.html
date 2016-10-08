@@ -246,7 +246,12 @@
                 return;
             }
 
-            input_ele.value += " "+element.innerText;
+            if (element.name.split("_")[0]=="qiandao"){
+                input_ele.value += " "+element.innerText;
+            }
+            else{
+                input_ele.value = element.innerText;
+            }
 
             // core_type contains verb, show core_verb input
             if (element.name.split("_")[0]=="core"){

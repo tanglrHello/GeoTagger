@@ -90,7 +90,6 @@ def testpaperInfo(request):
                         ctext['number']=str(question[questionIndexFieldName])+"-"+ctext['number']
                     else:
                         ctext['number']=str(question[questionIndexFieldName])+"-"+str(ctext['number'])
-
                     
                     validList=['template_valid','conpparse_valid',"auto_conpparse_valid",'auto_template_valid']
                     for v in validList:
@@ -104,15 +103,14 @@ def testpaperInfo(request):
             #将queryRes转换成便于前端显示的形式
             #每个元素是一个列表，对应一个句子的各个字段
             #每个标注字段表示成三元组，其中第一个元素表示该字段当前是否有效，第二个为内容，第三个为字段名
-            tranformedRes=[]
-            textIndexes=[]
+            tranformedRes = []
+            textIndexes = []
             
             for res in queryRes:
-                newres=[]
+                newres = []
+
                 textIndexes.append(res[globalIndexFieldName])
-                #print res
                 for field in sortedTagFieldsForTable:
-                    #print field[0],"--"
                     if field[3]==None:
                         newres.append((True,res[field[0]],field[0]))
                     else:

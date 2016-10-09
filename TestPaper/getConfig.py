@@ -55,20 +55,22 @@ def getTagFieldConfig(papertype):
     tf_tableWidth=[]
     tf_tableColIndex0=[]
 
+    index = 0
     for l in tagfield_file.readlines():
-        if l.strip()=="":
+        if l.strip() == "":
             continue
         else:
             l=l.strip().split("\t")
             tf_abbr.append(l[0])
             tf_chinese.append(l[1])
             tf_type.append(l[2])
-            if l[3]=="null":
+            if l[3] == "null":
                 tf_validDepFlag.append(None)
             else:
                 tf_validDepFlag.append(l[3])
             tf_tableWidth.append(l[4])
-            tf_tableColIndex0.append(int(l[5]))
+            tf_tableColIndex0.append(index)
+            index += 1
 
     tagfield_file.close()
 

@@ -1,36 +1,36 @@
-number	编号	string	null	3	0
-text	文本	string	null	9	1
-splitinfo	拆分信息	string	null	3	2
-goldtimes	时间	list_num	null	5	9
-goldlocs	地点	list_num	null	5	11
-goldterms	术语	list_num	null	5	13
-goldquants	数量词	list_num	null	5	14
-segres	（粗粒度）分词	list_string_index	null	9	3
-segres_fg	（细粒度）分词	list_string_index	null	9	4
-posres	词性	list_string_index	null	9	7
-bpres	成分分析	string	conpparse_valid	10	15
-topTemplate	高阶模板	string	template_valid	9	17
-secondTemplate	二阶模板	string	template_valid	10	20
-topTemplateCueword	高阶模板线索词	list_string	template_valid	5	19
-choiceQuestionSentence	选项问句	string	template_valid	5	22
-secondTemplateCueword	二阶模板线索词	list_string	template_valid	5	23
-topTemplateTypes	高阶模板类型	list_string	template_valid	5	18
-secondTemplateTypes	二阶模板类型	list_string	template_valid	5	21
-auto_time	（auto）时间	list_num	null	5	10
-auto_loc	（auto）地点	list_num	null	5	12
-auto_seg	（auto粗粒度）分词	string	null	9	5
-auto_seg_fg	（auto细粒度）分词	string	null	9	6
-auto_pos	（auto）词性	list_string_index	null	9	8
-auto_bpres	（auto）成分分析	string	auto_conpparse_valid	10	16
-auto_topTemplate	（auto）高阶模板	string	auto_template_valid	9	24
-auto_secondTemplate	（auto）二阶模板	string	auto_template_valid	10	25
-auto_topTemplateCueword	（auto）高阶模板线索词	list_string	auto_template_valid	5	26
-auto_choiceQuestionSentence	(auto)选项问句	string	template_valid	5	27
-auto_secondTemplateCueword	（auto）二阶模板线索词	list_string	auto_template_valid	5	28
-auto_topTemplateTypes	（auto）高阶模板类型	list_string	auto_template_valid	5	29
-auto_secondTemplateTypes	（auto）二阶模板类型	list_string	auto_template_valid	5	30
-choice_type	选项类别	string	null	5	31
-qiandao_type	题干前导类型	string	null	5	32
-core_type	题干核心类型	string	null	5	33
-core_verb	题干核心动词	string	null	5	34
-delete_part	可删除的套话	string	null	5	35
+number	编号	string	null	3
+text	文本	string	null	9
+splitinfo	拆分信息	string	null	3
+segres	（粗粒度）分词	list_string_index	null	9
+segres_fg	（细粒度）分词	list_string_index	null	9
+auto_seg	（auto粗粒度）分词	string	null	9
+auto_seg_fg	（auto细粒度）分词	string	null	9
+posres	词性	list_string_index	null	9
+auto_pos	（auto）词性	list_string_index	null	9
+goldtimes	时间	list_num	null	5
+auto_time	（auto）时间	list_num	null	5
+goldlocs	地点	list_num	null	5
+goldterms	术语	list_num	null	5
+auto_loc	（auto）地点	list_num	null	5
+goldquants	数量词	list_num	null	5
+bpres	成分分析	string	conpparse_valid	10
+auto_bpres	（auto）成分分析	string	auto_conpparse_valid	10
+topTemplate	高阶模板	string	template_valid	9
+topTemplateTypes	高阶模板类型	list_string	template_valid	5
+topTemplateCueword	高阶模板线索词	list_string	template_valid	5
+secondTemplate	二阶模板	string	template_valid	10
+secondTemplateTypes	二阶模板类型	list_string	template_valid	5
+choiceQuestionSentence	选项问句	string	template_valid	5
+secondTemplateCueword	二阶模板线索词	list_string	template_valid	5
+auto_topTemplate	（auto）高阶模板	string	auto_template_valid	9
+auto_secondTemplate	（auto）二阶模板	string	auto_template_valid	10
+auto_topTemplateCueword	（auto）高阶模板线索词	list_string	auto_template_valid	5
+auto_choiceQuestionSentence	(auto)选项问句	string	template_valid	5
+auto_secondTemplateCueword	（auto）二阶模板线索词	list_string	auto_template_valid	5
+auto_topTemplateTypes	（auto）高阶模板类型	list_string	auto_template_valid	5
+auto_secondTemplateTypes	（auto）二阶模板类型	list_string	auto_template_valid	5
+choice_type	选项类别	string	null	5
+qiandao_type	题干前导类型	string	null	5
+core_type	题干核心类型	string	null	5
+core_verb	题干核心动词	string	null	5
+delete_part	可删除的套话	string	null	5

@@ -108,9 +108,11 @@ def autoBatchAnalyze(request):
                             ctext["auto_seg_fg"]=seg_output_sentences_fg[seg_index]
                             seg_index+=1              
 
-
                     #保存至数据库
-                    print paper['testpaperName']
+                    try:
+                        print paper['testpaperName']
+                    except:
+                        print "an unkonwn paper"
                     dataCollection.save(paper)
 
                 state_document['last_auto_seg_time_'+papertype]=time.strftime('%Y-%m-%d %H:%M:%S')

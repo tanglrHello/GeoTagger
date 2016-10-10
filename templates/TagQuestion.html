@@ -122,12 +122,17 @@
 		<form method="POST" onsubmit="return submitCheck();">
 			<div class="input-group">
                 {%if papertype == "choice"%}
-                    <span class="input-group-addon" id="sizing-addon1">题面+选项：</span>
-                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
+                    <span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
+                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}}@{{textInfo.xuanxiang}}</textarea>
                 {%else%}
                     <span class="input-group-addon" id="sizing-addon1">题面：</span>
                     <textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
                 {%endif%}
+			</div>
+
+            <div class="input-group">
+                <span class="input-group-addon" id="sizing-addon1">词性：</span>
+                <textarea type="text" class="form-control" readOnly="true">{{textInfo.posinfo}}</textarea>
 			</div><br>
 
             <div class="input-group">
@@ -140,8 +145,9 @@
             <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">含主语的句子</button>
             <button type="button" class="btn btn-default" name="choice_type_button" onclick="click_button(this)">自定义类别</button><br><br>
 
+            {% if isFirstSubQuestion %}
             <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类:</span>
+                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类(可为空、可多选):</span>
                 <input type="text" class="form-control" readOnly="true" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
 			</div>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">时间状语</button>
@@ -149,7 +155,9 @@
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">目的状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">条件状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">陈述句</button>
-            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button><br><br>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">null</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">[清空]</button><br><br>
 
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon1">题干核心成分分类:</span>
@@ -189,6 +197,9 @@
                 </div>
             </div>
             <br>
+            {% else %}
+                (只有每道选择题的第一个题干选项的组合文本对应的页面里,可以进行题干的标注)<br><br>
+            {% endif %}
 
 			{% if textInfo.question_tagger%}
 			<div class="input-group">
@@ -229,7 +240,18 @@
 
         function click_button(element){
             var input_ele = document.getElementsByName(element.name.split("_")[0]+"_type_input_name")[0];
-            input_ele.value = element.innerText;
+
+            if (element.innerText == "[清空]"){
+                input_ele.value = "";
+                return;
+            }
+
+            if (element.name.split("_")[0]=="qiandao"){
+                input_ele.value += " "+element.innerText;
+            }
+            else{
+                input_ele.value = element.innerText;
+            }
 
             // core_type contains verb, show core_verb input
             if (element.name.split("_")[0]=="core"){
@@ -252,6 +274,7 @@
                 return false;
             }
             choice_type.style.background="#FFFFFF";
+
 
             var qiandao_type=document.getElementsByName("qiandao_type_input_name")[0];
             if (qiandao_type.value==""){

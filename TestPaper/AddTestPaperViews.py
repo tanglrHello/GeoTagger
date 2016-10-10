@@ -16,7 +16,6 @@ class SubjectiveFileForm(forms.Form):
 # Create your views here.
 def addTestPaper(request):
     if request.method=="POST":
-
         #取锁（批量分析时会上锁，对上传试卷互斥）
         while os.path.exists("static/mongo.lock"):
             continue
@@ -51,6 +50,9 @@ def addTestPaper(request):
             
             filepath="TestPaperData/SubjectiveData/";
             content=fileform.cleaned_data['SubjectiveFile'].read()
+
+        messages = {}
+
         if emptyFlag:
             messages['error_message']=u"请选择一个内容非空的txt文件！"
             cf=ChoiceFileForm()
@@ -59,9 +61,6 @@ def addTestPaper(request):
 
         print "uploading a "+papertype+" file.."
 
-        
-        messages={}
-        
         #检查是否有同名文件
         if checkFileIsNew(filename,messages,papertype):
             username=fileform.cleaned_data['uploadUserName']
@@ -110,9 +109,9 @@ def checkFileIsNew(filename,messages,filetype):
         path="TestPaperData/SubjectiveData/"
         
     exist_files=os.listdir(path)
-    #print [filename,filename.encode('gbk')]
+    #print [filename,filename.encode('utf-8')]
     
-    if filename.encode("gbk") in exist_files:
+    if filename.encode("utf-8") in exist_files:
         messages['error_message']=filename+u' 已存在重名的文件，不可覆盖！如果想上传，需要先删除相应试卷'
         return False
     else:
@@ -213,7 +212,7 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
                         return u"第"+str(index+1)+u"行的背景型题面题号"+number[:-1]+"有误，题号与前面的不连续"
                 
             #小题题面（2-3）
-            elif (number.split('-')[1].encode("gbk")).isdigit():     #unicode下的"①"等字符会被isdigit()函数判断为true
+            elif (number.split('-')[1].encode("utf-8")).isdigit():     #unicode下的"①"等字符会被isdigit()函数判断为true
                 print "xiaoti"
                 #print number
                 #print [number.split('-')[1],number.split('-')[1]]
@@ -580,15 +579,15 @@ def checkRepeatPaper(papertype,newfile_name):
 
     for oldfile_name in os.listdir(data_dir):
         try:
-            if oldfile_name.decode('gbk')==newfile_name.decode('gbk'):
+            if oldfile_name.decode('utf-8')==newfile_name.decode('utf-8'):
                 continue
         except:
             try:
-                if oldfile_name.decode('gbk')==newfile_name:
+                if oldfile_name.decode('utf-8')==newfile_name:
                     continue
             except:
                 try:
-                    if oldfile_name==newfile_name.decode('gbk'):
+                    if oldfile_name==newfile_name.decode('utf-8'):
                         continue
                 except:
                     try:
@@ -619,7 +618,7 @@ def checkRepeatPaper(papertype,newfile_name):
                         repeat_pairs.append((oldfile_question_list[index1][0],newfile_question_list[index2][0]))
 
         if len(repeat_pairs)!=0:
-            repeat_list[oldfile_name.decode("gbk")]=repeat_pairs
+            repeat_list[oldfile_name.decode("utf-8")]=repeat_pairs
     print repeat_list,"+++"
     return repeat_list
 

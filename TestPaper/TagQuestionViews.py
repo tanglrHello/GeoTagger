@@ -55,11 +55,13 @@ def tagQuestion(request):
         nextIndex = result[3]
         allValidIndex = result[4]
         fullQuestion = result[5]
+        isFirstSubQuestion = result[6]
         if papertype == "choice":
             # 将text拆成题面和选项，供前端显示
             textInfo['timian'] = textInfo['text'].split("\t")[0]
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
+            textInfo['posinfo'] = " ".join([seg+"_"+pos for seg,pos in zip(textInfo['segres'],textInfo['posres'])])
 
     username = request.COOKIES.get("username", "")
 
@@ -91,7 +93,8 @@ def tagQuestion(request):
                                    'papertype': papertype,
                                    'allValidIndex': json.dumps(allValidIndex),
                                    'fullQuestion': json.dumps(fullQuestion),
-                                   'username': username
+                                   'username': username,
+                                   'isFirstSubQuestion':isFirstSubQuestion
                                    })
 
     elif request.method == 'POST':
@@ -109,7 +112,7 @@ def tagQuestion(request):
 
         checkres = checkTagInfo(tagInfo)
         if checkres != "":
-            return HttpResponse(u"提交出错，标注中存在错误：" + checkres + \
+            return HttpResponse(u"提交出错，标注中存在错误：" + checkres +
                                 u"<br>可能是因为浏览器问题，前端检查没有正确执行" +
                                 u"<br>可以使用浏览器退回功能回到刚刚的标注状态中")
 
@@ -141,7 +144,7 @@ def checkTagInfo(tagInfo):
     if tagInfo['choice_type']=="":
         return u"请选择:选项类别"
     if tagInfo['qiandao_type']=="":
-        return u"请选择:题干前导部分分类"
+       return u"请选择:题干前导部分分类"
     if tagInfo['core_type']=="":
         return u"请选择:题干核心成分分类"
 
@@ -197,9 +200,10 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
     allValidIndex = []
 
     fullQuestion = None
+    isFirstSubQuestion = True
 
     for question in paperInfo['Questions']:
-        for ctext in question[textFieldName]:
+        for index,ctext in enumerate(question[textFieldName]):
             allValidIndex.append(ctext[globalIndexFieldName])
             if findFlag == True and nextFlag == False:  # 只有在nextFlag为False的时候才对nextIndex赋值
                 nextIndex = ctext[globalIndexFieldName]
@@ -207,6 +211,8 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
             if findFlag == True:
                 continue
             if globalIndex == ctext[globalIndexFieldName]:
+                if index > 0:
+                    isFirstSubQuestion = False
                 res.append(ctext)
                 if papertype == "choice":
                     res.append(question['QuestionIndex'])
@@ -233,6 +239,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
         res.append(nextIndex)
         res.append(allValidIndex)
         res.append(fullQuestion)
+        res.append(isFirstSubQuestion)
         return res
     else:
         # 如果遍历后没有找到则返回False

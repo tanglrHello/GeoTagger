@@ -145,7 +145,6 @@ def browseByPaper(request):
         return response
     elif request.method=='POST' and "query_kw_name" in request.POST:    #检索请求
         query_kw=request.POST['query_kw_name']
-        print query_kw
         paperInfoData=getData(conn,papertype,query_kw)
         return render_to_response("BrowseByPaper.html",
                                 {'paperInfoData':paperInfoData,

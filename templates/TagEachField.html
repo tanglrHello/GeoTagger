@@ -135,7 +135,7 @@
 	            	{%endif%}
 	            </tr>
 	            <tr>
-	            	{% if States.seg %}
+	            	{% if States.background %}
 	            	<td>
 	            		{%if papertype == "choice"%}
 	            			<a href="./TagNewTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">模板标注</a>
@@ -145,19 +145,19 @@
 	            	</td>
 	            	{%else%}
 	            	<td>
-						模板标注（需要先完成【分词】标注）
+						模板标注（需要先完成【套话、上下文信息】标注）
 					</td>
 	            	{%endif%}
 	            </tr>
                 <tr>
                 {%if papertype == "choice"%}
-	            	{% if States.seg %}
+	            	{% if States.background %}
 	            	<td>
                         <a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">题干选项标注</a>
 	            	</td>
 	            	{%else%}
 	            	<td>
-						题干选项标注（需要先完成【分词】标注）
+						题干选项标注（需要先完成【套话、上下文信息】标注）
 					</td>
 	            	{%endif%}
                 {%endif%}

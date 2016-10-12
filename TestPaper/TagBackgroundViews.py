@@ -79,8 +79,8 @@ def tagBackground(request):
 
         # 标注者信息
         username = None
-        if 'relativeUsernames' in paperInfo and 'timeloc_tagger' in paperInfo['relativeUsernames']:
-            username = paperInfo['relativeUsernames']['timeloc_tagger']
+        if 'relativeUsernames' in paperInfo and 'background_tagger' in paperInfo['relativeUsernames']:
+            username = paperInfo['relativeUsernames']['background_tagger']
         segs = []
         delete_part = []
         context = []
@@ -117,7 +117,7 @@ def tagBackground(request):
                                        'papertype': papertype})
         else:
             return render_to_response("TagBackground.html",
-                                      {'timeloc_tagger': username,
+                                      {'background_tagger': username,
                                        'States': paperInfo['States'],
                                        "restype": restype,
                                        "seg_taohua_context": zip(segs, delete_part, context),

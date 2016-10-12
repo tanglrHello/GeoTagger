@@ -136,11 +136,11 @@
 			     			{%for chinese_name,abbr_name,level,suggest,example in template_config%}
                                 {% if level == "1" %}
 				     			{% if templateSeltected == abbr_name%}
-				     			<td  width="25%">
+				     			<td  width="20%">
 				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" checked="true" />{{chinese_name}}</p>
 				     			</td>
 				     			{%else%}
-					     			<td  width="25%">
+					     			<td  width="20%">
 				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" />{{chinese_name}}</p>
 				     			</td>
 				     			{%endif%}
@@ -152,17 +152,17 @@
 					<table id="template_table" width="600">
 			     		<tr>
 			     			{%for chinese_name,abbr_name,level,suggest,example in template_config%}
-                                {%if forloop.counter0 == 8 or forloop.counter0 == 12%}
+                                {%if forloop.counter0 == 10 or forloop.counter0 == 15%}
 			     					</tr>
 			     					<tr>
 			     				{%endif%}
                                 {% if level == "2" %}
 				     			{% if templateSeltected == abbr_name%}
-				     			<td  width="25%">
+				     			<td  width="20%">
 				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" checked="true" />{{chinese_name}}</p>
 				     			</td>
 				     			{%else%}
-					     			<td  width="25%">
+					     			<td  width="20%">
 				     				<p><input type="radio" name="template" value="{{abbr_name}}Radio" />{{chinese_name}}</p>
 				     			</td>
 				     			{%endif%}
@@ -207,7 +207,7 @@
 
 		     			
 		     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 18 or forloop.counter0 == 22 or forloop.counter0 == 26 or forloop.counter0 == 30 or forloop.counter0 == 31%}
+							{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 18 or forloop.counter0 == 22 or forloop.counter0 == 26 or forloop.counter0 == 30 or forloop.counter0 == 31 or forloop.counter0 == 35%}
 							</tr>
 	     					<tr>
 							{%endif%}

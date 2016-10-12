@@ -131,7 +131,7 @@
 			<div class="input-group">
 			{%if papertype == "choice"%}
 				<span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
-				<textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}}@{{textInfo.xuanxiang}}</textarea>
+				<textarea type="text" class="form-control" readOnly="true">{{textInfo.remain_text}}</textarea>
 			{%else%}
 				<span class="input-group-addon" id="sizing-addon1">题面：</span>
 				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
@@ -139,11 +139,19 @@
 			</div>
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">分词：</span>
-				<textarea type="text" name="seg_name" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+				<textarea type="text" name="seg_name" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.remain_segres_info}}</textarea>
 			</div>
             <div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">词性：</span>
-				<textarea type="text" name="pos_name" id="segpos" class="form-control" rows="3" readOnly="true">{{textInfo.posinfo}}</textarea>
+				<textarea type="text" name="pos_name" id="segpos" class="form-control" rows="3" readOnly="true">{{textInfo.remain_posres_info}}</textarea>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">套话：</span>
+				<input type="text" name="delete_part_name" id="segpos" class="form-control"readOnly="true" value={{textInfo.delete_part_text}}>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">上下文信息：</span>
+				<input type="text" name="context_name" id="segpos" class="form-control" readOnly="true" value={{textInfo.context_text}}>
 			</div>
 		    <div class="panel panel-default">
 			  	<div class="panel-heading"><strong>一级模板：</strong></div>
@@ -203,7 +211,7 @@
 			<div class="input-group">
 			{%if papertype == "choice"%}
 				<span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
-				<input type="text" class="form-control" value="{{textInfo.timian}}@{{textInfo.xuanxiang}}" readOnly="true">
+				<input type="text" class="form-control" value="{{textInfo.remain_text}}" readOnly="true">
 			{%else%}
 				<span class="input-group-addon" id="sizing-addon1">题面：</span>
 				<textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
@@ -211,11 +219,20 @@
 			</div>
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">分词：</span>
-				<textarea type="text" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
+				<textarea type="text" id="segres" class="form-control" rows="3" readOnly="true">{{textInfo.remain_segres_info}}</textarea>
 			</div>
+
             <div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">词性：</span>
-				<textarea type="text" name="pos_name" id="segpos" class="form-control" rows="3" readOnly="true">{{textInfo.posinfo}}</textarea>
+				<textarea type="text" name="pos_name" id="segpos" class="form-control" rows="3" readOnly="true">{{textInfo.remain_posres_info}}</textarea>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">套话：</span>
+				<input type="text" name="delete_part_name" id="segpos" class="form-control"readOnly="true" value={{textInfo.delete_part_text}}>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">上下文信息：</span>
+				<input type="text" name="context_name" id="segpos" class="form-control" readOnly="true" value={{textInfo.context_text}}>
 			</div>
 
 			<div class="panel panel-default">
@@ -386,9 +403,8 @@
 			for(var i=0;i<templateInfo.length;i++){   //templateInfo的每一项有四个字段，分别为：模板中文名、模板名缩写、模板格式、模板填充示例
 				var t=templateInfo[i];
 				template_name[t[1]]=t[0];
-				//console.log(template_name);
-				template_suggest[t[1]]=t[0]+t[2];
-				template_example[t[1]]=t[3];
+				template_suggest[t[1]]=t[0]+t[3];
+				template_example[t[1]]=t[4];
 			}
 
 			for(var key in template_name){
@@ -397,7 +413,14 @@
 					suggest_div.innerHTML="格式："+template_suggest[key]+"<br>例子："+template_example[key];
 
 					//修改填充模版
-					insertAtCursor(template_input,template_name[key]+"_"+index+"（）");
+                    var comma_num = template_suggest[key].split(",").length-1;
+                    var fill_content = template_name[key]+"_"+index+"(";
+                    for (var i=0;i<comma_num;i++){
+                        fill_content+=",";
+                    }
+                    fill_content+=")";
+
+					insertAtCursor(template_input,fill_content);
 
 					//修改线索词
 					if(ttype!="qtgl" && ttype!="qtcs" && ttype!="sjxd"){
@@ -760,12 +783,14 @@
 			}
 
 			//是否含有英文逗号
-			if(template_input.value.indexOf(",")!=-1){
+            /*if(template_input.value.indexOf(",")!=-1){
 				template_input.style.background="#FFAAAA";
 				alert(template_type+"标注中不能含有英文逗号");
 				return false;
 			}
 			template_input.style.background="#FFFFFF";
+			*/
+
 			return true;
      	}
 

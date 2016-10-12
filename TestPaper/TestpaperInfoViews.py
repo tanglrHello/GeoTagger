@@ -97,6 +97,8 @@ def testpaperInfo(request):
                             ctext[v]="false"
                         else:
                             ctext[v]="true"
+
+                    ctext['text'] = "@".join(ctext['text'].split())
                     
                     queryRes.append(ctext)
 

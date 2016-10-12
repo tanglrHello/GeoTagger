@@ -115,6 +115,12 @@
                     <td><input id="term_no_ID" type="radio" name="termRadio" value="no"/>未完成</td>
                 </tr>
                 <tr>
+                    <td>套话、上下文信息:</td>
+                    <td><input id="background_all_ID" type="radio" name="backgroundRadio" value="all" checked="checked" />全部</td>
+                    <td><input id="background_yes_ID" type="radio" name="backgroundRadio" value="yes"/>完成</td>
+                    <td><input id="background_no_ID" type="radio" name="backgroundRadio" value="no"/>未完成</td>
+                </tr>
+                <tr>
                     <td>模板:</td>
                     <td><input id="secondTemplate_all_ID" type="radio" name="secondTemplateRadio" value="all" checked="checked" />全部</td>
                     <td><input id="secondTemplate_yes_ID" type="radio" name="secondTemplateRadio" value="yes"/>完成</td>
@@ -183,6 +189,9 @@
 									{%endif%}
 									{%if paper.relativeUsernames.conpparse_tagger%}
 									成分分析：{{paper.relativeUsernames.conpparse_tagger}}<br>
+									{%endif%}
+                                    {%if paper.relativeUsernames.background_tagger%}
+									套话上下文：{{paper.relativeUsernames.background_tagger}}<br>
 									{%endif%}
 									{%if paper.relativeUsernames.template_tagger%}
 									旧模板：{{paper.relativeUsernames.template_tagger}}<br>
@@ -304,18 +313,11 @@
 						<table id="outchoice_table" width="700">
 				     		<tr>
 				     			{%for tag_abbr,tag_chinese,tag_type,tag_depflag,tag_tableWidth,tag_tableColIndex in tagFields_config%}
-									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 9 or forloop.counter0 == 13 or forloop.counter0 == 17 or forloop.counter0 == 18 or forloop.counter0 == 22 or forloop.counter0 == 26 or forloop.counter0 == 30 or forloop.counter0 == 31 or forloop.counter0 == 35%}
+									{%if forloop.counter0 == 3 or forloop.counter0 == 7 or forloop.counter0 == 11 or forloop.counter0 == 15 or forloop.counter0 == 19 or forloop.counter0 == 23 or forloop.counter0 == 27 or forloop.counter0 == 31 or forloop.counter0 == 35 or forloop.counter0 == 39 or forloop.counter0 == 43%}
 									</tr>
 			     					<tr>
 									{%endif%}
-									{%if forloop.counter0 == 18 or forloop.counter0 == 31%}
-										<td>-----------------------------------</td>
-										<td>-----------------------------------</td>
-										<td>-----------------------------------</td>
-										<td>-----------------------------------</td>
-									</tr>
-						     		<tr>
-									{%endif%}
+
 									<td  width="25%">
 					     				<p><input type="checkbox" name="outcontent" value="{{tag_abbr}}Chk" />{{tag_chinese}}</p>
 					     			</td>

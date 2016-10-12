@@ -50,7 +50,7 @@ def tagNewTemplate(request):
 
     result = checkAndFindTextInfoInDB(papername, papertype, globalIndex)
     if result == False:
-        return HttpResponse("<h1>非法访问，该试卷没有这个选项文本")
+        return HttpResponse("<h1>非法访问，该试卷没有这个选项文本; 或者该文本的套话和上下文下标不合法")
     else:
         textInfo = result[0]
         questionIndex = result[1]
@@ -64,7 +64,6 @@ def tagNewTemplate(request):
             textInfo['timian'] = textInfo['text'].split("\t")[0]
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
-            textInfo['posinfo'] = " ".join([seg + "_" + pos for seg, pos in zip(textInfo['segres'], textInfo['posres'])])
 
     username = request.COOKIES.get("username", "")
 
@@ -72,10 +71,6 @@ def tagNewTemplate(request):
     if request.method == 'GET':
         if textInfo['segres'] == []:
             return HttpResponse("请先完成对该句的分词标注")
-
-        # 分词结果
-        textInfo['segres'] = " ".join(
-            [w + "_" + str(i) for w, i in zip(textInfo['segres'], range(len(textInfo['segres'])))])
 
         if textInfo['secondTemplate'] != "":
             tagtype = u"人工标注"
@@ -338,6 +333,62 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
             if findFlag == True:
                 continue
             if globalIndex == ctext[globalIndexFieldName]:
+                # remove taohua and context from seg and pos
+                remove_index = set()
+                deletepart_index = set()
+                context_index = set()
+                try:
+                    remove_ranges = [ctext['delete_part'],ctext['context']]
+                except:
+                    remove_ranges = []
+
+                for ri,remove_range in enumerate(remove_ranges):
+                    for irange in remove_range.split():
+                        try:
+                            remove_index.add(int(irange))
+                        except:
+                            start_end = irange.split("-")
+                            if len(start_end) != 2:
+                                return False
+
+                            try:
+                                start = int(start_end[0])
+                                end = int(start_end[1])
+                                if end<start:
+                                    return False
+                                if end>=len(ctext['segres']):
+                                    return False
+
+                                for i in range(start,end+1):
+                                    remove_index.add(i)
+                                    if ri == 0:
+                                        deletepart_index.add(i)
+                                    else:
+                                        context_index.add(i)
+                            except:
+                                return False
+
+                ctext['remain_segres_info'] = ""
+                ctext['remain_posres_info'] = ""
+                ctext['remain_text'] = ""
+                ctext['delete_part_text'] = ""
+                ctext['context_text'] = ""
+                for wi,word in enumerate(ctext['segres']):
+                    if wi not in remove_index:
+                        ctext['remain_segres_info']+=word+"_"+str(wi)+" "
+                        ctext["remain_text"]+=word
+                        try:
+                            ctext['remain_posres_info']+=word+"_"+ctext['posres'][wi]
+                        except:
+                            ctext['remain_posres_info'] = u"暂无词性标注"
+                    if "".join(ctext['segres'][:wi + 1]) == ctext['text'].split()[0]:
+                        ctext['remain_text'] += "@"
+
+                    if wi in deletepart_index:
+                        ctext['delete_part_text']+=word
+                    if wi in context_index:
+                        ctext['context_text']+=word
+
                 # 一些预处理
                 for f in relativeFieldNames[3:] + autoFieldNames[3:]:
                     if f in ctext:
@@ -366,6 +417,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
                     fullQuestion = "\n".join(fullQuestionInfo)
                 else:
                     fullQuestion = ""
+
             else:
                 lastIndex = ctext[globalIndexFieldName]
                 if papertype == "choice" and (ctext['number'] in "ABCD" or ctext['number'] in u"①②③④⑤⑥⑦⑧⑨"):  # 只有选择题需要从上一题同步的功能

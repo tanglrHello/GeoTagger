@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>套话、上下文信息标注-GeoTagger-njunlp</title>
+	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.9.1/bootstrap-table.min.css" />
+</head>
+<body>
+	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+
+	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
+	  	<div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="./SingleSentenceAnalyze.html">GeoTagger-njunlp</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析</a></li>
+	        <li><a href="{% url 'TestPaper.AddTestPaperViews.addTestPaper' %}">添加试题</a></li>
+	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
+	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>
+	        <li><a href="BrowseByPaper.html?papertype=subjective">主观题（按试卷）</a></li>
+	        <li><a href="BrowseByTemplate.html?papertype=subjective">主观题（按模板）</a></li>
+	        <li><a href="SearchText.html">搜索试题</a></li>
+	        <li><a href="AutoBatchAnalyze.html">批量自动分析</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+	<div> &nbsp;</div>
+	<div class="page-header">
+	  	<h1>套话、上下文信息标注-{{papername}}</h1>
+	</div>
+
+	<div class="container">
+		<div class="container">
+		<font size="4"><a href="./TagEachField.html?papername={{papername}}">回到本试卷单项标注导航页</a></font><br />
+
+		<form method="POST" onsubmit="return checkAllFunc();">
+
+			<div class="alert alert-info" role="alert">
+				<strong><font size="4">套话、上下文信息标注（在粗粒度的分词结果上标注）：</font></strong>
+                <label><font size="4">例子:</font></label><br>
+	          <strong>原文：</strong><br>
+	          &nbsp;&nbsp;&nbsp;&nbsp;下列/0 关于/1 A、B两地/2 大气/3 状况/4 的/5 叙述/6 ，/7 正确/8 的/9 是/10 气压/11 ：/12 A地/13 低于/14 B地/15<br>
+	          <strong>套话：</strong>
+	          &nbsp;&nbsp;0-1 5-12<br>
+	          &nbsp;&nbsp;&nbsp;&nbsp;（表示有两个套话区间，包含起始下标对应的词）<br>
+	          &nbsp;&nbsp;&nbsp;&nbsp;（多个区间之间用 <strong>空格</strong> 隔开，上下文信息标注规则相同）
+	          <br /><br />
+
+			</div>
+			<div class="alert alert-success" role="alert">
+			  	<a href="#" class="alert-link">当前显示的套话、上下文信息标注结果是：{{restype}}</a>
+			</div>
+			<table id="paper_table" class="table table-striped table-bordered table-hover js-table">
+		         <thead>
+		         <tr>
+		            <th width="50%" >分词结果</th>
+		         	<th width="25%">套话</th>
+		         	<th width="25%">上下文信息</th>
+		         </tr>
+		         </thead>
+		         <tbody id="body-fjShipChkList">
+		         	{%for s_t_l in seg_taohua_context%}
+		            <tr>
+		            	<td id="{{forloop.counter0}}_seg">{{s_t_l.0}}</td>
+		            	<td>
+							<input id="{{forloop.counter0}}_delete_part" name="{{forloop.counter0}}_delete_part" class="form-control" onblur="editBackgroundEndFunc({{forloop.counter0}});" value="{{s_t_l.1}}" placeholder="套话">
+		            	</td>
+		            	<td>
+							<input id="{{forloop.counter0}}_context" name="{{forloop.counter0}}_context" class="form-control" onblur="editBackgroundEndFunc({{forloop.counter0}});" value="{{s_t_l.2}}" placeholder="上下文信息">
+		            	</td>
+		            </tr>
+		            {%endfor%}
+		         </tbody>
+            </table>
+            <br />
+		     	{% if background_tagger%}
+		        <div class="input-group">
+		          <span class="input-group-addon" id="sizing-addon1"><strong>当前套话、上下文信息的标注者：</strong></span>
+		              <input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{background_tagger}}" readOnly="true">
+		        </div><br>
+		        {%endif%}
+				<div class="input-group">
+					<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为套话、上下文信息的标注者）：</strong></span>
+		      		<input id="username_id" name="username_name" type="text" class="form-control">
+		   		 </div>
+            <br />
+            <input type="submit" value="提交" class="btn btn-info" name="submitBackground"/>
+		     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+		 </form>
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+	     <script>
+	     	function editBackgroundEndFunc(index){
+	     		var seg=document.getElementById(index+"_seg").innerText.split(" ");
+
+	     		var types=["_delete_part","_context"];
+	     		var chineseTypes=["套话","上下文信息"]
+	     		var indexes=[];
+
+	     		for(var j=0;j<types.length;j++){
+	     			var thisindex=document.getElementById(index+types[j]).value.split(" ");
+	     			var realIndex=[];
+	     			for(var k=0;k<thisindex.length;k++){
+	     				if(thisindex[k]!=""){
+	     					realIndex.push(thisindex[k]);
+	     				}
+	     			}
+
+	     			indexes.push(realIndex);
+	     		}
+
+	     		return true;
+	     	}
+
+
+	     	function checkUserName(){
+	     		username_input=document.getElementById("username_id");
+	     		if(username_input.value.trim()==""){
+	     			alert("请输入你的名字");
+	     			username_input.style.background="#FFAAAA";
+	     			return false;
+	     		}
+	     		username_input.style.background="#FFFFFF";
+				return true;
+	     	}
+
+	     	function checkAllFunc(){
+	     		if(!checkUserName()){
+	     			return false;
+	     		}
+	     		for(var i=0;i<{{seg_taohua_context|length}};i++)
+	     			if(editBackgroundEndFunc(i)==false)
+	     				return false;
+	     		return true;
+	     	}
+	     </script>
+	</div>
+
+
+</body>
+</html>

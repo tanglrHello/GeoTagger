@@ -7,10 +7,8 @@ term	术语	0
 pos	词性	1
 auto_bpres	自动成分分析	0
 bpres	人工成分分析	0
-simplifiedTemplate	简化模板	1
-fullTemplate	完整模板	0
-topTemplate	高阶模板	0
-secondTemplate	二阶模板	0
-autoTemplate	自动简化模板	1
-autoTemplate	自动完整模板	0
+background	套话、上下文信息	1
+simplifiedTemplate	旧模板	0
+topTemplate	新模板	0
+autoTemplate	自动简化、完整模板	1
 questionInfo	题干选项信息	0

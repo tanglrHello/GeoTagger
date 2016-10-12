@@ -120,6 +120,20 @@
 	            	{%endif%}
 	            </tr>
                 <tr>
+	            	{% if States.seg %}
+	            	<td>
+	            		{%if papertype == "choice"%}
+	            			<a href="./TagBackground.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex=1">套话、上下文信息标注</a>
+	            		{%else%}
+							<a href="./TagBackground.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex=1">套话、上下文信息标注</a>
+	            		{%endif%}
+	            	</td>
+	            	{%else%}
+	            	<td>
+						套话、上下文信息标注（需要先完成【分词】标注）
+					</td>
+	            	{%endif%}
+	            </tr>
 	            <tr>
 	            	{% if States.seg %}
 	            	<td>

@@ -244,6 +244,8 @@ def getData(conn,papertype,paperName_kw,state={}):
             data['States']['topTemplate']=False
         if "secondTemplate" not in data['States']:
             data['States']['secondTemplate']=False
+        if "background" not in data['States']:
+            data['States']['background']=False
 
         paperInfoData.append(data)
     return paperInfoData

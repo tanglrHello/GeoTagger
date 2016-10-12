@@ -34,3 +34,4 @@ qiandao_type	题干前导类型	string	null	5
 core_type	题干核心类型	string	null	5
 core_verb	题干核心动词	string	null	5
 delete_part	可删除的套话	string	null	5
+context	上下文信息	string	null	5

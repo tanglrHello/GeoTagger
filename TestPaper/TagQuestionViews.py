@@ -61,7 +61,6 @@ def tagQuestion(request):
             textInfo['timian'] = textInfo['text'].split("\t")[0]
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
-            textInfo['posinfo'] = " ".join([seg+"_"+pos for seg,pos in zip(textInfo['segres'],textInfo['posres'])])
 
     username = request.COOKIES.get("username", "")
 
@@ -69,9 +68,6 @@ def tagQuestion(request):
         if textInfo['segres'] == []:
             return HttpResponse("请先完成对该句的分词标注")
 
-        # 分词结果
-        textInfo['segres'] = " ".join(
-            [w + "_" + str(i) for w, i in zip(textInfo['segres'], range(len(textInfo['segres'])))])
 
         if 'choice_type' not in textInfo:
             textInfo['choice_type']=""
@@ -79,8 +75,6 @@ def tagQuestion(request):
             textInfo['qiandao_type']=""
         if 'core_type' not in textInfo:
             textInfo['core_type']=""
-        if 'delete_part' not in textInfo:
-            textInfo['delete_part']=""
 
         return render_to_response("TagQuestion.html",
                                   {'textInfoJson': json.dumps(textInfo),
@@ -103,7 +97,6 @@ def tagQuestion(request):
         tagInfo['qiandao_type'] = request.POST.get("qiandao_type_input_name")
         tagInfo['core_type'] = request.POST.get("core_type_input_name")
         tagInfo['core_verb'] = request.POST.get("core_verb_input_name")
-        tagInfo['delete_part'] = request.POST.get("delete_part_input_name")
         tagInfo['seg'] = request.POST.get("seg_name")
         username = request.POST.get("username_name")
 
@@ -211,6 +204,62 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
             if findFlag == True:
                 continue
             if globalIndex == ctext[globalIndexFieldName]:
+                # remove taohua and context from seg and pos
+                remove_index = set()
+                deletepart_index = set()
+                context_index = set()
+                try:
+                    remove_ranges = [ctext['delete_part'], ctext['context']]
+                except:
+                    remove_ranges = []
+
+                for ri, remove_range in enumerate(remove_ranges):
+                    for irange in remove_range.split():
+                        try:
+                            remove_index.add(int(irange))
+                        except:
+                            start_end = irange.split("-")
+                            if len(start_end) != 2:
+                                return False
+
+                            try:
+                                start = int(start_end[0])
+                                end = int(start_end[1])
+                                if end < start:
+                                    return False
+                                if end >= len(ctext['segres']):
+                                    return False
+
+                                for i in range(start, end + 1):
+                                    remove_index.add(i)
+                                    if ri == 0:
+                                        deletepart_index.add(i)
+                                    else:
+                                        context_index.add(i)
+                            except:
+                                return False
+
+                ctext['remain_segres_info'] = ""
+                ctext['remain_posres_info'] = ""
+                ctext['remain_text'] = ""
+                ctext['delete_part_text'] = ""
+                ctext['context_text'] = ""
+                for wi, word in enumerate(ctext['segres']):
+                    if wi not in remove_index:
+                        ctext['remain_segres_info'] += word + "_" + str(wi) + " "
+                        ctext["remain_text"] += word
+                        try:
+                            ctext['remain_posres_info'] += word + "_" + ctext['posres'][wi]
+                        except:
+                            ctext['remain_posres_info'] = u"暂无词性标注"
+                    if "".join(ctext['segres'][:wi + 1]) == ctext['text'].split()[0]:
+                        ctext['remain_text'] += "@"
+
+                    if wi in deletepart_index:
+                        ctext['delete_part_text'] += word
+                    if wi in context_index:
+                        ctext['context_text'] += word
+
                 if index > 0:
                     isFirstSubQuestion = False
                 res.append(ctext)
@@ -279,7 +328,6 @@ def saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, reques
                     ctext['qiandao_type'] = tagInfo['qiandao_type']
                     ctext['core_type'] = tagInfo['core_type']
                     ctext['core_verb'] = tagInfo['core_verb']
-                    ctext['delete_part'] = tagInfo['delete_part']
 
         i = 0
         saveok = False

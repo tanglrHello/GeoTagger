@@ -123,7 +123,7 @@
 			<div class="input-group">
                 {%if papertype == "choice"%}
                     <span class="input-group-addon" id="sizing-addon1">题面@选项：</span>
-                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.timian}}@{{textInfo.xuanxiang}}</textarea>
+                    <textarea type="text" class="form-control" readOnly="true">{{textInfo.remain_text}}</textarea>
                 {%else%}
                     <span class="input-group-addon" id="sizing-addon1">题面：</span>
                     <textarea type="text" class="form-control" readOnly="true">{{textInfo.text}}</textarea>
@@ -132,7 +132,15 @@
 
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon1">词性：</span>
-                <textarea type="text" class="form-control" readOnly="true">{{textInfo.posinfo}}</textarea>
+                <textarea type="text" class="form-control" readOnly="true">{{textInfo.remain_posres_info}}</textarea>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">套话：</span>
+				<input type="text" name="delete_part_name" id="segpos" class="form-control"readOnly="true" value={{textInfo.delete_part_text}}>
+			</div>
+            <div class="input-group">
+				<span class="input-group-addon" id="sizing-addon1">上下文信息：</span>
+				<input type="text" name="context_name" id="segpos" class="form-control" readOnly="true" value={{textInfo.context_text}}>
 			</div><br>
 
             <div class="input-group">
@@ -154,6 +162,7 @@
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">范围限定</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">目的状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">条件状语</button>
+            <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">比较</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">陈述句</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">自定义类别</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">null</button>
@@ -163,7 +172,12 @@
                 <span class="input-group-addon" id="sizing-addon1">题干核心成分分类:</span>
                 <input type="text" class="form-control" readOnly="true" name="core_type_input_name" value="{{textInfo.core_type}}">
 			</div>
+
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">时间状语</button>
             <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">范围限定</button>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">目的状语</button>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">条件状语</button>
+            <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">比较</button>
             <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">名词短语(包括时间/地点短语)</button><br>
             <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">名词短语+动词短语</button>
             <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">动词短语</button>
@@ -184,18 +198,6 @@
             </div>
             <br>
 
-            <div id="delete_part">
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon1">可删除的套话:</span>
-                    <input type="text" class="form-control" name="delete_part_input_name"
-                           value="{{textInfo.delete_part}}"
-                           placeholder="例如:3 或者 3-5,表示第3个词语或者是第3到第5三个词语(包括第4个)">
-                </div>
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon1">分词：</span>
-                    <textarea type="text" name="seg_name" class="form-control" rows="3" readOnly="true">{{textInfo.segres}}</textarea>
-                </div>
-            </div>
             <br>
             {% else %}
                 (只有每道选择题的第一个题干选项的组合文本对应的页面里,可以进行题干的标注)<br><br>
@@ -318,14 +320,6 @@
             }
             core_verb.style.background="#FFFFFF";
 
-            var delete_part=document.getElementsByName("delete_part_input_name")[0];
-            if (delete_part.value!=""){
-                if (!checkIndex(delete_part.value, seglen)){
-                    delete_part.style.background="#FFAAAA";
-                    return false;
-                }
-            }
-            delete_part.style.background="#FFFFFF";
             //---check index end---
 
             return true;

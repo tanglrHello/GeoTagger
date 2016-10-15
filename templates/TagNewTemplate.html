@@ -413,7 +413,7 @@
 					suggest_div.innerHTML="格式："+template_suggest[key]+"<br>例子："+template_example[key];
 
 					//修改填充模版
-                    var comma_num = template_suggest[key].split(",").length-1;
+                    var comma_num = template_suggest[key].split("|")[0].split(",").length-1;
                     var fill_content = template_name[key]+"_"+index+"(";
                     for (var i=0;i<comma_num;i++){
                         fill_content+=",";

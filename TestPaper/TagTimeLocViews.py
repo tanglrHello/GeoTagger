@@ -29,6 +29,26 @@ def tagTimeLoc(request):
         dataCollection=GeopaperDB['SubjectiveData']
         textFieldName="subQuestions"
 
+    # change all time loc infos into string
+    for paperInfo in dataCollection.find():
+        for question in paperInfo['Questions']:
+            for ctext in question['combinedTexts']:
+                if type(ctext['goldtimes'])!=type(u"string"):
+                    print "1"
+                    if 'goldtimes' in ctext:
+                        ctext['goldtimes'] = " ".join([str(x) for x in ctext['goldtimes']])
+                    if 'goldlocs' in ctext:
+                        ctext['goldlocs'] = " ".join([str(x) for x in ctext['goldlocs']])
+                    if 'goldquants' in ctext:
+                        ctext['goldquants'] = " ".join([str(x) for x in ctext['goldquants']])
+                    if 'goldterms' in ctext:
+                        ctext['goldterms'] = " ".join([str(x) for x in ctext['goldterms']])
+                else:
+                    print "?"
+                    break
+
+        #dataCollection.save(paperInfo)
+
     paperInfo=dataCollection.find_one({'testpaperName':papername})
 
     if not paperInfo:
@@ -61,10 +81,10 @@ def tagTimeLoc(request):
             for ctext in question[textFieldName]:
                 segs.append(" ".join([w+"_"+str(i) for w,i in zip(ctext['segres'],range(len(ctext['segres'])))]))
                 for i,fn in enumerate(fieldNames):
-                    ctext[fn]=[int(i) for i in request.POST[str(index)+"_"+names[i]].split()]
+                    ctext[fn]=request.POST[str(index)+"_"+names[i]]
 
                 for i,l in enumerate(tltq_lists):
-                    l.append(" ".join([str(i) for i in ctext[fieldNames[i]]]))
+                    l.append(ctext[fieldNames[i]])
 
                 index+=1
 
@@ -177,7 +197,7 @@ def tagTimeLoc(request):
                 if paperInfo['States']['time']==True and paperInfo['States']['loc']==True:  #有人工标注的时间地点
                     for index,fn in enumerate(fieldNames):
                         if fn in ctext:
-                            res_strs[names[index]]=" ".join([str(i) for i in ctext[fn]])
+                            res_strs[names[index]]=ctext[fn]
                         else:
                             res_strs=""
 

@@ -10,7 +10,6 @@ from . import SearchTextViews,AutoBatchAnalyzeViews
 from . import TagQuestionViews,TagBackgroundViews
 from . import homepageViews
 
-
 urlpatterns = [
     url(r'AddTestPaper',AddTestPaperViews.addTestPaper),
 	url(r'BrowseByPaper',BrowseByPaperViews.browseByPaper),
@@ -30,7 +29,7 @@ urlpatterns = [
 	url(r'DeleteTestpaper',DeleteTestpaperViews.deleteTestpaper),
     url(r'SearchText',SearchTextViews.searchText),
     url(r'AutoBatchAnalyze',AutoBatchAnalyzeViews.autoBatchAnalyze),
-    url(r'TagQuestion',TagQuestionViews.tagQuestion),
     url(r'TagBackground',TagBackgroundViews.tagBackground),
+    url(r'TagQuestion',TagQuestionViews.tagQuestion),
     url(r'index',homepageViews.homepage)
 ]

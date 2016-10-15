@@ -155,8 +155,8 @@
 
             {% if isFirstSubQuestion %}
             <div class="input-group">
-                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类(可为空、可多选):</span>
-                <input type="text" class="form-control" readOnly="true" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
+                <span class="input-group-addon" id="sizing-addon1">题干前导部分分类(可为null、可多选):</span>
+                <input type="text" class="form-control" readOnly="true" placeholder="前导分类的数量必须和题干前导的个数相同(题干中m个逗号分割出m+1个题干前导)" name="qiandao_type_input_name" value="{{textInfo.qiandao_type}}">
 			</div>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">时间状语</button>
             <button type="button" class="btn btn-default" name="qiandao_type_button" onclick="click_button(this)">范围限定</button>
@@ -284,6 +284,14 @@
                 alert("请选择前导部分分类");
                 return false;
             }
+
+            /*
+            var text ="{{ textInfo.remain_text }}";
+            if (qiandao_type.value.split().length != text.split("@")[0].split("，").length){
+                alert("前导分类的数量必须和题干前导的个数相同(题干中m个逗号分割出m+1个题干前导)");
+                qiandao_type.style.background="#FFAAAA";
+                return false;
+            }*/
             qiandao_type.style.background="#FFFFFF";
 
             var core_type=document.getElementsByName("core_type_input_name")[0];

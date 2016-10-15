@@ -7,12 +7,12 @@ auto_seg	（auto粗粒度）分词	string	null	9
 auto_seg_fg	（auto细粒度）分词	string	null	9
 posres	词性	list_string_index	null	9
 auto_pos	（auto）词性	list_string_index	null	9
-goldtimes	时间	list_num	null	5
+goldtimes	时间	string	null	5
 auto_time	（auto）时间	list_num	null	5
-goldlocs	地点	list_num	null	5
-goldterms	术语	list_num	null	5
+goldlocs	地点	string	null	5
+goldterms	术语	string	null	5
 auto_loc	（auto）地点	list_num	null	5
-goldquants	数量词	list_num	null	5
+goldquants	数量词	string	null	5
 bpres	成分分析	string	conpparse_valid	10
 auto_bpres	（auto）成分分析	string	auto_conpparse_valid	10
 topTemplate	高阶模板	string	template_valid	9

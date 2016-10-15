@@ -236,10 +236,6 @@ def checkTagInfo(tagInfo):
             if template.count("_" + str(i)) > 1:
                 return chn_tname[t] + u"标注中存在重复的模板下标：" + str(i)
 
-        # 检查模板标注中是否有英文逗号
-        if template.find(",") != -1:
-            return chn_tname[t] + u"标注中存在英文逗号"
-
         # 检查每个线索词项格式是否正确
         cwList = cueword.split()
         templateIndex = []

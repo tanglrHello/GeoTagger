@@ -47,14 +47,13 @@ def tagTerm(request):
         # 保存标注者信息
         username = request.POST['username_name']
         paperInfo['relativeUsernames']['term_tagger'] = username
-        print username,"username(((((((((((((("
 
         index = 0
         for question in paperInfo['Questions']:
             for ctext in question[textFieldName]:
                 segs.append(" ".join([w + "_" + str(i) for w, i in zip(ctext['segres'], range(len(ctext['segres'])))]))
-                ctext['goldterms'] = [int(i) for i in request.POST[str(index) + "_term"].split()]
-                termres.append(" ".join([str(i) for i in ctext['goldterms']]))
+                ctext['goldterms'] =  request.POST[str(index) + "_term"]
+                termres.append(ctext['goldterms'])
                 index += 1
 
         # 修改试卷标注状态
@@ -95,7 +94,7 @@ def tagTerm(request):
 
                 if paperInfo['States']['term'] == True:  # 有人工标注的时间地点
                     if 'goldterms' in ctext:
-                        termres.append(" ".join([str(i) for i in ctext['goldterms']]))
+                        termres.append(ctext['goldterms'])
                     else:
                         termres.append("")
                 else:

@@ -251,7 +251,7 @@ def checkTagInfo(tagInfo):
                 return chn_tname[t] + u"线索词标注中，'" + cw + u"'这一项的线索词下标存在重复"
 
             seg_remain = seg.split()
-            maxWordIndex = int(seg_remain[len(seg_remain)-1].split("_")[2])
+            maxWordIndex = int(seg_remain[len(seg_remain)-1].split("_")[1])
             for wi in cw[1].split("-"):
                 if not 0 <= int(wi) <= maxWordIndex :
                     return chn_tname[t] + u"线索词标注中，'" + cw + u"'这一项对应的线索词下标不是有效的词语下标"

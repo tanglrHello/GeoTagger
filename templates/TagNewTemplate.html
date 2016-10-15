@@ -494,7 +494,7 @@
 				document.getElementById("currentSTIndex").innerText=ST_index;
 			}
 			else if(location=="second"){
-				if(FT_index==0){
+				if(FT_index==-1){
 					alert("下标为-1，不能再减小");
 					return;
 				}
@@ -788,9 +788,9 @@
 				template_input.style.background="#FFAAAA";
 				alert(template_type+"标注中不能含有英文逗号");
 				return false;
-			}
+			}*/
 			template_input.style.background="#FFFFFF";
-			*/
+
 
 			return true;
      	}

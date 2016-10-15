@@ -217,6 +217,8 @@ def checkTagInfo(tagInfo):
     chn_tname = {"top": u"高阶模板", "second": u"二阶模板"}
 
     seg = tagInfo['seg']
+    seg_remain = seg.split()
+    maxWordIndex = int(seg_remain[len(seg_remain) - 1].split("_")[1])
 
     if tagInfo["topTemplate"].strip() == "" and tagInfo['secondTemplate'].strip()=="":
         return u"一级模板和二级模板至少要填写一个"
@@ -250,8 +252,6 @@ def checkTagInfo(tagInfo):
             if len(list(set(cw[1].split("-")))) != len(cw[1].split('-')):
                 return chn_tname[t] + u"线索词标注中，'" + cw + u"'这一项的线索词下标存在重复"
 
-            seg_remain = seg.split()
-            maxWordIndex = int(seg_remain[len(seg_remain)-1].split("_")[1])
             for wi in cw[1].split("-"):
                 if not 0 <= int(wi) <= maxWordIndex :
                     return chn_tname[t] + u"线索词标注中，'" + cw + u"'这一项对应的线索词下标不是有效的词语下标"
@@ -263,7 +263,7 @@ def checkTagInfo(tagInfo):
         for index in cq_index:
             try:
                 i = int(index)
-                if i >= len(seg):
+                if i > maxWordIndex:
                     return u"选项问句的下标范围超过了最大下标"
             except:
                 return u"选项问句的下标范围不是有效数字"

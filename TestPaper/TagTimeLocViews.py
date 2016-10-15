@@ -29,26 +29,6 @@ def tagTimeLoc(request):
         dataCollection=GeopaperDB['SubjectiveData']
         textFieldName="subQuestions"
 
-    # change all time loc infos into string
-    for paperInfo in dataCollection.find():
-        for question in paperInfo['Questions']:
-            for ctext in question['combinedTexts']:
-                if type(ctext['goldtimes'])!=type(u"string"):
-                    print "1"
-                    if 'goldtimes' in ctext:
-                        ctext['goldtimes'] = " ".join([str(x) for x in ctext['goldtimes']])
-                    if 'goldlocs' in ctext:
-                        ctext['goldlocs'] = " ".join([str(x) for x in ctext['goldlocs']])
-                    if 'goldquants' in ctext:
-                        ctext['goldquants'] = " ".join([str(x) for x in ctext['goldquants']])
-                    if 'goldterms' in ctext:
-                        ctext['goldterms'] = " ".join([str(x) for x in ctext['goldterms']])
-                else:
-                    print "?"
-                    break
-
-        #dataCollection.save(paperInfo)
-
     paperInfo=dataCollection.find_one({'testpaperName':papername})
 
     if not paperInfo:

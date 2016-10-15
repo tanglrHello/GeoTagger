@@ -410,7 +410,7 @@
 			for(var key in template_name){
 				if(ttype==key){
 					//显示模板填槽提示
-					suggest_div.innerHTML="格式："+template_suggest[key]+"<br>例子："+template_example[key];
+					suggest_div.innerHTML="(默认生成的逗号个数和该模板的第一种形式一致,如果需要第二种形式,需要自己调整逗号个数)<br>格式："+template_suggest[key]+"<br>例子："+template_example[key];
 
 					//修改填充模版
                     var comma_num = template_suggest[key].split("|")[0].split(",").length-1;

@@ -66,6 +66,7 @@ def tagNewTemplate(request):
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")
 
     username = request.COOKIES.get("username", "")
+    print "masld;kfjlej",username
 
     tagtype = ""
     if request.method == 'GET':

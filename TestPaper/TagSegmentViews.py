@@ -78,7 +78,6 @@ def tagSegment(request):
         paperInfo=dataCollection.find_one({'testpaperName':papername})
 
         seg_index=0
-        print len(seg_output_sentences),"******"
         if papertype=="choice":
             for question in paperInfo['Questions']:
                 for ctext in question['combinedTexts']:
@@ -105,37 +104,44 @@ def tagSegment(request):
                                  'papername':papername,
                                  'papertype':papertype})
 
-    elif request.method=="POST" and "submitSEG" in request.POST:  #提交人工分词结果（含可能修改过的原试题文本）
+    elif request.method == "POST" and "submitSEG" in request.POST:  #提交人工分词结果（含可能修改过的原试题文本）
         #print request.POST
-        paperInfo=dataCollection.find_one({'testpaperName':papername})
+        paperInfo = dataCollection.find_one({'testpaperName':papername})
 
         #保存标注者信息
-        username=request.POST['username_name']
-        paperInfo['relativeUsernames']['seg_tagger']=username
+        username = request.POST['username_name']
+        paperInfo['relativeUsernames']['seg_tagger'] = username
 
-        texts=[]
-        seg_res=[]     #粗粒度
-        seg_res_fg=[]  #细粒度
+        texts = []
+        seg_res = []     #粗粒度
+        seg_res_fg = []  #细粒度
 
         try:
-            index=0
+            index = 0
             for question in paperInfo['Questions']:
                 for ctext in question[textFieldName]:
-                    new_text=request.POST[str(index)+"_text"]   #前端保证粗细粒度文本一致，这里只需获取一个
-                    oritext=ctext['text']
-                    if new_text!=oritext:
-                        ctext['text']=new_text
-                        if 'deprecated_text' in ctext:                            
+                    if request.POST[str(index) + "_text"] != request.POST[str(index)+"_text_fg"]:
+                        return HttpResponse("第" + index + "个文本的粗细粒度原文本不一致")
+                    if len(request.POST[str(index) + "_text"].split("\t")) != 2:
+                        return HttpResponse("第" + index + "个文本的粗粒度原文本中应该有一个tab隔开题面和选项")
+                    if len(request.POST[str(index) + "_text_fg"].split("\t")) != 2:
+                        return HttpResponse("第" + index + "个文本的细粒度原文本中应该有一个tab隔开题面和选项")
+
+                    new_text = request.POST[str(index)+"_text"]   # 前端保证粗细粒度文本一致，这里只需获取一个
+                    oritext = ctext['text']
+                    if new_text != oritext:
+                        ctext['text'] = new_text
+                        if 'deprecated_text' in ctext:
                             ctext["deprecated_text"].append(new_text)
                         else:
-                            ctext['deprecated_text']=[new_text]
+                            ctext['deprecated_text'] = [new_text]
                     texts.append(new_text)
 
-                    ctext['segres']=request.POST[str(index)+"_seg"].split()
-                    ctext['segres_fg']=request.POST[str(index)+"_seg_fg"].split()
+                    ctext['segres'] = request.POST[str(index) + "_seg"].split()
+                    ctext['segres_fg'] = request.POST[str(index) + "_seg_fg"].split()
                     seg_res.append(" ".join(ctext['segres']))
                     seg_res_fg.append(" ".join(ctext['segres_fg']))
-                    index+=1
+                    index += 1
         except Exception, e:
             print e
             print traceback.format_exc()

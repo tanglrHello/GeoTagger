@@ -155,6 +155,12 @@
 	     			button.innerText="保存";
 	     		}
 	     		else if(button.innerText=="保存"){
+                    if (text.value.split("\t").length!=2){
+                        alert("题面和选项之间必须有一个tab");
+                        text.style.background = "#FFAAAA";
+                        return;
+                    }
+                    text.style.background = "#FFFFFF";
 	     			text.readOnly=true;
 	     			button.innerText="修改";
 	     		}
@@ -177,7 +183,7 @@
 
 	     	}
 	     	function editSegEndFunc(index,suffix){
-	     		var papertype={{papertype}};
+	     		var papertype="{{papertype}}";
 	     		var text="";
 	     		if(papertype=="choice"){
 	     			text=document.getElementById(index+"_text"+suffix).value.split("\t");
@@ -223,6 +229,7 @@
 	     	}
 
 	     	//因为可以修改原文本，该函数检查粗粒度和细粒度对应的原文本是否一致
+            //检查可能修改后的原文本是否有一个tab分割题面和选项
 	     	function checkTextConsistency(){
 	     		for(var i=0;i<{{text_seg|length}};i++){
 	     			oritext=document.getElementById(i+"_text");
@@ -233,6 +240,17 @@
 	     				oritext_fg.style.background="#FFAAAA";
 	     				return false;
 	     			}
+                    if(oritext.value.split("\t").length!=2 ){
+                        alert("第"+i+"个粗粒度文本中应该有tab隔开题面和选项");
+                        oritext.style.background="#FFAAAA";
+                        return false;
+                    }
+                    if(oritext_fg.value.split("\t").length!=2 ){
+                        alert("第"+i+"个细粒度文本中应该有tab隔开题面和选项");
+                        oritext_fg.style.background="#FFAAAA";
+                        return false;
+                    }
+
 	     			oritext.style.background="#FFFFFF";
 	     			oritext_fg.style.background="#FFFFFF";
 	     		}

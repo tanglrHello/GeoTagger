@@ -73,8 +73,6 @@ def addTestPaper(request):
                     print e
                     print traceback.format_exc()
                     result="some exceptions occured in parseFileAndSaveToDatabase"
-                print "***"
-                print result
                 if len(result)==3:   #解析并保存成功
                     messages['success_message']=u"上传成功！"
                     if result[1] or result[2]:
@@ -109,8 +107,7 @@ def checkFileIsNew(filename,messages,filetype):
         path="TestPaperData/SubjectiveData/"
         
     exist_files=os.listdir(path)
-    #print [filename,filename.encode('utf-8')]
-    
+
     if filename.encode("utf-8") in exist_files:
         messages['error_message']=filename+u' 已存在重名的文件，不可覆盖！如果想上传，需要先删除相应试卷'
         return False
@@ -179,13 +176,11 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
             if line.strip()=="":
                 continue
             
-            #print line.decode("utf-8")
             line=line.decode("utf-8").strip()
             documentForMongo['originalFileText'].append(line)
             
             content=line.split("\t")
             if len(content)!=2:
-                print "+++",len(content),content
                 return u"第"+str(index+1)+u"行有超过一个Tab或有多余的未知符号"
             if "-" not in content[0]:
                 return u"第"+str(index+1)+u"行编号有误，不含'-'"
@@ -202,7 +197,6 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
             number=content[0]
             #背景型题面（2-）
             if number[-1]=="-":
-                #print "beijing"
                 if number[:-1].isdigit() and int(number[:-1])==len(documentForMongo['SharedTexts'])+1:
                     documentForMongo['SharedTexts'].append(content[1])
                 else:
@@ -214,9 +208,6 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
             #小题题面（2-3）
             elif (number.split('-')[1].encode("utf-8")).isdigit():     #unicode下的"①"等字符会被isdigit()函数判断为true
                 print "xiaoti"
-                #print number
-                #print [number.split('-')[1],number.split('-')[1]]
-                #print number.split('-')[1].isdigit()
                 if int(number.split("-")[1])!=len(documentForMongo['Questions'])+1:
                     return u"缺少第"+str(len(documentForMongo['Questions']))+u"小题" 
                 if number[0]!='-' and (not number.split('-')[0].isdigit()):
@@ -238,7 +229,6 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
                                             'combinedTexts':[]})
             #选项或小选项
             elif number.split('-')[0].isdigit():
-                #print "xuanxiang"
                 if int(number.split('-')[0])!=len(documentForMongo['Questions']):
                     return u"第"+str(index+1)+u"行的选项的小题编号有误"
                     
@@ -299,9 +289,6 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
         choiceFile.close()
         
     
-    
-    
-    #print documentForMongo
     #********part 1：解析文件（end）************
     #********part 2：连接并存储至数据库************
     configFile=open("static/config.txt",'r')
@@ -399,7 +386,6 @@ def parseSubjectiveFileAndSaveToDatabase(filename,username):
                 question={}
 
                 question['text']=content[1]
-                print index,number_segs
                 question['number']=int(number_segs[0])
                 question['backgroudTexts']=[]
                 question['subQuestions']=[] 
@@ -436,7 +422,6 @@ def parseSubjectiveFileAndSaveToDatabase(filename,username):
                     return u"第"+str(index+1)+u"行的小题编号不是数字"
 
                 if len(question['subQuestions'])>0 and int(number_segs[2])<=question['subQuestions'][-1]['number']:
-                    print number_segs[2],question['subQuestions'][-1]
                     return u"第"+str(index+1)+u"行的小题编号小于等于该大题中的上一个小题编号"
 
                 #把上一个小题放入question中，并清空smallQuestion
@@ -465,7 +450,6 @@ def parseSubjectiveFileAndSaveToDatabase(filename,username):
                     question['subQuestions'].append(smallQuestion)
 
                 for q in question['subQuestions'][::-1]:
-                    #print question['subQuestions']
                     if "-" not in str(q['number']):
                         if str(q['number'])!=number_segs[2]:
                             return u"第"+str(index+1)+u"行的子题编号中的小题编号与最近的小题不相同"
@@ -619,7 +603,6 @@ def checkRepeatPaper(papertype,newfile_name):
 
         if len(repeat_pairs)!=0:
             repeat_list[oldfile_name.decode("utf-8")]=repeat_pairs
-    print repeat_list,"+++"
     return repeat_list
 
 
@@ -651,5 +634,4 @@ def checkRepeatQuestion(papertype,filename):
             elif papertype=="subjective":
                 if question_list[index1][1]==question_list[index2][1]:
                     repeat_list.append((question_list[index1][0],question_list[index2][0]))
-    print repeat_list,"---"
     return repeat_list

@@ -61,7 +61,6 @@ def tagNewTemplate(request):
         fullQuestion = result[6]
         if papertype == "choice":
             # 将text拆成题面和选项，供前端显示
-            print textInfo['text']
             textInfo['timian'] = textInfo['text'].split("\t")[0]
             textInfo['xuanxiang'] = textInfo['text'].split("\t")[1]
             textInfo['combinedTextWithoutTab'] = textInfo['text'].replace("\t", "")

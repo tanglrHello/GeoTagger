@@ -190,12 +190,7 @@ def browseByTemplate(request):
             tdict[t[1]]=t[0].decode('utf-8')
         
         for template in templateNames:
-            #if templateType=='ST':
-            #tag_tmpf=open(outPath+template+"."+papertype+".sim.csv","w")
-            #elif templateType=='FT':
-            tag_tmpf=open(outPath+template+"."+papertype+".csv","w")
-            #else:
-            #    print templateType,"unknown templateType"
+            tag_tmpf=open(outPath+template+"."+papertype+".data","w")
 
             #写表头
             for index,content in enumerate(outcontents):
@@ -207,7 +202,7 @@ def browseByTemplate(request):
                             tag_tmpf.write(tagField[1])
 
                 if index<len(outcontents)-1:
-                    tag_tmpf.write(",")
+                    tag_tmpf.write("!@#")
             tag_tmpf.write('\n')
 
             #写标注信息
@@ -218,10 +213,8 @@ def browseByTemplate(request):
                 for question in paper['Questions']:
                     for textInfo in question[textFieldName]:
                         flag=False
-                        #if templateType=="ST":
                         if 'topTemplateTypes' in textInfo and tdict[template] in textInfo['topTemplateTypes']:
                             flag=True
-                    #    elif templateType=='FT':
                         if 'secondTemplateTypes' in textInfo and tdict[template] in textInfo['secondTemplateTypes']:
                             flag=True
 
@@ -240,7 +233,7 @@ def browseByTemplate(request):
                                             #如果有依赖关系，进行判断，如果无效则不写入文件
                                             if tagField[3]!=None and tagField[3] in textInfo and textInfo[tagField[3]]==False:                                                
                                                 tag_tmpf.write("")
-                                            elif tagField[0] in textInfo:
+                                            elif tagField[0] in textInfo and textInfo[tagField[0]]!=None:
                                                 if tagField[2]=="string":
                                                     tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
                                                 elif tagField[2]=="list_num":
@@ -253,7 +246,7 @@ def browseByTemplate(request):
                                                 tag_tmpf.write("")
                                                        
                                 if index<len(outcontents)-1:
-                                    tag_tmpf.write(",")
+                                    tag_tmpf.write("!@#")
                             tag_tmpf.write("\n")
 
             tag_tmpf.close()

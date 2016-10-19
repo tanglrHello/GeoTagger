@@ -370,16 +370,6 @@
 			     </table>
 			     <!--导出内容的的全选全不选功能-->
 		     	<script>
-		     		//默认是显示所有内容的
-		     		/*
-		     		document.getElementById("showAllContent").checked=true;
-		     		showAllContentFunc();
-		     		chks=document.getElementsByName("selectRow")
-		     		for(var i=0;i<chks.length;i++){
-		     			chks[i].checked=true;
-		     		}
-		     		*/
-
 		     		//默认只显示来源和文本
 		     		document.getElementById('sourceChk').checked=true;
 		     		document.getElementById('textChk').checked=true;
@@ -639,17 +629,16 @@
 						<br />
 				     	<div class="alert alert-info" role="alert">
 				     		<strong>输出文件格式说明：</strong><br />
-				     		输出为一个.zip压缩包，其中的每个文件为.csv文件<br>
+				     		输出为一个.zip压缩包，其中的每个文件为.data文件<br>
 
 				     		<br>
 							<br />
-							<strong>csv文件命名及格式：</strong><br>
+							<strong>data文件命名及格式：</strong><br>
 							以模板名命名，加后缀（如下）<br>
 							每个输出文件对应一种试卷<br>
-							以简化模板分类的导出结果，文件名为 [模板名].[题型].sim.csv<br>
-							以完整模板分类的导出结果，文件名为 [模板名].[题型].full.csv<br>
-							
-							每个.csv的文件的每一列对应导出内容的每一项。
+							每个文件名为 [模板名].[题型].data<br>
+
+							每个.data的文件的每一列对应导出内容的每一项,两项之间以"!@#"这个字符串作为分隔符。
 				     	</div>
 				     	<br />
 				     	

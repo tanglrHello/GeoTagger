@@ -50,27 +50,11 @@ def browseByPaper(request):
             paper=dataCollection.find_one({'testpaperName':paperName})
             
             tagContent=outContent[:]
-            #如果有拆分信息，单独处理（仅对选择题有效）
-            '''
-            if u"splitinfoChk" in outContent:
-                #写文件：
-                split_tmpf=open(outPath+paperName+"."+papertype+".split.csv","w")
-                for question in paper['Questions']:
-                    for textInfo in question['combinedTexts']:
-                        split_tmpf.write(str(question['QuestionIndex'])+"-"+textInfo['number'].encode('utf-8')+",")
-                        split_tmpf.write(textInfo['text'].encode('utf-8')+",")
-                        split_tmpf.write(str(textInfo['splitinfo']).encode("utf-8")+"\n")
-                split_tmpf.close()
-                
-                outContent.remove(u"splitinfoChk")
-                tagContent=outContent[:]
-                outContent.append(u"splitinfoChk")
-            '''
             
             #标注信息
             if len(tagContent)>0:
                 #写文件：
-                tag_tmpf=open(outPath+paperName+"."+papertype+".tag.csv","w")
+                tag_tmpf=open(outPath+paperName+"."+papertype+".tag.data","w")
                 #写表头
                 for index,content in enumerate(tagContent):
                     for tagField in tagFields_Info:
@@ -78,7 +62,7 @@ def browseByPaper(request):
                             tag_tmpf.write(tagField[1])
 
                     if index<len(outContent)-1:
-                        tag_tmpf.write(",")
+                        tag_tmpf.write("!@#")
                 tag_tmpf.write("\n")
             
 
@@ -103,7 +87,7 @@ def browseByPaper(request):
                                         #如果有依赖关系，进行判断，如果无效则不写入文件
                                         if tagField[3]!=None and tagField[3] in textInfo and textInfo[tagField[3]]==False:   
                                             tag_tmpf.write("")
-                                        elif tagField[0] in textInfo:
+                                        elif tagField[0] in textInfo and textInfo[tagField[0]]!=None:
                                             if tagField[2]=="string":
                                                 tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
                                             elif tagField[2]=="list_num":
@@ -116,7 +100,7 @@ def browseByPaper(request):
                                             tag_tmpf.write("")
 
                             if index<len(outContent)-1:
-                                tag_tmpf.write(",")
+                                tag_tmpf.write("!@#")
                         tag_tmpf.write("\n")
 
                 #关闭文件

@@ -345,6 +345,10 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
                     for irange in remove_range.split():
                         try:
                             remove_index.add(int(irange))
+                            if ri == 0:
+                                deletepart_index.add(int(irange))
+                            else:
+                                context_index.add(int(irange))
                         except:
                             start_end = irange.split("-")
                             if len(start_end) != 2:

@@ -128,7 +128,7 @@
       <br>
       
       <div class="input-group">
-        <span class="input-group-addon" id="sizing-addon1">（细粒度）分词：</span>
+        <span class="input-group-addon" id="sizing-addon1">分词：</span>
         <textarea name="seg_fg_input_name" id="seg_fg_input" type="text" class="form-control" 
         onblur="editSegEndFunc('_fg');" onfocus="editSegFunc('_fg')"
         rows="3"></textarea>
@@ -158,26 +158,7 @@
 
       </div><!-- /input-group -->
       <br /><br />
-      <div class="alert alert-warning" role="alert">
-          <a href="#" class="alert-link">时间、地点、术语、数量词、词性都是基于【粗粒度分词】的结果标注的</a>
-      </div>
-      <div class="input-group">
-        <span class="input-group-addon" id="sizing-addon1">（粗粒度）分词：</span>
-        <textarea name="seg_input_name" id="seg_input" type="text" class="form-control" 
-        onblur="editSegEndFunc('');" onfocus="editSegFunc('')"
-        rows="3"></textarea>
-        
 
-        {%if textInfo.segres%}
-          <script>
-            init_seg_func('');
-          </script>
-        {%else%}
-          <script>
-            document.getElementById("seg_input").value="{{textInfo.combinedTextWithoutTab}}";
-          </script>
-        {%endif%}
-      </div><!-- /input-group -->
 
       <div class="input-group">
         <span class="input-group-addon" id="sizing-addon1">时间：</span>
@@ -251,6 +232,9 @@
         {% if papertype == "choice"%}
             <font size="3"><a href="./TagConpparse.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用成分分析标注专用页面</a></font>
             <br />
+            <strong>套话、上下文标注:</strong>
+            <font size="3"><a href="./TagBackground.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用套话上下文标注专用页面</a></font>
+            <br />
             <strong>模板标注：</strong>
             <font size="3"><a href="./TagNewTemplate.html?papername={{papername}}&papertype={{papertype}}&combinedChoiceIndex={{thisIndex}}">使用模板标注专用页面</a></font>
             <br />
@@ -263,8 +247,6 @@
             <strong>模板标注：</strong>
             <font size="3"><a href="./TagTemplate.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用模板标注专用页面</a></font>
             <br />
-            <strong>题干选项标注：</strong>
-            <font size="3"><a href="./TagQuestion.html?papername={{papername}}&papertype={{papertype}}&subQuestionIndex={{thisIndex}}">使用题干选项标注专用页面</a></font>
         {%endif%}
 
       <br />
@@ -301,8 +283,8 @@
 <script>
   //页面加载时先执行一次失去焦点的函数，使分词结果中带有下标信息
   editSegEndFunc("_fg");
-  editSegEndFunc("");
 
+  //显示纯分词的结果(不含下标),进入标注状态
   function editSegFunc(type){
     var segres=document.getElementById("seg"+type+"_input").value;
   
@@ -390,7 +372,7 @@
 <script>
   function checkSegPosConsistencyFunc(){
       var pos_input=document.getElementById("pos_input");
-      var seg_input=document.getElementById("seg_input");
+      var seg_input=document.getElementById("seg_fg_input");
       var posres=pos_input.value.split(" ");
       var segres=seg_input.value.split(" ");
 
@@ -474,12 +456,10 @@
   function submitCheckFunc(){
     res=true;
     res=res&&
-        checkSegTextConsistency("submitCheck","")&&
         checkSegTextConsistency("submitCheck","_fg")&&
         checkUserName()&&
         checkSegPosConsistencyFunc()&&
-        checkPOSValidFunc()&&
-        checkTLPosConsistency(true);
+        checkPOSValidFunc();
     if(res){
       alert("如果修改了分词，请修改套话上下文标注、模板标注、题干选项标注；如果修改了词性，请修改模板标注和成分句法标注");
     }

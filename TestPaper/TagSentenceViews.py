@@ -52,8 +52,6 @@ def tagSentence(request):
             return HttpResponse("请先完成对改试卷的分词标注")
         elif paperInfo['States']['time']==False:
             return HttpResponse("请先完成对改试卷的时间、地点标注")
-        elif paperInfo['States']['pos']==False:
-            return HttpResponse("请先完成对改试卷的词性标注")
 
         result=checkAndFindTextInfoInDB(papername,papertype,globalIndex)
         
@@ -94,7 +92,7 @@ def tagSentence(request):
             globalIndex=request.GET['subQuestionIndex']
 
         tagInfo={}
-        tagInfo['seg']=request.POST.get("seg_input_name")
+        tagInfo['seg']=request.POST.get("seg_fg_input_name")
         tagInfo['seg_fg']=request.POST.get("seg_fg_input_name")
         tagInfo['pos']=request.POST.get("pos_input_name")
         tagInfo['time']=request.POST.get("time_input_name")
@@ -158,8 +156,6 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
     
     allValidIndex=[]
 
-    relativeFieldNames=['goldlocs','goldtimes','goldterms','goldquants']
-
     for question in paperInfo['Questions']:
         for ctext in question[textFieldName]:            
             allValidIndex.append(ctext[globalIndexFieldName])
@@ -169,13 +165,6 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
             if findFlag==True:
                 continue
             if globalIndex==ctext[globalIndexFieldName]:
-                #一些预处理
-                for f in relativeFieldNames:
-                    if f in ctext:
-                        ctext[f]=" ".join([str(l) for l in ctext[f]])
-                    else:
-                        ctext[f]=""
-
                 res.append(ctext)
                 if papertype=="choice":
                     res.append(question['QuestionIndex'])
@@ -251,10 +240,10 @@ def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
                     ctext['segres']=[p.split("_")[0] for p in tagInfo['seg'].split()]
                     ctext['segres_fg']=[p.split("_")[0] for p in tagInfo['seg_fg'].split()]
                     ctext['posres']=[p.split("_")[1] for p in tagInfo['pos'].split()]
-                    ctext['goldtimes']=[int(x) for x in tagInfo['time'].split()]
-                    ctext['goldlocs']=[int(x) for x in tagInfo['loc'].split()]
-                    ctext['goldterms']=[int(x) for x in tagInfo['term'].split()]
-                    ctext['goldquants']=[int(x) for x in tagInfo['quant'].split()]
+                    ctext['goldtimes']=tagInfo['time']
+                    ctext['goldlocs']=tagInfo['loc']
+                    ctext['goldterms']=tagInfo['term']
+                    ctext['goldquants']=tagInfo['quant']
 
                     #试题文本，如果有修改，添加一个字段，记录之前的试题文本的内容
                     if papertype=="choice":

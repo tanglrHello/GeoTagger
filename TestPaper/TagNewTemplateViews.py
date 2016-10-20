@@ -220,10 +220,10 @@ def checkTagInfo(tagInfo):
     seg_remain = seg.split()
     maxWordIndex = int(seg_remain[len(seg_remain) - 1].split("_")[1])
 
-    if tagInfo["topTemplate"].strip() == "" and tagInfo['secondTemplate'].strip()=="":
+    if tagInfo["topTemplate"].strip() == "" and tagInfo['secondTemplate'].strip() == "":
         return u"一级模板和二级模板至少要填写一个"
 
-    if tagInfo['hastop']=="true" and tagInfo['topTemplate'].strip()=="":
+    if tagInfo['hastop'] == "true" and tagInfo['topTemplate'].strip() == "":
         return u"一级模板需要填写"
 
     for t in types:

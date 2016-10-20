@@ -587,9 +587,6 @@
 
 
             if (cq.trim()==""){
-                //cq_input.style.background="#FFAAAA";
-                //alert("选项问句不能为空");
-                //return false;
                 return true;
             }
 
@@ -600,6 +597,8 @@
             }
 
             cq_index = cq.split("-");
+            segres=document.getElementById("segres").value.trim().split(" ");
+            segnum=parseInt(segres[segres.length-1].split("_")[1]);
             for (var i=0;i<cq_index.length;i++){
                 var re = /^[1-9]+[0-9]*$/;
                 if (!re.test(cq_index[i]) && cq_index[i]!="0")
@@ -609,7 +608,7 @@
                     return false;
                 }
 
-                if (parseInt(cq_index[i])>=segnum){
+                if (parseInt(cq_index[i])>segnum){
                     cq_input.style.background="#FFAAAA";
                     alert("选项问句的下标超过最大下标");
                     return false;

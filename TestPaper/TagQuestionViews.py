@@ -145,7 +145,7 @@ def checkTagInfo(tagInfo):
         if tagInfo["core_verb"]=="":
             return u"当题干核心成分分类为<动词短语>时,请填写动词"
         else:
-            seglen=len(seg)
+            seglen=int(seg.split()[-1].split("_")[1])
             if "-" in tagInfo['core_verb']:
                 indexs=[int(x) for x in tagInfo['core_verb'].split('-')]
             else:
@@ -154,7 +154,7 @@ def checkTagInfo(tagInfo):
             for i in indexs:
                 if i=="":
                     return u"题干核心动词下标格式错误(有空下标)"
-                if i>=seglen:
+                if i>seglen:
                     return u"题干核心动词下标格式错误(超过最大下标)"
     return ""
 

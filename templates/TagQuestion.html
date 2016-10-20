@@ -170,7 +170,7 @@
 
             <div class="input-group">
                 <span class="input-group-addon" id="sizing-addon1">题干核心成分分类:</span>
-                <input type="text" class="form-control" readOnly="true" name="core_type_input_name" value="{{textInfo.core_type}}">
+                <input type="text" class="form-control" readOnly="true" name="core_type_input_name" id="core_type_input_id" value="{{textInfo.core_type}}">
 			</div>
 
             <button type="button" class="btn btn-default" name="core_type_button" onclick="click_button(this)">时间状语</button>
@@ -236,8 +236,9 @@
 
         //根据核心成分分类,判断是否显示核心动词相关内容
         var core_verb = document.getElementById("for_core_verb");
+        var input_ele = document.getElementById("core_type_input_id");
         if (input_ele.value=="名词短语+动词短语"||input_ele.value=="动词短语"){
-            core_verb.style.display="table-cell";
+            core_verb.style.display="block";
         }
 
         function click_button(element){
@@ -285,13 +286,6 @@
                 return false;
             }
 
-            /*
-            var text ="{{ textInfo.remain_text }}";
-            if (qiandao_type.value.split().length != text.split("@")[0].split("，").length){
-                alert("前导分类的数量必须和题干前导的个数相同(题干中m个逗号分割出m+1个题干前导)");
-                qiandao_type.style.background="#FFAAAA";
-                return false;
-            }*/
             qiandao_type.style.background="#FFFFFF";
 
             var core_type=document.getElementsByName("core_type_input_name")[0];
@@ -312,7 +306,8 @@
             //---check empty end---
 
             //check index
-            var seglen = document.getElementsByName("seg_name")[0].value.split(" ").length;
+            var segres = document.getElementsByName("seg_name")[0].value.trim().split(" ");
+            var seglen = parseInt(segres[segres.length-1].split("_")[1]);
 
             var core_verb=document.getElementsByName("core_verb_input_name")[0];
             if (core_type.value=="名词短语+动词短语"||core_type.value=="动词短语"){
@@ -340,8 +335,9 @@
                     alert("多余的-");
                     return false;
                 }
+
                 index=parseInt(index_arr[i]);
-                if (index>=seglen){
+                if (index>seglen){
                     alert("下标溢出");
                     return false;
                 }

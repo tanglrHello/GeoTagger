@@ -679,7 +679,7 @@
 
 				cw_index=cuewords[i].split("_")[1];
 
-				segres=document.getElementById("segres").value.split(" ");
+				segres=document.getElementById("segres").value.trim().split(" ");
                 segnum=parseInt(segres[segres.length-1].split("_")[1]);
 
 				if(cw_index.indexOf("-")==-1){   //仅一个线索词
@@ -711,7 +711,7 @@
 					        return false;
 					    }
 				    	//判断是不是有效下标
-						if(parseInt(cw_index[j])<0 || parseInt(cw_index[j])>segnum-1){
+						if(parseInt(cw_index[j])<0 || parseInt(cw_index[j])>segnum){
 							cueword_input.style.background="#FFAAAA";
 							alert(cw_index[j]+"不是有效的词语下标");
 							return false;

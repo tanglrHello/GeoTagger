@@ -585,10 +585,12 @@
             var cq_input = document.getElementById("CQ_input_name");
             var cq = cq_input.value;
 
+
             if (cq.trim()==""){
-                cq_input.style.background="#FFAAAA";
-                alert("选项问句不能为空");
-                return false;
+                //cq_input.style.background="#FFAAAA";
+                //alert("选项问句不能为空");
+                //return false;
+                return true;
             }
 
             if (cq.split("-").length!=2){

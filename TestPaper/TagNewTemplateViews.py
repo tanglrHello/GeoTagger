@@ -257,18 +257,19 @@ def checkTagInfo(tagInfo):
                     return chn_tname[t] + u"线索词标注中，'" + cw + u"'这一项对应的线索词下标不是有效的词语下标"
 
         # 检查选项问句格式是否正确
-        if len(cq.split("-"))!=2:
-            return u"选项问句中应该有且仅有一个-"
-        cq_index = cq.split("-")
-        for index in cq_index:
-            try:
-                i = int(index)
-                if i > maxWordIndex:
-                    return u"选项问句的下标范围超过了最大下标"
-            except:
-                return u"选项问句的下标范围不是有效数字"
-        if int(cq_index[1]) <= int(cq_index[0]):
-            return u"选项问句的起始下标不应该大于终止下标"
+        if cq!="":
+            if len(cq.split("-"))!=2:
+                return u"选项问句中应该有且仅有一个-"
+            cq_index = cq.split("-")
+            for index in cq_index:
+                try:
+                    i = int(index)
+                    if i > maxWordIndex:
+                        return u"选项问句的下标范围超过了最大下标"
+                except:
+                    return u"选项问句的下标范围不是有效数字"
+            if int(cq_index[1]) <= int(cq_index[0]):
+                return u"选项问句的起始下标不应该大于终止下标"
 
         # 是否有重复标注线索词的模板下标
         if len(set(templateIndex)) != len(templateIndex):

@@ -111,30 +111,12 @@ def tagPos(request):
         pos_input_sentences=[]
         for question in paperInfo['Questions']:
             for ctext in question[textFieldName]:
-                tl_str=""
-
-                fields_dicts=[]
-                for fn in fieldNames:
-                    fields_dicts.append({})
-
-                for i,fn in enumerate(fieldNames):
-                    for t in ctext[fn]:
-                        fields_dicts[i][t]=1
-
-                for index,w in enumerate(ctext['segres']):
-                    for i,d in enumerate(fields_dicts):
-                        if index in d:
-                            tl_str+=w+appendix[i]+" "
-                            break
-                    else:
-                        tl_str+=w+" "
-
-                tl_str=tl_str[:-1]
+                tl_str=" ".join(ctext['segres'])
                 pos_input_sentences.append(tl_str)
 
         #自动分词
         geo_processor=geoProcessor.geo_Processor()
-        segpos_output_sentences=geo_processor.process(pos_input_sentences,5)        #接口5（分词+时间地点-》词性）
+        segpos_output_sentences=geo_processor.process(pos_input_sentences,5)        #接口5（分词-》词性）
 
         #解析成前端需要的格式
         segTexts=[]

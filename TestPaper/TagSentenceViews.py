@@ -54,7 +54,7 @@ def tagSentence(request):
             return HttpResponse("请先完成对改试卷的时间、地点标注")
         elif paperInfo['States']['pos']==False:
             return HttpResponse("请先完成对改试卷的词性标注")
-        
+
         result=checkAndFindTextInfoInDB(papername,papertype,globalIndex)
         
         if result==False:
@@ -341,7 +341,7 @@ def checkGlobalTagState(papername,papertype):
                 ST_state=False
                 STT_state=False
                 STCW_state=False                             
-    
+
     '''
     paperInfo['States']['seg']=seg_state
     paperInfo['States']['loc']=pos_state

@@ -48,35 +48,7 @@ def tagPos(request):
         index=0
         for question in paperInfo['Questions']:
             for ctext in question[textFieldName]:
-                #给分词结果加上时间地点标注结果
-                timedict={}
-                locdict={}
-                termdict={}
-                quantdict={}
-                for t in ctext['goldtimes']:
-                    timedict[t]=1
-                for l in ctext['goldlocs']:
-                    locdict[l]=1
-                for t in ctext['goldterms']:
-                    termdict[t]=1
-                for q in ctext['goldquants']:
-                    quantdict[q]=1
-
-
-                segstr=""
-                for i,w in enumerate(ctext['segres']):
-                    if i in timedict:
-                        segstr+=w+"_time "
-                    elif i in locdict:
-                        segstr+=w+"_loc "
-                    elif i in termdict:
-                        segstr+=w+"_term "
-                    elif i in quantdict:
-                        segstr+=w+"_num "
-                    else:
-                        segstr+=w+" "
-                seg_tl.append(segstr)
-
+                seg_tl.append(" ".join(ctext['segres']))
                 posinfo=request.POST[str(index)+"_pos"]
 
                 
@@ -111,36 +83,12 @@ def tagPos(request):
         pos_input_sentences=[]
         for question in paperInfo['Questions']:
             for ctext in question[textFieldName]:
-                tl_str=" ".join(ctext['segres'])
-                pos_input_sentences.append(tl_str)
+                pos_input_sentences.append(" ".join(ctext['segres']))
 
         #自动分词
         geo_processor=geoProcessor.geo_Processor()
         segpos_output_sentences=geo_processor.process(pos_input_sentences,5)        #接口5（分词-》词性）
-
-        #解析成前端需要的格式
-        segTexts=[]
-        segposTexts=[]
-        #print segpos_output_sentences[0].decode("utf-8")
-        for s in segpos_output_sentences:
-            segstr=""
-            segposstr=""
-
-            for index,p in enumerate(s.decode("utf-8").strip().split()):
-                word=p.split("_")[0]
-                pos=p.split("_")[1]
-
-                segposstr+=p+" "
-                
-                if pos=="time" or pos=="loc" or pos=="term" or pos=="num":    #时间地点的标注会在页面左侧的分词结果中显示
-                    segstr+=p+" "
-                else:
-                    segstr+=word+" "
-            segstr=segstr[:-1]
-            segposstr=segposstr[:-1]
-            segTexts.append(segstr)
-            segposTexts.append(segposstr)
-            
+        segpos_output_sentences = [line.strip() for line in segpos_output_sentences]
 
         #将自动分析的词性放入数据库
         paperInfo=dataCollection.find_one({'testpaperName':papername})
@@ -155,7 +103,7 @@ def tagPos(request):
         return render_to_response("TagPos.html",
                                 {'States':paperInfo['States'],
                                  "restype":"自动标注",
-                                 "segtl_pos":zip(segTexts,segposTexts),
+                                 "segtl_pos":zip(pos_input_sentences,segpos_output_sentences),
                                  'papername':papername,
                                  'papertype':papertype})
 
@@ -175,26 +123,7 @@ def tagPos(request):
         restype=""
         for question in paperInfo['Questions']:
             for ctext in question[textFieldName]:
-                #给分词结果加上时间地点标注结果
-                dicts=[]
-                for fn in fieldNames:
-                    dicts.append({})
-
-                for i,field in enumerate(fieldNames):
-                    if field in ctext:
-                        for x in ctext[field]:
-                            dicts[i][x]=1
-
-                segstr=""
-                for index,w in enumerate(ctext['segres']):
-                    for i,d in enumerate(dicts):
-                        if index in d:
-                            segstr+=w+appendix[i]+" "
-                            break
-                    else:
-                        segstr+=w+" "
-
-                seg_tl.append(segstr)
+                seg_tl.append(" ".join(ctext['segres']))
 
                 #读取人工标注的词性
                 if 'posres' in ctext and ctext['posres']!=[]:
@@ -207,12 +136,7 @@ def tagPos(request):
                     restype="暂无标注（除了时间地点术语数量词，所有词性设置为默认的NN）"
                     posstr=""
                     for index,w in enumerate(ctext['segres']):
-                        for i,d in enumerate(dicts):
-                            if index in d:
-                                posstr+=w+appendix[i]+" "
-                                break
-                        else:
-                            posstr+=w+"_NN "
+                        posstr+=w+"_NN "
                         
                     posstr=posstr[:-1]  #删除最后的空格
                     pos.append(posstr)

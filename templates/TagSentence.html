@@ -416,86 +416,6 @@
       return rightFlag;
   }
 
-  function checkTLPosConsistency(alert_flag){
-    var pos_input=document.getElementById("pos_input").value;
-    var time_input=document.getElementById("time_input").value;
-    var loc_input=document.getElementById("loc_input").value;
-    var term_input=document.getElementById("term_input").value;
-    var quant_input=document.getElementById("quant_input").value;
-
-    //检查时间地点术语数量词标注是否一致
-    var times=new Array();
-    time_input=time_input.split(" ");
-    for(var i=0;i<time_input.length;i++){
-        if (time_input[i]!=""){
-          times[time_input[i]]=1;
-        }
-    }
-    var locs=new Array();
-    loc_input=loc_input.split(" ");
-    for(var i=0;i<loc_input.length;i++){
-      if(loc_input[i]!=""){
-        locs[loc_input[i]]=1;
-      }
-    }
-
-    var terms=new Array();
-    term_input=term_input.split(" ");
-    for(var i=0;i<term_input.length;i++){
-      if(term_input[i]!=""){
-        terms[term_input[i]]=1;
-      }
-    }
-
-    var quants=new Array();
-    quant_input=quant_input.split(" ");
-    for(var i=0;i<quant_input.length;i++){
-      if(quant_input[i]!=""){
-        quants[quant_input[i]]=1;
-      }
-    }
-
-    posres=pos_input.split(" ")
-    for(var i=0;i<posres.length;i++){
-        if(posres[i]==""){
-          continue;
-        }
-        if(posres[i].split("_")[1]=="time" && times[i]!=1 || posres[i].split("_")[1]!="time" && times[i]==1){
-          document.getElementById("pos_input").style.background="#FFAAAA";
-          if(alert_flag){
-            alert("第"+i+"个词的时间标注不一致");
-          }
-          
-          return false;
-        }
-        if(posres[i].split("_")[1]=="loc" && locs[i]!=1 || posres[i].split("_")[1]!="loc" && locs[i]==1){
-          document.getElementById("pos_input").style.background="#FFAAAA";
-          if(alert_flag){
-            alert("第"+i+"个词的地点标注不一致");
-          }
-          
-          return false;
-        }
-        if(posres[i].split("_")[1]=="term" && terms[i]!=1 || posres[i].split("_")[1]!="term" && terms[i]==1){
-          document.getElementById("pos_input").style.background="#FFAAAA";
-          if(alert_flag){
-            alert("第"+i+"个词的术语标注不一致");
-          }
-          
-          return false;
-        }
-        if(posres[i].split("_")[1]=="num" && quants[i]!=1 || posres[i].split("_")[1]!="num" && quants[i]==1){
-          document.getElementById("pos_input").style.background="#FFAAAA";
-          if(alert_flag){
-            alert("第"+i+"个词的数量词标注不一致");
-          }
-          
-          return false;
-        }
-    }
-    document.getElementById("pos_input").style.background="#FFFFFF";
-  }
-
   function checkPOSValidFunc(){
     var pos_input=document.getElementById("pos_input").value;
     var time_input=document.getElementById("time_input").value;
@@ -536,161 +456,6 @@
   }
 </script>
 
-<!--检查时间词有效性的函数,form提交时需检测-->
-<script>
-  function checkTimeFunc(){
-    var segres=document.getElementById("seg_input").value.split(" ");
-    var timeres=document.getElementById("time_input").value.split(" ");
-
-    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
-    maxIndex=segres[segres.length-1].split("_")[1];
-    for(var i=0;i<timeres.length;i++){
-      if(timeres[i]==""){
-        continue;
-      }
-      else{
-        //单个词时间
-        if(!(re.test(timeres[i]) || timeres[i]=='0')){   //不是数字
-          document.getElementById("time_input").style.background="#FFAAAA";
-          alert("第"+(i+1)+"个时间不是数字下标！");
-          return false;
-        }
-        else{   //不是有效下标
-          time=parseInt(timeres[i]);
-          if(time<0||time>maxIndex){
-            document.getElementById("time_input").style.background="#FFAAAA";
-            alert("第"+(i+1)+"个时间不是有效的词语下标！（有效下标范围是0~"+maxIndex+"）");
-            return false;
-          }
-        }
-      }
-    }
-    document.getElementById("time_input").style.background="#FFFFFF";
-    return true;
-  }
-</script>
-
-<!--检查地点词有效性的函数,form提交时需检测-->
-<script>
-  function checkLocFunc(){
-    var segres=document.getElementById("seg_input").value.split(" ");
-    var locres=document.getElementById("loc_input").value.split(" ");
-
-    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
-    maxIndex=segres[segres.length-1].split("/")[1];
-    for(var i=0;i<locres.length;i++){
-      if(locres[i]==""){
-        continue;
-      }
-      else{
-        /*
-        //含'-',范围地点
-        if (locres[i].indexOf('-')>-1){   
-          a=parseInt(locres[i].split('-')[0]);
-          b=parseInt(locres[i].split('-')[1]);
-          if (!(re.test(a) || a=='0') || !(re.test(b) || b=='0')){
-            alert("第"+(i+1)+"个地点的起止范围不是数字");
-            return false;
-          }
-          if (a>b || a==b || a<0 ||b>maxIndex){
-            alert("第"+(i+1)+"个地点的起止范围不合理");
-            return false;
-          }
-        }*/
-        //单个词地点
-        if(!(re.test(locres[i]) || locres[i]=='0')){   //不是数字
-          document.getElementById("loc_input").style.background="#FFAAAA";
-          alert("第"+(i+1)+"个地点不是数字下标！");
-          return false;
-        }
-        else{   //不是有效下标
-          loc=parseInt(locres[i]);
-          if(loc<0||loc>maxIndex){
-            document.getElementById("loc_input").style.background="#FFAAAA";
-            alert("第"+(i+1)+"个地点不是有效的词语下标！（有效下标范围是0~"+maxIndex+"）");
-            return false;
-          }
-        }
-      }
-    }
-    document.getElementById("loc_input").style.background="#FFFFFF";
-    return true;
-  }
-</script>
-
-<!--检查术语有效性的函数,form提交时需检测-->
-<script>
-  function checkTermFunc(){
-    var segres=document.getElementById("seg_input").value.split(" ");
-    var termres=document.getElementById("term_input").value.split(" ");
-
-    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
-    maxIndex=segres[segres.length-1].split("/")[1];
-    for(var i=0;i<termres.length;i++){
-      if(termres[i]==""){
-        continue;
-      }
-      else{
-        //单个词地点
-        if(!(re.test(termres[i]) || termres[i]=='0')){   //不是数字
-          document.getElementById("term_input").style.background="#FFAAAA";
-          alert("第"+(i+1)+"个术语不是数字下标！");
-          return false;
-        }
-        else{   //不是有效下标
-          term=parseInt(termres[i]);
-          if(term<0||term>maxIndex){
-            document.getElementById("term_input").style.background="#FFAAAA";
-            alert("第"+(i+1)+"个术语不是有效的术语下标！（有效下标范围是0~"+maxIndex+"）");
-            return false;
-          }
-        }
-      }
-    }
-    document.getElementById("term_input").style.background="#FFFFFF";
-    return true;
-  }
-</script>
-
-<!--检查数量词有效性的函数,form提交时需检测-->
-<script>
-  function checkQuantFunc(){
-    var segres=document.getElementById("seg_input").value.split(" ");
-    var quantres=document.getElementById("quant_input").value.split(" ");
-
-    var re = /^[1-9]+[0-9]*]*$/;           //判断正整数
-    maxIndex=segres[segres.length-1].split("/")[1];
-    for(var i=0;i<quantres.length;i++){
-      if(quantres[i]==""){
-        continue;
-      }
-      else{
-        //单个词地点
-        if(!(re.test(quantres[i]) || quantres[i]=='0')){   //不是数字
-          document.getElementById("quant_input").style.background="#FFAAAA";
-          alert("第"+(i+1)+"个数量词不是数字下标！");
-          return false;
-        }
-        else{   //不是有效下标
-          quant=parseInt(quantres[i]);
-          if(quant<0||quant>maxIndex){
-            document.getElementById("quant_input").style.background="#FFAAAA";
-            alert("第"+(i+1)+"个数量词不是有效的词语下标！（有效下标范围是0~"+maxIndex+"）");
-            return false;
-          }
-        }
-      }
-    }
-    document.getElementById("quant_input").style.background="#FFFFFF";
-    return true;
-  }
-</script>
-
-<!--检查时间地点术语数量词的-->
-<script>
-  
-</script>
-
 <script>
   function checkUserName(){
       username_input=document.getElementById("username_id");
@@ -700,7 +465,7 @@
         return false;
       }
       username_input.style.background="#FFFFFF";
-    return true;          
+    return true;
   }
 </script>
 
@@ -714,14 +479,9 @@
         checkUserName()&&
         checkSegPosConsistencyFunc()&&
         checkPOSValidFunc()&&
-        checkTLPosConsistency(true)&&
-        checkTimeFunc()&&
-        checkLocFunc();  
-        //checkCueword('full')&&
-        //checkCueword('simplified');
-       
+        checkTLPosConsistency(true);
     if(res){
-      alert("如果修改了分词，请修改模板标注；如果修改了词性，请修改模板标注和成分句法标注");
+      alert("如果修改了分词，请修改套话上下文标注、模板标注、题干选项标注；如果修改了词性，请修改模板标注和成分句法标注");
     }
     return res;
   }

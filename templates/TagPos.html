@@ -113,72 +113,14 @@
 			    //判断分词和词性标注中词的个数是否相同
 			    if(posres.length!=segtl.length){
 			    	document.getElementById(index+"_pos").style.background="#FFAAAA";
-			    	alert("分词和词性标注中词的个数不相同");			    	
+			    	alert("分词和词性标注中词的个数不相同");
+                    alert(posres.length);
+                    alert(segtl.length);
 			    	return false;
-			    }			    
-
-			    var word_in_segtl=[]
-
-			    var time_in_segtl=[]
-			    var loc_in_segtl=[]
-			    var term_in_segtl=[]
-			    var quant_in_segtl=[]
-
-			    var word_in_posres=[]
-			    var pos_in_posres=[]
-
-			    for(var i=0;i<posres.length;i++){			    	
-			    	if(posres[i].indexOf("_")==-1){
-			    		document.getElementById(index+"_pos").style.background="#FFAAAA";
-			    		alert("每项中都应该有'_'");			    		
-			    		return false;
-			    	}
-			    	var tmp=posres[i].split("_");
-			    	pos_in_posres[i]=tmp[1];
-			    	word_in_posres[i]=tmp[0];	
-			    }
-
-			    for(var i=0;i<segtl.length;i++){			    				    	
-			    	if(segtl[i].indexOf("_")==-1){
-			    		loc_in_segtl[i]=0;
-			    		time_in_segtl[i]=0;
-			    		term_in_segtl[i]=0;
-			    		quant_in_segtl[i]=0;
-			    		word_in_segtl[i]=segtl[i];
-			    	}
-			    	else{
-			    		var tmp=segtl[i].split("_");
-			    		if (tmp[1]=="time"){
-				    		time_in_segtl[i]=1;
-				    		loc_in_segtl[i]=0;
-				    		term_in_segtl[i]=0;
-				    		quant_in_segtl[i]=0;
-				    	}
-				    	else if(tmp[1]=="loc"){
-				    		time_in_segtl[i]=0;
-				    		loc_in_segtl[i]=1;
-				    		term_in_segtl[i]=0;
-				    		quant_in_segtl[i]=0;
-				    	}
-				    	else if(tmp[1]=="term"){
-				    		time_in_segtl[i]=0;
-				    		loc_in_segtl[i]=0;
-				    		term_in_segtl[i]=1;
-				    		quant_in_segtl[i]=0;
-				    	}
-				    	else if(tmp[1]=="num"){
-				    		time_in_segtl[i]=0;
-				    		loc_in_segtl[i]=0;
-				    		term_in_segtl[i]=0;
-				    		quant_in_segtl[i]=1;
-				    	}
-				    	word_in_segtl[i]=tmp[0];
-			    	}
 			    }
 
 			    for(var i=0;i<pos_in_posres.length;i++){
 			    	//判断分词和词性标注中的词是否一一对应
-
 			    	if(word_in_segtl[i]!=word_in_posres[i]){
 			    		alert("第"+i+"个词的分词不一致");
 				        document.getElementById(index+"_pos").style.background="#FFAAAA";
@@ -190,6 +132,7 @@
 			                  'DT','ETC','FW','IJ','JJ','LB','LC','M','MSP','NN',
 			                  'NR','NT','OD','ON','P','PN','PU','SB','SP','VA',
 			                  'VC','VE','VV'];
+
 			    	if(pos_in_posres[i]!="time"&&pos_in_posres[i]!="loc"&&pos_in_posres[i]!="term"&&pos_in_posres[i]!="num"){
 			    		for(var j=0;j<validPOS.length;j++){
 				       		if(pos_in_posres[i]==validPOS[j]){
@@ -201,28 +144,6 @@
 				        	document.getElementById(index+"_pos").style.background="#FFAAAA";
 				        	return false;
 				      	}
-			    	}
-
-			    	//判断分词和词性标注中的时间地点术语数量词标注是否一一对应
-			    	if(pos_in_posres[i]=="time"&&time_in_segtl[i]!=1 || pos_in_posres[i]!="time"&&time_in_segtl[i]==1){
-			    		document.getElementById(index+"_pos").style.background="#FFAAAA";
-			    		alert("第"+i+"个词的时间标注不一致");
-			    		return false;
-			    	}
-			    	if(pos_in_posres[i]=="loc"&&loc_in_segtl[i]!=1||pos_in_posres[i]!="loc"&&loc_in_segtl[i]==1){
-			    		document.getElementById(index+"_pos").style.background="#FFAAAA";
-			    		alert("第"+i+"个词的地点标注不一致");
-			    		return false;
-			    	}
-			    	if(pos_in_posres[i]=="term"&&term_in_segtl[i]!=1||pos_in_posres[i]!="term"&&term_in_segtl[i]==1){
-			    		document.getElementById(index+"_pos").style.background="#FFAAAA";
-			    		alert("第"+i+"个词的术语标注不一致");
-			    		return false;
-			    	}
-			    	if(pos_in_posres[i]=="num"&&quant_in_segtl[i]!=1||pos_in_posres[i]!="num"&&quant_in_segtl[i]==1){
-			    		document.getElementById(index+"_pos").style.background="#FFAAAA";
-			    		alert("第"+i+"个词的数量词标注不一致");
-			    		return false;
 			    	}
 			    }
 			    document.getElementById(index+"_pos").style.background="#FFFFFF";

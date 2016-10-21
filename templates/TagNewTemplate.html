@@ -254,7 +254,8 @@
 			  		<button type="button" class="btn btn-success" onClick="resetTags('second')">清空标注</button>
 			  		<button type="button" class="btn btn-success" onClick="copyFromSim()">从一级模板同步</button>
 			  		{%if papertype == "choice"%}
-			  		<button type="button" class="btn btn-success" onClick="copyFromLastSim('second')">从最近原始选项的二级模板同步（不同步当前最大模板下标）</button>
+			  		    <button type="button" class="btn btn-success" onClick="copyFromLastSim('second')">从最近原始选项的二级模板同步（不同步当前最大模板下标）</button>
+                        <button type="button" class="btn btn-success" onClick="autoFillCQ()">自动填充选项问句</button>
 			  		{%endif%}
 			  		<br /><br />
 
@@ -579,6 +580,15 @@
                 document.getElementById("FTC_input_name").value = last_FTC;
                 document.getElementById("FT_input_name").style.background = "#FFFFFF";
             }
+        }
+
+        function autoFillCQ(){
+            var cq_input = document.getElementById("CQ_input_name");
+            var remain_seg = document.getElementById("segres").value.trim().split(" ");
+            var minIndex = remain_seg[0].split("_")[1];
+            var maxIndex = remain_seg[remain_seg.length-1].split("_")[1];
+
+            cq_input.value = minIndex+"-"+maxIndex;
         }
 
         function checkCQ(){

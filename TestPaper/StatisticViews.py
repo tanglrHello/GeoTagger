@@ -73,7 +73,7 @@ def statistic(request):
         total_tagged_num += info[2]
     paper_info.append([u'所有试卷总计', total_num, total_tagged_num])
 
-    template_info = [[template_name, num, '%s%%' % (num*100/total_tagged_num)]
+    template_info = [[template_name, num, '%.2f%%' % (num*100.0/total_tagged_num)]
                      for template_name, num in template_dict.items()]
 
     return render_to_response("Statistic.html", {'paper_info': paper_info,

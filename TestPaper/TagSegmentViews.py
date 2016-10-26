@@ -3,7 +3,6 @@ from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
 
 import pymongo
-import time
 import traceback
 
 from . import geoProcessor

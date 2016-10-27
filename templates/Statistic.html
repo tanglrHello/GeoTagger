@@ -83,11 +83,9 @@
                 {% for paperinfo in paper_info %}
                     <tr>
                         {% if paperinfo.1 == paperinfo.2 %}
-                            <font color="#ce0000">
-                                <td>{{ paperinfo.0 }}</td>
-                                <td>{{ paperinfo.1 }}</td>
-                                <td>{{ paperinfo.2 }}</td>
-                            </font>
+                            <td style="color:#00c000">{{ paperinfo.0 }}</td>
+                            <td style="color:#00c000">{{ paperinfo.1 }}</td>
+                            <td style="color:#00c000">{{ paperinfo.2 }}</td>
                         {% else %}
                             <td>{{ paperinfo.0 }}</td>
                             <td>{{ paperinfo.1 }}</td>

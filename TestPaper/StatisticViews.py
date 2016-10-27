@@ -50,7 +50,7 @@ def statistic(request):
             for text_info in question[text_field_name]:
                 paper_info[-1][1] += 1
                 if 'topTemplate' in text_info and text_info['topTemplate'] != "" or \
-                   'secondTemplate' in text_info and text_info['topTemplate'] != "":
+                   'secondTemplate' in text_info and text_info['secondTemplate'] != "":
                     paper_info[-1][2] += 1
 
                 if 'topTemplate' in text_info and text_info['topTemplate'] != "":
@@ -59,7 +59,7 @@ def statistic(request):
                         if tname in template_names:
                             template_dict[tname] += 1
 
-                if 'secondTemplate' in text_info and text_info['topTemplate'] != "":
+                if 'secondTemplate' in text_info and text_info['secondTemplate'] != "":
                     ttype = text_info['secondTemplateTypes']
                     for tname in ttype:
                         if tname in template_names:

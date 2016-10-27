@@ -82,9 +82,17 @@
             <tbody id="body-fjShipChkList">
                 {% for paperinfo in paper_info %}
                     <tr>
-                        <td>{{ paperinfo.0 }}</td>
-                        <td>{{ paperinfo.1 }}</td>
-                        <td>{{ paperinfo.2 }}</td>
+                        {% if paperinfo.1 == paperinfo.2 %}
+                            <font color="#ce0000">
+                                <td>{{ paperinfo.0 }}</td>
+                                <td>{{ paperinfo.1 }}</td>
+                                <td>{{ paperinfo.2 }}</td>
+                            </font>
+                        {% else %}
+                            <td>{{ paperinfo.0 }}</td>
+                            <td>{{ paperinfo.1 }}</td>
+                            <td>{{ paperinfo.2 }}</td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

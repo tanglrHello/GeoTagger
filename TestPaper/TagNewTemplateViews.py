@@ -471,9 +471,16 @@ def saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, reques
             for ctext in question[textFieldName]:
                 if globalIndex == ctext[globalIndexFieldName]:
                     ctext['new_template_tagger'] = username
-                    ctext['topTemplate'] = tagInfo['topTemplate']
-                    ctext['topTemplateTypes'] = tagInfo['topTemplateTypes'].split()
-                    ctext['topTemplateCueword'] = tagInfo['topTemplateCueword'].split()
+                    print tagInfo['hastop'] == "true","++++"
+                    if tagInfo['hastop'] == "true":
+                        ctext['topTemplate'] = tagInfo['topTemplate']
+                        ctext['topTemplateTypes'] = tagInfo['topTemplateTypes'].split()
+                        ctext['topTemplateCueword'] = tagInfo['topTemplateCueword'].split()
+                    else:
+                        ctext['topTemplate'] = ""
+                        ctext['topTemplateTypes'] = []
+                        ctext['topTemplateCueword'] = []
+
                     ctext['choiceQuestionSentence'] = tagInfo['choiceQuestionSentence']
                     ctext['secondTemplate'] = tagInfo['secondTemplate']
                     ctext['secondTemplateTypes'] = tagInfo['secondTemplateTypes'].split()

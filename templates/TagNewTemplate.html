@@ -163,8 +163,8 @@
                     <input id="notop_id" type="radio" name="hastop" value="false" onclick="showTopTemplate(false)" checked="checked" />无<br>
                 {% else %}
                     <label>是否有一级模板：</label>
-                    <input id="hastop_id" type="radio" name="hastop" onclick="showTopTemplate(true)" checked="checked" />有&nbsp;&nbsp;&nbsp;
-                    <input id="notop_id" type="radio" name="hastop"  onclick="showTopTemplate(false)"/>无<br>
+                    <input id="hastop_id" type="radio" name="hastop" value="true" onclick="showTopTemplate(true)" checked="checked" />有&nbsp;&nbsp;&nbsp;
+                    <input id="notop_id" type="radio" name="hastop" value="false" onclick="showTopTemplate(false)"/>无<br>
                 {% endif %}
                     <div id="topTemplateTags">
                         <strong>插入模板：</strong><br />
@@ -745,6 +745,12 @@
 			}
 
             var hastop = document.getElementById("hastop_id");
+
+            if (hastop.checked == false && FT.value == ""){
+                alert("一级模板为空,二级模板必须填写");
+                return false;
+            }
+
             if (hastop.checked == true && ST.value==""){
                 alert("一级模板需要填写");
                 return false;
@@ -794,14 +800,7 @@
 				}
 			}
 
-			//是否含有英文逗号
-            /*if(template_input.value.indexOf(",")!=-1){
-				template_input.style.background="#FFAAAA";
-				alert(template_type+"标注中不能含有英文逗号");
-				return false;
-			}*/
 			template_input.style.background="#FFFFFF";
-
 
 			return true;
      	}

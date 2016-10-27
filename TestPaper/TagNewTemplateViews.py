@@ -538,29 +538,28 @@ def checkGlobalTagState(papername, papertype):
 
     paperInfo = dataCollection.find_one({'testpaperName': papername})
 
-    for paperInfo in dataCollection.find():
-        new_template_state = True
-        taggers = {}
-        for question in paperInfo['Questions']:
-            for ctext in question[textFieldName]:
-                if ('secondTemplate' not in ctext or ctext['secondTemplate'] == "" or 'template_valid' in ctext and ctext[
-                    'template_valid'] == False) and ('topTemplate' not in ctext or ctext['topTemplate'] == "" or
-                    'template_valid' in ctext and ctext['template_valid'] == False):
-                    new_template_state = False
+    new_template_state = True
+    taggers = {}
+    for question in paperInfo['Questions']:
+        for ctext in question[textFieldName]:
+            if ('secondTemplate' not in ctext or ctext['secondTemplate'] == "" or 'template_valid' in ctext and ctext[
+                'template_valid'] == False) and ('topTemplate' not in ctext or ctext['topTemplate'] == "" or
+                'template_valid' in ctext and ctext['template_valid'] == False):
+                new_template_state = False
 
-                if 'new_template_tagger' in ctext:
-                    if ctext['new_template_tagger'] not in taggers:
-                        taggers[ctext['new_template_tagger']] = 1
-                    else:
-                        taggers[ctext['new_template_tagger']] += 1
+            if 'new_template_tagger' in ctext:
+                if ctext['new_template_tagger'] not in taggers:
+                    taggers[ctext['new_template_tagger']] = 1
+                else:
+                    taggers[ctext['new_template_tagger']] += 1
 
-        paperInfo['relativeUsernames']['new_template_tagger'] = list(taggers)
+    paperInfo['relativeUsernames']['new_template_tagger'] = list(taggers)
 
-        paperInfo['States']['newTemplate'] = new_template_state
+    paperInfo['States']['newTemplate'] = new_template_state
 
-        if 'topTemplate' in paperInfo['States']:
-            del paperInfo['States']['topTemplate']
-        if 'secondTemplate' in paperInfo['States']:
-            del paperInfo['States']['secondTemplate']
+    if 'topTemplate' in paperInfo['States']:
+        del paperInfo['States']['topTemplate']
+    if 'secondTemplate' in paperInfo['States']:
+        del paperInfo['States']['secondTemplate']
 
-        dataCollection.save(paperInfo)
+    dataCollection.save(paperInfo)

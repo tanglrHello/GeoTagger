@@ -558,4 +558,9 @@ def checkGlobalTagState(papername, papertype):
 
         paperInfo['States']['newTemplate'] = new_template_state
 
+        if 'topTemplate' in paperInfo['States']:
+            del paperInfo['States']['topTemplate']
+        if 'secondTemplate' in paperInfo['States']:
+            del paperInfo['States']['secondTemplate']
+
         dataCollection.save(paperInfo)

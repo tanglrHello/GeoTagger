@@ -529,42 +529,33 @@ def checkGlobalTagState(papername, papertype):
 
     dataCollection = None
     textFieldName = None
-    globalIndexFieldName = None
     if papertype == "choice":
         dataCollection = GeoPaperDB['ChoiceData']
         textFieldName = "combinedTexts"
-        globalIndexFieldName = "combinedChoiceIndex"
     elif papertype == "subjective":
         dataCollection = GeoPaperDB['SubjectiveData']
         textFieldName = "subQuestions"
-        globalIndexFieldName = "subQuestionIndex"
+
     paperInfo = dataCollection.find_one({'testpaperName': papername})
 
-    second_template_state = True
-    top_template_state = True
+    for paperInfo in dataCollection.find():
+        new_template_state = True
+        taggers = {}
+        for question in paperInfo['Questions']:
+            for ctext in question[textFieldName]:
+                if ('secondTemplate' not in ctext or ctext['secondTemplate'] == "" or 'template_valid' in ctext and ctext[
+                    'template_valid'] == False) and ('topTemplate' not in ctext or ctext['topTemplate'] == "" or
+                    'template_valid' in ctext and ctext['template_valid'] == False):
+                    new_template_state = False
 
-    taggers = {}
-    for question in paperInfo['Questions']:
-        for ctext in question[textFieldName]:
-            if 'secondTemplate' not in ctext or ctext['secondTemplate'] == "" or 'template_valid' in ctext and ctext[
-                'template_valid'] == False:
-                second_template_state = False
+                if 'new_template_tagger' in ctext:
+                    if ctext['new_template_tagger'] not in taggers:
+                        taggers[ctext['new_template_tagger']] = 1
+                    else:
+                        taggers[ctext['new_template_tagger']] += 1
 
-            # topTemplate may be empty, but this field doesn't exist before tagged
-            if 'topTemplate' not in ctext or 'template_valid' in ctext and ctext['template_valid'] == False:
-                top_template_state = False
+        paperInfo['relativeUsernames']['new_template_tagger'] = list(taggers)
 
-            if 'new_template_tagger' in ctext:
-                if ctext['new_template_tagger'] not in taggers:
-                    taggers[ctext['new_template_tagger']] = 1
-                else:
-                    taggers[ctext['new_template_tagger']] += 1
+        paperInfo['States']['newTemplate'] = new_template_state
 
-    paperInfo['relativeUsernames']['new_template_tagger'] = list(taggers)
-
-    paperInfo['States']['topTemplate'] = top_template_state
-    paperInfo['States']['secondTemplate'] = second_template_state
-
-    dataCollection.save(paperInfo)
-
-    return paperInfo['States']
+        dataCollection.save(paperInfo)

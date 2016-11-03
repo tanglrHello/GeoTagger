@@ -61,8 +61,12 @@ def addTestPaper(request):
 
         print "uploading a "+papertype+" file.."
 
+        # 文件名中不能有空格
+        if ' ' in filename:
+            messages['error_message'] = u"文件名中不能有空格"
+
         #检查是否有同名文件
-        if checkFileIsNew(filename,messages,papertype):
+        elif checkFileIsNew(filename,messages,papertype):
             username=fileform.cleaned_data['uploadUserName']
             if save_file(filename,content,messages,papertype):
                 #解析文件，并结构化存储进数据库

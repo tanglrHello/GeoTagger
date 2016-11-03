@@ -89,7 +89,11 @@ def browseByPaper(request):
                                             tag_tmpf.write("")
                                         elif tagField[0] in textInfo and textInfo[tagField[0]]!=None:
                                             if tagField[2]=="string":
-                                                tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
+                                                try:
+                                                    tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
+                                                except:
+                                                    textInfo[tagField[0]] = " ".join(textInfo[tagField[0]])
+                                                    tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
                                             elif tagField[2]=="list_num":
                                                 tag_tmpf.write(" ".join([str(i) for i in textInfo[tagField[0]]]).encode("utf-8"))
                                             elif tagField[2]=="list_string":
@@ -102,6 +106,8 @@ def browseByPaper(request):
                             if index<len(outContent)-1:
                                 tag_tmpf.write("!@#")
                         tag_tmpf.write("\n")
+
+                    dataCollection.save(paper)
 
                 #关闭文件
                 tag_tmpf.close()

@@ -123,7 +123,7 @@ def tagTimeLoc(request):
             AllSegStrs.append(tmpstr)
 
             for i,atl in enumerate(All_tltq_lists):
-                atl.append(tag_lists[i])
+                atl.append(" ".join(tag_lists[i]))
 
         #将自动分析的时间地点放入数据库
         paperInfo=dataCollection.find_one({'testpaperName':papername})

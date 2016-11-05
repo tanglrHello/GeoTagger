@@ -189,7 +189,7 @@ def autoBatchAnalyze(request):
                 appendix=['_time',"_loc","_term","_num"]
                 input_sentences=[]
                 for paper in papers:
-                    if paper['States']['time']==False:
+                    if paper['States']['seg']==False:
                         continue
 
                     for question in paper['Questions']:

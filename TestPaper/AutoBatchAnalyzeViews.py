@@ -185,47 +185,25 @@ def autoBatchAnalyze(request):
 
             #词性标注
             elif "pos_choice" in request.POST or "pos_subjective" in request.POST:
-                fieldNames=['goldtimes','goldlocs','goldterms','goldquants']
-                appendix=['_time',"_loc","_term","_num"]
                 input_sentences=[]
+
                 for paper in papers:
                     if paper['States']['seg']==False:
                         continue
 
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
-                            tl_str=""
-
-                            fields_dicts=[]
-                            for fn in fieldNames:
-                                fields_dicts.append({})
-
-                            for i,fn in enumerate(fieldNames):
-                                for t in ctext[fn]:
-                                    fields_dicts[i][t]=1
-
-                            for index,w in enumerate(ctext['segres']):
-                                for i,d in enumerate(fields_dicts):
-                                    if index in d:
-                                        tl_str+=w+appendix[i]+" "
-                                        break
-                                else:
-                                    tl_str+=w+" "
-
-                            tl_str=tl_str[:-1]
-                            input_sentences.append(tl_str)
+                            input_sentences.append(" ".join(ctext['segres']))
 
                 #自动分词
                 geo_processor=geoProcessor.geo_Processor()
                 segpos_output_sentences=geo_processor.process(input_sentences,5)        #接口5（分词+时间地点-》词性）
                     
-
-                #将自动分析的词性放入数据库
                 papers=dataCollection.find().sort("uploadTimestamp",pymongo.DESCENDING)
 
                 index=0
                 for paper in papers:
-                    if paper['States']['time']==False:
+                    if paper['States']['seg']==False:
                         continue
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
@@ -236,7 +214,7 @@ def autoBatchAnalyze(request):
                 state_document['last_auto_pos_time_'+papertype]=time.strftime('%Y-%m-%d %H:%M:%S')
                 GeopaperDB['globalData'].save(state_document)
 
-                success_message=papertype_chn+u"批量词性标注完成（仅对完成了人工实体、术语识别的试卷进行）"
+                success_message=papertype_chn+u"批量词性标注完成（仅对完成了人工分词的试卷进行）"
 
             #成分分析
             elif "bpres_choice" in request.POST or "bpers_subjective" in request.POST:

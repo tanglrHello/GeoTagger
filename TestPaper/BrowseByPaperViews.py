@@ -90,10 +90,10 @@ def browseByPaper(request):
                                         elif tagField[0] in textInfo and textInfo[tagField[0]]!=None:
                                             if tagField[2]=="string":
                                                 try:
-                                                    tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
+                                                    tag_tmpf.write(textInfo[tagField[0]].replace("\n","").encode("utf-8"))
                                                 except:
                                                     textInfo[tagField[0]] = " ".join([str(x) for x in textInfo[tagField[0]]])
-                                                    tag_tmpf.write(textInfo[tagField[0]].encode("utf-8"))
+                                                    tag_tmpf.write(textInfo[tagField[0]].replace("\n","").encode("utf-8"))
                                             elif tagField[2]=="list_num":
                                                 tag_tmpf.write(" ".join([str(i) for i in textInfo[tagField[0]]]).encode("utf-8"))
                                             elif tagField[2]=="list_string":

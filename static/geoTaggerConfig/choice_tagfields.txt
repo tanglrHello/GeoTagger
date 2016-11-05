@@ -20,8 +20,8 @@ topTemplateTypes	高阶模板类型	list_string	template_valid	5
 topTemplateCueword	高阶模板线索词	list_string	template_valid	5
 secondTemplate	二阶模板	string	template_valid	10
 secondTemplateTypes	二阶模板类型	list_string	template_valid	5
-choiceQuestionSentence	选项问句	string	template_valid	5
 secondTemplateCueword	二阶模板线索词	list_string	template_valid	5
+choiceQuestionSentence	选项问句	string	template_valid	5
 auto_topTemplate	（auto）高阶模板	string	auto_template_valid	9
 auto_secondTemplate	（auto）二阶模板	string	auto_template_valid	10
 auto_topTemplateCueword	（auto）高阶模板线索词	list_string	auto_template_valid	5

@@ -1,9 +1,8 @@
 #coding=utf-8
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render, render_to_response
+from django.http import HttpResponse
 import pymongo
 import os,time
-from django import forms
-import traceback
 
 from . import geoProcessor
 
@@ -108,11 +107,6 @@ def autoBatchAnalyze(request):
                             ctext["auto_seg_fg"]=seg_output_sentences_fg[seg_index]
                             seg_index+=1              
 
-                    #保存至数据库
-                    try:
-                        print paper['testpaperName']
-                    except:
-                        print "an unkonwn paper"
                     dataCollection.save(paper)
 
                 state_document['last_auto_seg_time_'+papertype]=time.strftime('%Y-%m-%d %H:%M:%S')
@@ -128,10 +122,8 @@ def autoBatchAnalyze(request):
 
                 input_sentences=[]
                 for paper in papers:
-                    print paper['testpaperName']
                     if paper['States']['seg']==False:
                         continue
-                    print "ok"
 
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
@@ -177,10 +169,8 @@ def autoBatchAnalyze(request):
 
                 index=0
                 for paper in papers:
-                    print paper['testpaperName']
                     if paper['States']['seg']==False:
                         continue
-                    print "ok"
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
                             for i,afn in enumerate(auto_fieldNames):
@@ -199,10 +189,8 @@ def autoBatchAnalyze(request):
                 appendix=['_time',"_loc","_term","_num"]
                 input_sentences=[]
                 for paper in papers:
-                    print paper['testpaperName']
                     if paper['States']['time']==False:
                         continue
-                    print "ok"
 
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
@@ -237,10 +225,8 @@ def autoBatchAnalyze(request):
 
                 index=0
                 for paper in papers:
-                    print paper['testpaperName']
                     if paper['States']['time']==False:
                         continue
-                    print "ok"
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
                             ctext['auto_pos']=[p.split("_")[1] for p in segpos_output_sentences[index].split()]
@@ -258,10 +244,8 @@ def autoBatchAnalyze(request):
                 input_sentences_goldpos=[]        
 
                 for paper in papers:
-                    print paper['testpaperName']
                     if paper['States']['pos']==False:
                         continue
-                    print "ok"
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:
                             input_sentences_goldseg.append(ctext['segres'])
@@ -293,21 +277,16 @@ def autoBatchAnalyze(request):
                 
                 cmd="java -Xmx1024m -jar nlptools/BerkeleyParser/berkeleyParser-1.7.jar -gr nlptools/BerkeleyParser/chn_sm5.gr -useGoldPOS <"+infilename+" >"+outfilename
                 print cmd
-                #os.system(cmd)
                 res=os.popen(cmd).readlines()
-                print res
-                for l in res:
-                    print l
+
 
                 #将自动分析的结果写回数据库
                 papers=dataCollection.find().sort("uploadTimestamp",pymongo.DESCENDING)
                
                 outfile=open(outfilename,"r")
                 for paper in papers:
-                    print paper['testpaperName']
                     if paper['States']['pos']==False:
                         continue
-                    print "ok"
                     for question in paper['Questions']:
                         for ctext in question[textFieldName]:            
                             ctext["auto_bpres"]=outfile.readline().decode("gbk").strip()
@@ -336,7 +315,6 @@ def autoBatchAnalyze(request):
                 #papers=dataCollection.find().sort("uploadTimestamp",pymongo.DESCENDING)
                 pi=0
                 for paper in papers:
-                    print paper['testpaperName'],index,paper['States']['seg'],pi
                     pi+=1
                     if paper['States']['seg']==False:
                         continue
@@ -356,16 +334,13 @@ def autoBatchAnalyze(request):
 
                 index0=0
                 pi=0
-                print len(autoTemplate0['auto_simplifiedTemplate'])
                 for paperInfo in papers:
-                    print paperInfo['testpaperName'],index0,paperInfo['States']['seg'],pi
                     pi+=1
                     if paperInfo['States']['seg']==False:
                         continue
                     
                     for question in paperInfo['Questions']:
                         for ctext in question[textFieldName]:
-                            #print index0
                             ctext['auto_simplifiedTemplate']=autoTemplate0['auto_simplifiedTemplate'][index0]
                             ctext['auto_simplifiedTemplateTypes']=autoTemplate0['auto_simplifiedTemplateTypes'][index0]
                             ctext['auto_simplifiedTemplateCueword']=autoTemplate0['auto_simplifiedTemplateCueword'][index0]

@@ -1,6 +1,6 @@
 import pymongo
 
-def connect_mongodb(self):
+def connect_mongodb():
     mongo_ip = "121.40.193.226"
     mongo_port = 27017
     user_name = "root"

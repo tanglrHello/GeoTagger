@@ -6,17 +6,16 @@ from . import getConfig
 from . import geoProcessor
 
 import pymongo
-import time, json
+import time
+import json
 import traceback
+import mongoConnection
 
 
 # Create your views here.
 def tagQuestion(request):
     # 连接数据库
-    configFile = open("static/config.txt", 'r')
-    mongoIP = configFile.readline().split("\t")[1].strip()
-    mongoPort = int(configFile.readline().split("\t")[1].strip())
-    conn = pymongo.Connection(mongoIP, mongoPort)
+    conn = mongoConnection.connect_mongodb()
 
     GeopaperDB = conn['GeoPaper']
 
@@ -161,10 +160,7 @@ def checkTagInfo(tagInfo):
 
 def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
     # 连接数据库
-    configFile = open("static/config.txt", 'r')
-    mongoIP = configFile.readline().split("\t")[1].strip()
-    mongoPort = int(configFile.readline().split("\t")[1].strip())
-    conn = pymongo.Connection(mongoIP, mongoPort)
+    conn = mongoConnection.connect_mongodb()
 
     GeoPaperDB = conn['GeoPaper']
     dataCollection = None
@@ -301,10 +297,7 @@ def checkAndFindTextInfoInDB(papername, papertype, globalIndex):
 
 def saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, request):
     # 连接数据库
-    configFile = open("static/config.txt", 'r')
-    mongoIP = configFile.readline().split("\t")[1].strip()
-    mongoPort = int(configFile.readline().split("\t")[1].strip())
-    conn = pymongo.Connection(mongoIP, mongoPort)
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB = conn['GeoPaper']
 
     dataCollection = None
@@ -372,10 +365,7 @@ def saveTagInfoToDB(papername, papertype, globalIndex, tagInfo, username, reques
 
 def checkGlobalTagState(papername, papertype):
     # 连接数据库
-    configFile = open("static/config.txt", 'r')
-    mongoIP = configFile.readline().split("\t")[1].strip()
-    mongoPort = int(configFile.readline().split("\t")[1].strip())
-    conn = pymongo.Connection(mongoIP, mongoPort)
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB = conn['GeoPaper']
 
     dataCollection = None

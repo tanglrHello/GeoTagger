@@ -5,6 +5,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 import pymongo
 import json
 import traceback
+import mongoConnection
 
 # Create your views here.
 def tagSplit(request):
@@ -14,10 +15,7 @@ def tagSplit(request):
         combinedChoiceIndex=request.GET.get("combinedChoiceIndex")
 
         #连接数据库
-        configFile=open("static/config.txt",'r')
-        mongoIP=configFile.readline().split("\t")[1].strip()
-        mongoPort=int(configFile.readline().split("\t")[1].strip())
-        conn=pymongo.Connection(mongoIP,mongoPort)
+        conn=mongoConnection.connect_mongodb()
         
         GeoPaperDB=conn['GeoPaper']
         choiceCollection=GeoPaperDB['ChoiceData']
@@ -111,11 +109,8 @@ def tagSplit(request):
 
 #检查并更新整张试卷的splitinfo标注状态
 def checkGlobalSplitTagState(papername):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB=conn['GeoPaper']
     choiceCollection=GeoPaperDB['ChoiceData']
     
@@ -141,11 +136,8 @@ def checkGlobalSplitTagState(papername):
                     
                 
 def saveSplitInfoToDB(papername,combinedChoiceIndex,splitRes,splitFlag,username):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB=conn['GeoPaper']
     choiceCollection=GeoPaperDB['ChoiceData']
     
@@ -215,11 +207,8 @@ def saveSplitInfoToDB(papername,combinedChoiceIndex,splitRes,splitFlag,username)
 
         
 def checkAndFindChoiceInDB(papername,combinedChoiceIndex):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     
     GeoPaperDB=conn['GeoPaper']
     choiceCollection=GeoPaperDB['ChoiceData']

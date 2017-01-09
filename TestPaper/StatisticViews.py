@@ -1,16 +1,14 @@
 # coding=utf-8
 from django.shortcuts import render_to_response
 import pymongo
+import mongoConnection
 
 from . import getConfig
 
 
 def statistic(request):
     # 连接数据库
-    config_file = open("static/config.txt", 'r')
-    mongo_ip = config_file.readline().split("\t")[1].strip()
-    mongo_port = int(config_file.readline().split("\t")[1].strip())
-    conn = pymongo.Connection(mongo_ip, mongo_port)
+    conn = mongoConnection.connect_mongodb()
 
     geopaper_db = conn['GeoPaper']
 

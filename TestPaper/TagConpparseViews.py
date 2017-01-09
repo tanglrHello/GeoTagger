@@ -1,20 +1,18 @@
 #coding=utf-8
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render_to_response
 from django.http import HttpResponse,HttpResponseRedirect
 
 import pymongo
-import time,json
+import time
+import json
 import traceback
-
 import os
+import mongoConnection
 
 # Create your views here.
 def tagConpparse(request):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
 
     GeopaperDB=conn['GeoPaper']
 
@@ -201,11 +199,8 @@ def tagConpparse(request):
 
 
 def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     
     GeoPaperDB=conn['GeoPaper']
     
@@ -262,11 +257,8 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
         return False
 
 def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB=conn['GeoPaper']
     
     dataCollection=None
@@ -303,11 +295,8 @@ def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
     return True
 
 def checkGlobalTagState(papername,papertype):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB=conn['GeoPaper']
     choiceCollection=GeoPaperDB['ChoiceData']
     

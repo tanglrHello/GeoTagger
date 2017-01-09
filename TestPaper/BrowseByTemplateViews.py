@@ -1,7 +1,7 @@
 #coding=utf-8
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
-import pymongo
+import mongoConnection
 import json
 import time
 import os,shutil
@@ -12,11 +12,8 @@ from . import getConfig
 
 # Create your views here.
 def browseByTemplate(request):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
 
     GeopaperDB=conn['GeoPaper']
 
@@ -46,8 +43,6 @@ def browseByTemplate(request):
         template_Info = getConfig.getTemplateConfig(papertype)
     else:
         return HttpResponse("<h1>非法访问，没有提供试卷类型！</h1><br><a href='./BrowseByPaper.html'>返回试卷列表页面</a>")
-
-
     
     #获取标注字段配置信息
     tagFields_Info=getConfig.getTagFieldConfig(papertype)
@@ -56,7 +51,6 @@ def browseByTemplate(request):
     
     if request.method=='POST' and "template" in request.POST:   #查询某种模板的所有句子的请求
         papers=dataCollection.find()
-        Datas=[]
 
         print request.POST
         #t_type=request.POST['templateType']   #高阶模板还是二阶模板

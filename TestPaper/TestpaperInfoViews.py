@@ -2,13 +2,12 @@
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
 
-import pymongo
+import mongoConnection
 
 from . import getConfig
 
 # Create your views here.
 def testpaperInfo(request):
-
     papername=request.GET.get("papername")
     papertype=request.GET.get("papertype")
 
@@ -134,11 +133,8 @@ def testpaperInfo(request):
 
 #在数据库中查找试卷信息
 def checkAndReadPaperFromDB(papername,papertype):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     geoData=conn['GeoPaper']
     if papertype=="choice":
         choiceDB=geoData['ChoiceData']

@@ -3,6 +3,7 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
 import pymongo
 import os,time
+import mongoConnection
 
 from . import geoProcessor
 
@@ -12,11 +13,8 @@ def autoBatchAnalyze(request):
     success_message=None
     times=None
 
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
 
     GeopaperDB=conn['GeoPaper']
 

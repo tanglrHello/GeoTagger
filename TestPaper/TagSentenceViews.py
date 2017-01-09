@@ -5,14 +5,12 @@ from django.http import HttpResponse,HttpResponseRedirect
 import pymongo
 import traceback
 import json
+import mongoConnection
 
 # Create your views here.
 def tagSentence(request):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
 
     GeopaperDB=conn['GeoPaper']
 
@@ -123,11 +121,8 @@ def tagSentence(request):
         
 
 def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     
     GeoPaperDB=conn['GeoPaper']
 
@@ -186,11 +181,8 @@ def checkAndFindTextInfoInDB(papername,papertype,globalIndex):
         
         
 def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB=conn['GeoPaper']
     
     dataCollection=None
@@ -272,11 +264,8 @@ def saveTagInfoToDB(papername,papertype,globalIndex,tagInfo,username):
 
 
 def checkGlobalTagState(papername,papertype):
-    #连接数据库
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    # 连接数据库
+    conn = mongoConnection.connect_mongodb()
     GeoPaperDB=conn['GeoPaper']
 
     dataCollection=None

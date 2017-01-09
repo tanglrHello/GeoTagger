@@ -1,20 +1,13 @@
 # coding=utf-8
 from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
-
-import pymongo
-import time
-
-from . import geoProcessor
+import mongoConnection
 
 
 # Create your views here.
 def tagBackground(request):
     # 连接数据库
-    configFile = open("static/config.txt", 'r')
-    mongoIP = configFile.readline().split("\t")[1].strip()
-    mongoPort = int(configFile.readline().split("\t")[1].strip())
-    conn = pymongo.Connection(mongoIP, mongoPort)
+    conn = mongoConnection.connect_mongodb()
 
     GeopaperDB = conn['GeoPaper']
 
@@ -37,7 +30,6 @@ def tagBackground(request):
     # 必须是手动分词标注完了才来标注时间地点(这里使用粗粒度的版本)
     if paperInfo['States']['seg'] == False:
         return HttpResponse("请先完成对改试卷的分词标注")
-
 
     if request.method == 'POST' and "submitBackground" in request.POST:  # 提交标注结果
         paperInfo = dataCollection.find_one({'testpaperName': papername})

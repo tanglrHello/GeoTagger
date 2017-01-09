@@ -1,20 +1,13 @@
 #coding=utf-8
 from django.shortcuts import render,render_to_response
-import pymongo
-import os,time
-from django import forms
-import traceback
+import mongoConnection
 
 
 # Create your views here.
 def searchText(request):
-
     if request.method=="POST":   #检索试题请求
-        #连接数据库
-        configFile=open("static/config.txt",'r')
-        mongoIP=configFile.readline().split("\t")[1].strip()
-        mongoPort=int(configFile.readline().split("\t")[1].strip())
-        conn=pymongo.Connection(mongoIP,mongoPort)
+        # 连接数据库
+        conn = mongoConnection.connect_mongodb()
 
         GeopaperDB=conn['GeoPaper']
 

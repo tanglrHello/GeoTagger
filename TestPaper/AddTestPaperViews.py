@@ -1,9 +1,9 @@
 #coding=utf-8
 from django.shortcuts import render,render_to_response
-import pymongo
 import os,time
 from django import forms
 import traceback
+import mongoConnection
 
 class ChoiceFileForm(forms.Form):
     uploadUserName=forms.CharField(widget=forms.TextInput(attrs={'id': 'cf_username_id'}))
@@ -295,10 +295,7 @@ def parseChoiceFileAndSaveToDatabase(filename,username):
     
     #********part 1：解析文件（end）************
     #********part 2：连接并存储至数据库************
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    conn = mongoConnection.connect_mongodb()
     
     geopaperDB=conn['GeoPaper']
     choiceCollection=geopaperDB['ChoiceData']
@@ -487,10 +484,7 @@ def parseSubjectiveFileAndSaveToDatabase(filename,username):
     #print documentForMongo
     #********part 1：解析文件（end）************
     #********part 2：连接并存储至数据库************
-    configFile=open("static/config.txt",'r')
-    mongoIP=configFile.readline().split("\t")[1].strip()
-    mongoPort=int(configFile.readline().split("\t")[1].strip())
-    conn=pymongo.Connection(mongoIP,mongoPort)
+    conn = mongoConnection.connect_mongodb()
     
     geopaperDB=conn['GeoPaper']
     subjectiveCollection=geopaperDB['SubjectiveData']

@@ -226,7 +226,7 @@ def getData(conn,papertype,paperName_kw,state={}):
             data['States']['autoTemplate']=False
         if "questionInfo" not in data['States']:
             data['States']['questionInfo']=False
-        if "newTemplate" not in data['States']:
+        if "topTemplate" not in data['States']:
             data['States']['newTemplate']=False
         if "background" not in data['States']:
             data['States']['background']=False

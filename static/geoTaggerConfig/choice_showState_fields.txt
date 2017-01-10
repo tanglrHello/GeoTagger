@@ -9,6 +9,6 @@ auto_bpres	自动成分分析	0
 bpres	人工成分分析	0
 background	套话、上下文信息	1
 simplifiedTemplate	旧模板	0
-newTemplate	新模板	0
+topTemplate	新模板	0
 autoTemplate	自动简化、完整模板	1
 questionInfo	题干选项信息	0

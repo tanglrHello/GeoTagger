@@ -1,5 +1,5 @@
 #coding=utf-8
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render_to_response
 from django.http import HttpResponse
 
 import pymongo
@@ -192,7 +192,6 @@ def getData(conn,papertype,paperName_kw,state={}):
                     not_satisfy = True
         if not_satisfy:
             continue
-
 
         data={}
         data['testpaperName']=paper['testpaperName']

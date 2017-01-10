@@ -57,7 +57,7 @@ def autoBatchAnalyze(request):
                     textFieldName="subQuestions"
                     break
             
-            papers=dataCollection.find().sort("uploadTimestamp",pymongo.DESCENDING)
+            papers=dataCollection.find().sort("uploadTimestamp", pymongo.DESCENDING)
 
             #分词
             if "seg_choice" in request.POST or "seg_subjective" in request.POST:

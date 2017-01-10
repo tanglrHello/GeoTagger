@@ -143,7 +143,7 @@ def browseByPaper(request):
     elif request.method=='POST' and 'splitRadio' in request.POST:   #按标注状态查询试卷请求
         print "search paper by tagging state..."
         state={}
-        field = ['split','seg','time','pos','term','newTemplate','questionInfo','background']
+        field = ['split','seg','time','pos','term','topTemplate','questionInfo','background']
         for fname in field:
             tmp = request.POST[fname+"Radio"]
             if tmp != "all":
@@ -226,10 +226,8 @@ def getData(conn,papertype,paperName_kw,state={}):
             data['States']['autoTemplate']=False
         if "questionInfo" not in data['States']:
             data['States']['questionInfo']=False
-        if "topTemplate" not in data['States']:
+        if "newTemplate" not in data['States']:
             data['States']['newTemplate']=False
-        else:
-            data['States']['newTemplate']=data['States']['topTemplate']
         if "background" not in data['States']:
             data['States']['background']=False
 

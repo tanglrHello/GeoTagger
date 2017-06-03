@@ -74,15 +74,15 @@ def tagPos(request):
                                  'papername':papername,
                                  'papertype':papertype})
 
-    elif request.method=="POST" and "generatePOS" in request.POST:    #自动生成词性候选标注
+    elif request.method=="POST" and "generatePOS" in request.POST:    # 自动生成词性候选标注
         pos_input_sentences=[]
         for question in paperInfo['Questions']:
             for ctext in question[textFieldName]:
                 pos_input_sentences.append(" ".join(ctext['segres']))
 
-        #自动分词
+        # 自动分词
         geo_processor=geoProcessor.geo_Processor()
-        segpos_output_sentences=geo_processor.process(pos_input_sentences,5)        #接口5（分词-》词性）
+        segpos_output_sentences=geo_processor.process(pos_input_sentences, 5)        # 接口5（分词-》词性）
         segpos_output_sentences = [line.strip() for line in segpos_output_sentences]
 
         #将自动分析的词性放入数据库

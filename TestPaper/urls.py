@@ -7,7 +7,7 @@ from . import TagTemplateViews,TagNewTemplateViews
 from . import PosReferenceViews
 from . import TestpaperInfoViews,DeleteTestpaperViews
 from . import SearchTextViews,AutoBatchAnalyzeViews
-from . import TagQuestionViews,TagBackgroundViews
+from . import TagQuestionViews,TagBackgroundViews, TagAMRViews
 from . import StatisticViews
 from . import homepageViews
 
@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'TagPos',TagPosViews.tagPos),
     url(r'PosReference',PosReferenceViews.posReference),
     url(r'TagConpparse',TagConpparseViews.tagConpparse),
+    url(r'TagAMR', TagAMRViews.tagAMR),
     url(r'TagTemplate',TagTemplateViews.tagTemplate),
     url(r'TagNewTemplate',TagNewTemplateViews.tagNewTemplate),
 	url(r'TagSplit',TagSplitViews.tagSplit),

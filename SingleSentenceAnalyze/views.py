@@ -64,7 +64,6 @@ class LTP_Processor():
 def berkeleyParser(infile,outfile):
     cmd="java -Xmx1024m -jar nlptools/BerkeleyParser/berkeleyParser-1.7.jar -gr nlptools/BerkeleyParser/chn_sm5.gr -useGoldPOS <"+infile+" >"+outfile
     print cmd
-    #os.system(cmd)
     res=os.popen(cmd).readlines()
     print res
     for l in res:
@@ -72,23 +71,23 @@ def berkeleyParser(infile,outfile):
         
 
 def SentenceAnalyze(request):
-    ltp=None
-    if request.method=='POST':   #button for 'analyze'
-        sentence=None
-        print request.POST.get('sentence',"")
-        if request.POST.get('sentence',"")!="":
-            sentence=request.POST.get('sentence',"")
+    ltp = None
+    if request.method == 'POST':   #button for 'analyze'
+        sentence = None
+        print request.POST.get('sentence', "")
+        if request.POST.get('sentence', "") != "":
+            sentence = request.POST.get('sentence', "")
            
-            analyze_res={}
-            analyze_res['sentence']=sentence
+            analyze_res = {}
+            analyze_res['sentence'] = sentence
             
-            #使用组内为地理试题定制的工具
-            geo=geoProcessor.geo_Processor()
-            output_sentences=geo.process([sentence],1) 
-            geo_res=output_sentences[0]
+            # 使用组内为地理试题定制的工具
+            geo = geoProcessor.geo_Processor()
+            output_sentences = geo.process([sentence], 1)
+            geo_res = output_sentences[0]
 
             #分词
-            analyze_res['segres']=geo.get_seg_res(geo_res)
+            analyze_res['segres'] = geo.get_seg_res(geo_res)
             
             #词性标注
             analyze_res['posres']=geo.get_pos_res(geo_res)
@@ -109,46 +108,45 @@ def SentenceAnalyze(request):
             #BParser
             
             print "BerkeleyParsing..."
-            timestamp=time.time()
-            timestamp=str(timestamp).replace(".","")
+            timestamp = time.time()
+            timestamp = str(timestamp).replace(".", "")
             
-            infilename="SingleSentenceFiles/"+timestamp+".BerkeleyParser.in"            
-            tmpfile=open(infilename,"w")
+            infilename = "SingleSentenceFiles/" + timestamp + ".BerkeleyParser.in"
+            tmpfile = open(infilename,"w")
 
-            input_sentences_goldseg=[[w.split("_")[0] for w in analyze_res['segres'].decode("utf-8").split()]]
-            input_sentences_goldpos=[[w.split("_")[0] for w in analyze_res['posres'].decode("utf-8").split()]]
+            input_sentences_goldseg = [[w.split("_")[0] for w in analyze_res['segres'].decode("utf-8").split()]]
+            input_sentences_goldpos = [[w.split("_")[0] for w in analyze_res['posres'].decode("utf-8").split()]]
 
-            for seg,pos in zip(input_sentences_goldseg,input_sentences_goldpos):
-                for s,p in zip(seg,pos):
-                    if p=="time":
-                        p="NT"
-                    elif p=="loc":
-                        p="NR"
-                    elif p=="term":
-                        p="NN"
-                    elif p=="num":
-                        p="CD"
-                    tmpfile.write(s.encode("gbk")+"\t"+p.encode("gbk")+"\n")
+            for seg, pos in zip(input_sentences_goldseg,input_sentences_goldpos):
+                for s,p in zip(seg, pos):
+                    if p == "time":
+                        p = "NT"
+                    elif p == "loc":
+                        p = "NR"
+                    elif p == "term":
+                        p = "NN"
+                    elif p == "num":
+                        p = "CD"
+                    tmpfile.write(s.encode("utf-8") + "\t" + p.encode("utf-8") + "\n")
                 tmpfile.write("\n")
             tmpfile.close()
 
-            outfilename="SingleSentenceFiles/"+timestamp+".BerkeleyParser.out"
+            outfilename = "SingleSentenceFiles/" + timestamp + ".BerkeleyParser.out"
             
-            berkeleyParser(infilename,outfilename)
+            berkeleyParser(infilename, outfilename)
             
-            tmpoutfile=open(outfilename,"r")
+            tmpoutfile = open(outfilename, "r")
             for line in tmpoutfile.readlines():    #only one sentence here
-                analyze_res['bpres']=line.decode("gbk")
+                analyze_res['bpres'] = line.decode("utf-8")
                 print line
                 break
             tmpoutfile.close()
 
-            #删除相关文件
+            # 删除相关文件
             os.remove(infilename)
             os.remove(outfilename)
-
             
-            #语义角色标注
+            # 语义角色标注
             '''
             if ltp==None:
                 print "load ltp models..."
@@ -158,13 +156,13 @@ def SentenceAnalyze(request):
             analyze_res['srlres']=srlres
             '''
             
-            #模板填槽
+            # 模板填槽
             
-            return render_to_response("SingleSentenceAnalyze.html",analyze_res)
+            return render_to_response("SingleSentenceAnalyze.html", analyze_res)
         else:
-            return render_to_response("SingleSentenceAnalyze.html",{'sentence':"请输入待分析的句子！"})
+            return render_to_response("SingleSentenceAnalyze.html", {'sentence': "请输入待分析的句子！"})
 
-    return render_to_response("SingleSentenceAnalyze.html",{})
+    return render_to_response("SingleSentenceAnalyze.html", {})
 
 
       

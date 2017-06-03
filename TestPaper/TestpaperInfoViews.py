@@ -49,7 +49,7 @@ def testpaperInfo(request):
                 for ctext in question[textFieldName]:
                     segres=ctext['segres']
 
-                    may_empty_fields=['segres_fg','auto_seg',"auto_seg_fg","auto_time","auto_loc","auto_pos","auto_bpres"]
+                    may_empty_fields=['segres_fg','auto_seg',"auto_seg_fg","auto_time","auto_loc","auto_pos","auto_bpres", "amr"]
                     for mef in may_empty_fields:
                         if mef not in ctext:
                             ctext[mef]=""

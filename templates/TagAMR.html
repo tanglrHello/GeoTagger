@@ -1,16 +1,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>成分句法分析标注-GeoTagger-njunlp</title>
+	<title>AMR标注-GeoTagger-njunlp</title>
 	<link rel="stylesheet" href="../static/css/bootstrap.min.css" type="text/css" />
-	<script type="text/javascript" src="../static/js/bootstrap-table.min.js"></script>
+	<script src="../static/js/bootstrap-table.min.js"></script>
 	<link rel="stylesheet" href="../static/css/bootstrap-table.min.css" />
 </head>
 <body>
 	<script type="text/javascript" src="../static/js/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="../static/js/myjs/TagParseTree.js"></script>
-	<script src="../static/js/echarts.js"></script>
 	
 	<nav class="navbar navbar-default navbar-fixed-top navbar-inverse navbar-right" >
 	  	<div class="container-fluid">
@@ -37,19 +35,20 @@
 	
 	<div> &nbsp;</div>
 	<div class="page-header">
-	  	<h1>成分句法分析标注-{{papername}}</h1>
+	  	<h1>AMR标注-{{papername}}</h1>
 	</div>
 	
 	<div class="container">
 		<font size="4"><a href="./TagEachField.html?papername={{papername}}">回到本试卷单项标注导航页</a></font><br />
 		<font size="4"><a href="./TagSentence.html?papername={{papername}}&combinedChoiceIndex={{thisIndex}}">回到本句单句标注页面</a></font><br /><br>
+		<!--
 		<form method="POST">
-			<input type="submit" value="生成候选成分分析结果（整张试卷）" class="btn btn-info" name="generateBPres"/>
+			<input type="submit" value="生成候选AMR结果（整张试卷）" class="btn btn-info" name="generateAMR"/>
 		</form>
 		<br />
+		-->
 
 		<form method="POST">
-			
 			<div class="input-group">
 				{% if papertype == "choice"%}
 		        <span class="input-group-addon" id="sizing-addon1">组合选项序号：</span>
@@ -106,88 +105,49 @@
 	    </form>
 
 		{%if papertype == "choice"%}
+			<div class="alert alert-success" role="alert">
+				<a href="#" class="alert-link">当前显示的词性标注结果是：{{pos_type}}</a>
+			</div>
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">原试题文本：</span>
-				<textarea id="oriText" type="text" class="form-control" readOnly="true">{{textInfo.timian}} {{textInfo.xuanxiang}}</textarea>
+				<textarea id="oriText" type="text" class="form-control" readOnly="true">{{textInfo.timian}}@{{textInfo.xuanxiang}}</textarea>
 			</div>
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">分词和词性：</span>
-				<textarea id="segpos" type="text" class="form-control" readOnly="true">{{textInfo.segpos}}</textarea>
+				<textarea id="segpos" type="text" class="form-control" rows="5" readOnly="true">{{textInfo.segpos}}</textarea>
 			</div>
 		{%else%}
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">原试题文本：</span>
-				<textarea id="oriText" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.text}}</textarea>
+				<textarea id="oriText" type="text" class="form-control" rows="5" readOnly="true">{{textInfo.text}}</textarea>
 			</div>
 			<div class="input-group">
 				<span class="input-group-addon" id="sizing-addon1">分词和词性：</span>
-				<textarea id="segpos" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.segpos}}</textarea>
+				<textarea id="segpos" type="text" class="form-control" rows="5" readOnly="true">{{textInfo.segpos}}</textarea>
 			</div>
 		{%endif%}
 		<br>
 	    
-		<form method="POST" onsubmit="return checkOnSubmit();">
+		<form method="POST" onsubmit="return checkUserName();">
 			<div class="alert alert-success" role="alert">
-				<a href="#" class="alert-link">当前显示的成分分析标注结果是：{{restype}}</a>
+				<a href="#" class="alert-link">当前显示的AMR标注结果是：{{amr_type}}</a>
 			</div>
-
-			<div class="input-group">
-			  <span class="input-group-addon" id="basic-addon1">节点序号：</span>
-			  <input type="text" id="nodeIndexID" onblur="getNodeContent();" autocomplete="off" class="form-control" aria-describedby="basic-addon1">
-			</div>
-			<div class="input-group">
-			  <span class="input-group-addon" id="basic-addon1">节点内容：</span>
-			  <input type="text" id="nodeContentID" autocomplete="off" class="form-control" aria-describedby="basic-addon1">
-			</div>
-
-         	<button type="button" id="deleteNodeBtn" onclick="deleteNodeFunc();" class="btn btn-danger" onClick="deleteNode()">删除单个节点</button>
-         	<button type="button" id="deleteNodeBtn" onclick="deleteSubtreeFunc();" class="btn btn-danger">删除子树</button>
-       
-         	<button type="button" id="editNodeBtn" onclick="editNodeFunc();" class="btn btn-warning">修改内容</button>
-
-         	<button type="button" id="addLeftBtn" onclick="addSibling('left')" class="btn btn-info">添加左兄弟</button>
-
-         	<button type="button" id="addRightBtn" onclick="addSibling('right')" class="btn btn-info">添加右兄弟</button>
-
-         	<button type="button" id="addChildBtn" onclick="addRightChild();" class="btn btn-info">添加子节点</button>
-
-         	<button type="button" id="resetTreeBtn" onclick="resetTreeFunc()" class="btn btn-primary">恢复原标注</button>			     		   
-
-			<br><br>
-
-			<div class="input-group">
-			  <span class="input-group-addon" id="basic-addon1">父子节点：</span>
-			  <input type="text" id="parent_child_ID" class="form-control" placeholder="（输入“3 5”表示将节点3作为节点5的父节点）" aria-describedby="basic-addon1">
-			  <span class="input-group-btn">
-		        <button class="btn btn-warning" onclick="linkNodes();" type="button">确认修改</button>
-		      </span>
-			</div>
-			
-			<br>
-			<button type="button" id="showNodeIndexBtn" onclick="showNodeIndexFunc();" class="btn btn-success">隐藏节点序号</button>
-
-	        <div id="bpres_tree_container" style="width:100%;height:500px"></div>
 
 		    <div class="input-group">
-		      	<span class="input-group-addon" id="sizing-addon1"><strong>原句法树：</strong></span>
-		      	<textarea name="conpparse_input_ori_name" id="conpparse_ori" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.conpparse}}</textarea>		      
+		      	<span class="input-group-addon" id="sizing-addon1"><strong>AMR:</strong></span>
+		      	<textarea name="amr_input_name" id="amr_input" type="text" class="form-control" rows="15">{{textInfo.amr}}</textarea>		      
 		    </div><!-- /input-group -->		
-		    <div class="input-group">
-		      	<span class="input-group-addon" id="sizing-addon1"><strong>当前结构：</strong></span>
-		      	<textarea name="conpparse_input_new_name" id="conpparse_now" type="text" class="form-control" rows="3" readOnly="true">{{textInfo.conpparse}}</textarea>
-		    </div><!-- /input-group -->
-
 			
 			<br /><br>
 		  	{% if textInfo.conpparse_tagger%}
 			<div class="input-group">
-				<span class="input-group-addon" id="sizing-addon1"><strong>当前句法结果的标注者：</strong></span>
-	      		<input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.conpparse_tagger}}" readOnly="true">
+				<span class="input-group-addon" id="sizing-addon1"><strong>当前AMR的标注者：</strong></span>
+	      		<input id="username_old_id" name="username_old_name" type="text" class="form-control" value="{{textInfo.amr_tagger}}" readOnly="true">
 	   		</div><br>
 	   		{%endif%}
 
 			<div class="input-group">
-				<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该句句法分析结果的标注者）：</strong></span>
+				<span class="input-group-addon" id="sizing-addon1"><strong>请输入你的名字（作为该句AMR的标注者）：</strong></span>
 	      		<input id="username_id" name="username_name" type="text" class="form-control" value="{{ username }}">
 	   		</div>
 
@@ -201,27 +161,7 @@
         </form>
 	</div>
 
-
 	<script>	
-		PrintTree();
-		function PrintTree(){
-			var is_ch = /chrome/.test(navigator.userAgent.toLowerCase()); 
-			var bpres=document.getElementById("conpparse_ori").value;
-
-			if(bpres==""){
-				return;
-			}
-
-			iscorrect=validateTree(bpres);
-			if(iscorrect){
-				createJsTree(bpres);
-				showEchartsTree(document.getElementById("bpres_tree_container"),getCompleteEchartsTree(true));
-			}
-			else{
-				alert("句法分析结果有误！")
-			}
-		}		
-
 		function checkUserName(){
      		username_input=document.getElementById("username_id");
      		if(username_input.value.trim()==""){

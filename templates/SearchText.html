@@ -19,7 +19,7 @@
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	      <ul class="nav navbar-nav">
-	        <li><a href="./SingleSentenceAnalyze.html">单句分析 <span class="sr-only">(current)</span></a></li>
+	        <li><a href="{% url 'SingleSentenceAnalyze.views.SentenceAnalyze' %}">单句分析 <span class="sr-only">(current)</span></a></li>
 	        <li><a href="./AddTestPaper.html">添加试题</a></li>
 	     	<li><a href="{% url 'TestPaper.BrowseByPaperViews.browseByPaper' %}">选择题（按试卷）</a></li>
 	        <li><a href="{% url 'TestPaper.BrowseByTemplateViews.browseByTemplate' %}">选择题（按模板）</a></li>

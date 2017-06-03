@@ -72,8 +72,8 @@ def autoBatchAnalyze(request):
                             elif papertype=="subjective":
                                 seg_input_sentences.append(ctext['text'])
                
-                seg_output_sentences=geo_processor.process(seg_input_sentences,3)        #粗粒度，接口3（原文本-》含时间地点的分词）
-                seg_output_sentences_fg=geo_processor.process(seg_input_sentences,2)     #细粒度，接口2（原文本-》纯分词）
+                seg_output_sentences=geo_processor.process(seg_input_sentences, 3)        #粗粒度，接口3（原文本-》含时间地点的分词）
+                seg_output_sentences_fg=geo_processor.process(seg_input_sentences, 2)     #细粒度，接口2（原文本-》纯分词）
 
                 #对分词结果进行处理
                 seg_output_sentences_withoutTL=[]

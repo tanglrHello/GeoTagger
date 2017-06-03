@@ -1,4 +1,5 @@
 split	选项拆分	1
+amr	AMR	0
 seg	分词	1
 time	时间	0
 loc	地点	0
